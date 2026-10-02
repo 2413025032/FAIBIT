@@ -3,11 +3,13 @@ class UserProfile {
     required this.name,
     required this.schoolClass,
     required this.school,
+    this.photoPath,
   });
 
   final String name;
   final String schoolClass;
   final String school;
+  final String? photoPath;
 
   UserProfile copyWith({String? name, String? schoolClass, String? school}) =>
       UserProfile(

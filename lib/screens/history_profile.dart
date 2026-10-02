@@ -147,41 +147,18 @@ class _ProfilePageState extends State<ProfilePage> {
           OutlineCard(
             child: Row(
               children: [
-              Stack(
-                clipBehavior: Clip.none,
-                children: [
-                  CircleAvatar(
-                    radius: 34,
-                    backgroundColor: AppTheme.tealSurface,
-                    foregroundColor: AppTheme.darkGray,
-                    backgroundImage:
-                        _profileImage != null ? FileImage(_profileImage!) : null,
-                    child: _profileImage == null
-                        ? const Icon(Icons.person_outline, size: 38)
-                        : null,
-                  ),
-                  Positioned(
-                    right: -4,
-                    bottom: -4,
-                    child: Material(
-                      color: Theme.of(context).colorScheme.primary,
-                      shape: const CircleBorder(),
-                      child: InkWell(
-                        onTap: _pickProfileImage,
-                        customBorder: const CircleBorder(),
-                        child: const Padding(
-                          padding: EdgeInsets.all(7),
-                          child: Icon(
-                            Icons.edit_outlined,
-                            size: 16,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
+              CircleAvatar(
+                radius: 34,
+                backgroundColor: AppTheme.tealSurface,
+                foregroundColor: AppTheme.darkGray,
+                backgroundImage: profile.photoPath != null
+                    ? FileImage(File(profile.photoPath!))
+                    : null,
+                child: profile.photoPath == null
+                    ? const Icon(Icons.person_outline, size: 38)
+                    : null,
               ),
+
                 const SizedBox(width: 16),
                 Expanded(
                   child: Column(

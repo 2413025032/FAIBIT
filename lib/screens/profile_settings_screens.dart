@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../models/models.dart';
 import '../theme/app_theme.dart';
@@ -23,12 +26,32 @@ class _EditProfilePageState extends State<EditProfilePage> {
   late final TextEditingController _classController;
   late final TextEditingController _schoolController;
 
+  File? _profileImage;
+
+  Future<void> _pickProfileImage() async {
+    final picker = ImagePicker();
+
+    final pickedFile = await picker.pickImage(
+      source: ImageSource.gallery,
+    );
+
+    if (pickedFile == null) return;
+
+    setState(() {
+      _profileImage = File(pickedFile.path);
+    });
+  }
+
   @override
   void initState() {
     super.initState();
     _nameController = TextEditingController(text: widget.profile.name);
     _classController = TextEditingController(text: widget.profile.schoolClass);
     _schoolController = TextEditingController(text: widget.profile.school);
+
+    if (widget.profile.photoPath != null) {
+      _profileImage = File(widget.profile.photoPath!);
+    }
   }
 
   @override
@@ -42,7 +65,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
   bool get _hasChanges {
     return _nameController.text.trim() != widget.profile.name ||
         _classController.text.trim() != widget.profile.schoolClass ||
-        _schoolController.text.trim() != widget.profile.school;
+        _schoolController.text.trim() != widget.profile.school ||
+        _profileImage?.path != widget.profile.photoPath;
   }
 
   void _save() {
@@ -63,6 +87,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
       name: name,
       schoolClass: schoolClass,
       school: school,
+      photoPath: _profileImage?.path,
     );
 
     widget.onSaved(updatedProfile);
@@ -178,26 +203,32 @@ Widget build(BuildContext context) {
               child: Stack(
                 alignment: Alignment.bottomRight,
                 children: [
-                  const CircleAvatar(
+                  CircleAvatar(
                     radius: 48,
                     backgroundColor: AppTheme.tealSurface,
                     foregroundColor: AppTheme.darkGray,
-                    child: Icon(
-                      Icons.person_outline,
-                      size: 52,
-                    ),
+                    backgroundImage:
+                        _profileImage != null ? FileImage(_profileImage!) : null,
+                    child: _profileImage == null
+                        ? const Icon(
+                            Icons.person_outline,
+                            size: 52,
+                          )
+                        : null,
                   ),
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.primary,
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Padding(
-                      padding: EdgeInsets.all(7),
-                      child: Icon(
-                        Icons.edit_outlined,
-                        color: Colors.white,
-                        size: 18,
+                  Material(
+                    color: Theme.of(context).colorScheme.primary,
+                    shape: const CircleBorder(),
+                    child: InkWell(
+                      onTap: _pickProfileImage,
+                      customBorder: const CircleBorder(),
+                      child: const Padding(
+                        padding: EdgeInsets.all(7),
+                        child: Icon(
+                          Icons.edit_outlined,
+                          color: Colors.white,
+                          size: 18,
+                        ),
                       ),
                     ),
                   ),
