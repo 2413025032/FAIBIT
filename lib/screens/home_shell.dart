@@ -1,116 +1,112 @@
 import 'package:flutter/material.dart';
 
+import '../models/models.dart';
 import '../widgets/ui.dart';
+import 'history_profile.dart';
 import 'material_screens.dart';
 import 'quiz_screens.dart';
-import 'history_profile.dart';
+
+enum RootDestination { home, materials, history, profile }
 
 class HomeShell extends StatefulWidget {
-  const HomeShell({
-    super.key,
-    required this.name,
-    required this.schoolClass,
-    this.initialTab = 0,
-  });
-  final String name, schoolClass;
-  final int initialTab;
+  const HomeShell({super.key, required this.profile});
+
+  final UserProfile profile;
+
   @override
   State<HomeShell> createState() => _HomeShellState();
 }
 
 class _HomeShellState extends State<HomeShell> {
-  late int tab;
+  RootDestination destination = RootDestination.home;
+  late UserProfile profile;
+
   @override
   void initState() {
     super.initState();
-    tab = widget.initialTab;
+    profile = widget.profile;
   }
 
-  void go(int index) {
-    if (index == tab) return;
-    setState(() => tab = index);
+  void selectDestination(RootDestination value) {
+    if (value == destination) return;
+    setState(() => destination = value);
+  }
+
+  void updateProfile(UserProfile value) {
+    setState(() => profile = value);
   }
 
   @override
-  Widget build(BuildContext context) {
-    final pages = [
-      HomePage(name: widget.name, schoolClass: widget.schoolClass, go: go),
-      MaterialListPage(name: widget.name, schoolClass: widget.schoolClass),
-      QuizPage(name: widget.name, schoolClass: widget.schoolClass),
-      ChallengePage(name: widget.name, schoolClass: widget.schoolClass),
-      HistoryPage(name: widget.name, schoolClass: widget.schoolClass),
-    ];
-    return Scaffold(
-      body: SafeArea(child: pages[tab]),
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: tab,
-        onDestinationSelected: go,
-        labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
-        destinations: const [
-          NavigationDestination(
-            icon: Icon(Icons.home_outlined),
-            selectedIcon: Icon(Icons.home),
-            label: 'Beranda',
+  Widget build(BuildContext context) => Scaffold(
+    body: SafeArea(
+      child: IndexedStack(
+        index: destination.index,
+        children: [
+          HomePage(
+            profile: profile,
+            onDestinationSelected: selectDestination,
           ),
-          NavigationDestination(
-            icon: Icon(Icons.menu_book_outlined),
-            selectedIcon: Icon(Icons.menu_book),
-            label: 'Materi',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.edit_note_outlined),
-            selectedIcon: Icon(Icons.edit_note),
-            label: 'Latihan',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.bolt_outlined),
-            selectedIcon: Icon(Icons.bolt),
-            label: 'Challenge',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.history_outlined),
-            selectedIcon: Icon(Icons.history),
-            label: 'Riwayat',
-          ),
+          const MaterialListPage(),
+          const HistoryPage(),
+          ProfilePage(profile: profile, onProfileChanged: updateProfile),
         ],
       ),
-    );
-  }
+    ),
+    bottomNavigationBar: NavigationBar(
+      selectedIndex: destination.index,
+      onDestinationSelected: (index) {
+        selectDestination(RootDestination.values[index]);
+      },
+      labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
+      destinations: const [
+        NavigationDestination(
+          icon: Icon(Icons.home_outlined),
+          selectedIcon: Icon(Icons.home),
+          label: 'Beranda',
+        ),
+        NavigationDestination(
+          icon: Icon(Icons.menu_book_outlined),
+          selectedIcon: Icon(Icons.menu_book),
+          label: 'Materi',
+        ),
+        NavigationDestination(
+          icon: Icon(Icons.history_outlined),
+          selectedIcon: Icon(Icons.history),
+          label: 'Riwayat',
+        ),
+        NavigationDestination(
+          icon: Icon(Icons.person_outline),
+          selectedIcon: Icon(Icons.person),
+          label: 'Profil',
+        ),
+      ],
+    ),
+  );
 }
 
 class HomePage extends StatelessWidget {
   const HomePage({
     super.key,
-    required this.name,
-    required this.schoolClass,
-    required this.go,
+    required this.profile,
+    required this.onDestinationSelected,
   });
-  final String name, schoolClass;
-  final ValueChanged<int> go;
+
+  final UserProfile profile;
+  final ValueChanged<RootDestination> onDestinationSelected;
+
+  void _openChildPage(BuildContext context, Widget page) {
+    Navigator.of(context).push(MaterialPageRoute(builder: (_) => page));
+  }
+
   @override
   Widget build(BuildContext context) => Padding(
     padding: const EdgeInsets.fromLTRB(20, 12, 20, 8),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Row(
-          children: [
-            const Text(
-              'FAIBIT',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800),
-            ),
-            const Spacer(),
-            IconButton(
-              onPressed: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) =>
-                      ProfilePage(name: name, schoolClass: schoolClass),
-                ),
-              ),
-              icon: const Icon(Icons.settings_outlined),
-            ),
-          ],
+        const Text(
+          'FAIBIT',
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800),
         ),
         Expanded(
           child: SingleChildScrollView(
@@ -125,13 +121,13 @@ class HomePage extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Hai, $name!',
+                              'Hai, ${profile.name}!',
                               style: const TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.w800,
                               ),
                             ),
-                            Text('Kelas $schoolClass'),
+                            Text('Kelas ${profile.schoolClass}'),
                             const SizedBox(height: 12),
                             const Text(
                               'Semangat belajar hari ini! Konsisten sedikit demi sedikit, hasilnya pasti terasa.',
@@ -171,21 +167,28 @@ class HomePage extends StatelessWidget {
                   crossAxisSpacing: 10,
                   mainAxisSpacing: 10,
                   children: [
-                    _menu('Materi', Icons.menu_book_outlined, () => go(1)),
+                    _menu(
+                      'Materi',
+                      Icons.menu_book_outlined,
+                      () => onDestinationSelected(RootDestination.materials),
+                    ),
                     _menu(
                       'Latihan Santai',
                       Icons.edit_note_outlined,
-                      () => go(2),
+                      () => _openChildPage(context, const QuizPage()),
                     ),
                     _menu(
                       'Challenge',
                       Icons.emoji_events_outlined,
-                      () => go(3),
+                      () => _openChildPage(
+                        context,
+                        ChallengePage(profile: profile),
+                      ),
                     ),
                     _menu(
                       'Riwayat Aktivitas',
                       Icons.history_outlined,
-                      () => go(4),
+                      () => onDestinationSelected(RootDestination.history),
                     ),
                   ],
                 ),
@@ -196,6 +199,7 @@ class HomePage extends StatelessWidget {
       ],
     ),
   );
+
   Widget _menu(String text, IconData icon, VoidCallback tap) => OutlineCard(
     onTap: tap,
     child: Column(

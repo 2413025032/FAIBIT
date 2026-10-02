@@ -5,16 +5,11 @@ import '../models/models.dart';
 import '../widgets/ui.dart';
 
 class MaterialListPage extends StatelessWidget {
-  const MaterialListPage({
-    super.key,
-    required this.name,
-    required this.schoolClass,
-  });
-  final String name, schoolClass;
+  const MaterialListPage({super.key});
   @override
   Widget build(BuildContext context) => Column(
     children: [
-      const PageTitle(title: 'Materi'),
+      const PageTitle(title: 'Materi', showBack: false),
       Expanded(
         child: ListView.separated(
           padding: const EdgeInsets.fromLTRB(20, 10, 20, 20),

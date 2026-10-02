@@ -7,8 +7,7 @@ import '../models/models.dart';
 import '../widgets/ui.dart';
 
 class QuizPage extends StatefulWidget {
-  const QuizPage({super.key, required this.name, required this.schoolClass});
-  final String name, schoolClass;
+  const QuizPage({super.key});
   @override
   State<QuizPage> createState() => _QuizPageState();
 }
@@ -16,22 +15,26 @@ class QuizPage extends StatefulWidget {
 class _QuizPageState extends State<QuizPage> {
   int selected = -1;
   @override
-  Widget build(BuildContext context) => _QuestionScreen(
-    title: 'Latihan Santai',
-    number: 'Soal 3 dari 10',
-    value: .3,
-    question: questions[0],
-    selected: selected,
-    onSelected: (i) => setState(() => selected = i),
-    onNext: selected < 0
-        ? null
-        : () => Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (_) =>
-                  FeedbackPage(question: questions[0], selected: selected),
-            ),
-          ),
+  Widget build(BuildContext context) => Scaffold(
+    body: SafeArea(
+      child: _QuestionScreen(
+        title: 'Latihan Santai',
+        number: 'Soal 3 dari 10',
+        value: .3,
+        question: questions[0],
+        selected: selected,
+        onSelected: (i) => setState(() => selected = i),
+        onNext: selected < 0
+            ? null
+            : () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) =>
+                      FeedbackPage(question: questions[0], selected: selected),
+                ),
+              ),
+      ),
+    ),
   );
 }
 
@@ -196,12 +199,8 @@ class QuizResultPage extends StatelessWidget {
 }
 
 class ChallengePage extends StatefulWidget {
-  const ChallengePage({
-    super.key,
-    required this.name,
-    required this.schoolClass,
-  });
-  final String name, schoolClass;
+  const ChallengePage({super.key, required this.profile});
+  final UserProfile profile;
   @override
   State<ChallengePage> createState() => _ChallengePageState();
 }
@@ -233,63 +232,57 @@ class _ChallengePageState extends State<ChallengePage> {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (_) => ChallengeResultPage(
-            name: widget.name,
-            schoolClass: widget.schoolClass,
-          ),
+          builder: (_) => ChallengeResultPage(profile: widget.profile),
         ),
       );
     }
   }
 
   @override
-  Widget build(BuildContext context) => Column(
-    children: [
-      PageTitle(title: 'Challenge'),
-      Padding(
-        padding: const EdgeInsets.all(20),
-        child: Row(
-          children: [
-            const Text('Soal 2 dari 10'),
-            const Spacer(),
-            const Icon(Icons.timer_outlined),
-            Text(' 00:${seconds.toString().padLeft(2, '0')}'),
-          ],
-        ),
+  Widget build(BuildContext context) => Scaffold(
+    body: SafeArea(
+      child: Column(
+        children: [
+          PageTitle(title: 'Challenge'),
+          Padding(
+            padding: const EdgeInsets.all(20),
+            child: Row(
+              children: [
+                const Text('Soal 2 dari 10'),
+                const Spacer(),
+                const Icon(Icons.timer_outlined),
+                Text(' 00:${seconds.toString().padLeft(2, '0')}'),
+              ],
+            ),
+          ),
+          Expanded(
+            child: _QuestionScreen(
+              showHeader: false,
+              title: '',
+              number: '',
+              value: .2,
+              question: questions[1],
+              selected: selected,
+              onSelected: (i) => setState(() => selected = i),
+              onNext: selected < 0 ? null : finish,
+            ),
+          ),
+        ],
       ),
-      Expanded(
-        child: _QuestionScreen(
-          showHeader: false,
-          title: '',
-          number: '',
-          value: .2,
-          question: questions[1],
-          selected: selected,
-          onSelected: (i) => setState(() => selected = i),
-          onNext: selected < 0 ? null : finish,
-        ),
-      ),
-    ],
+    ),
   );
 }
 
 class ChallengeResultPage extends StatelessWidget {
-  const ChallengeResultPage({
-    super.key,
-    required this.name,
-    required this.schoolClass,
-  });
+  const ChallengeResultPage({super.key, required this.profile});
 
-  final String name;
-  final String schoolClass;
+  final UserProfile profile;
   @override
   Widget build(BuildContext context) => ResultPage(
     challenge: true,
     onRetry: () => Navigator.pushReplacement(
       context,
-      MaterialPageRoute(
-        builder: (_) => ChallengePage(name: name, schoolClass: schoolClass),
-      ),
+      MaterialPageRoute(builder: (_) => ChallengePage(profile: profile)),
     ),
   );
 }

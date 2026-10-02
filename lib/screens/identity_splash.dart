@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import '../theme/app_theme.dart';
+import '../models/models.dart';
 import 'home_shell.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -50,10 +51,12 @@ class _IdentityPageState extends State<IdentityPage> {
   final key = GlobalKey<FormState>();
   final name = TextEditingController();
   final schoolClass = TextEditingController();
+  final school = TextEditingController();
   @override
   void dispose() {
     name.dispose();
     schoolClass.dispose();
+    school.dispose();
     super.dispose();
   }
 
@@ -63,8 +66,11 @@ class _IdentityPageState extends State<IdentityPage> {
         context,
         MaterialPageRoute(
           builder: (_) => HomeShell(
-            name: name.text.trim(),
-            schoolClass: schoolClass.text.trim(),
+            profile: UserProfile(
+              name: name.text.trim(),
+              schoolClass: schoolClass.text.trim(),
+              school: school.text.trim(),
+            ),
           ),
         ),
       );
@@ -143,6 +149,19 @@ class _IdentityPageState extends State<IdentityPage> {
                       ),
                       validator: (v) => v == null || v.trim().isEmpty
                           ? 'Kelas wajib diisi'
+                          : null,
+                    ),
+                    const SizedBox(height: 14),
+                    TextFormField(
+                      controller: school,
+                      textInputAction: TextInputAction.done,
+                      onFieldSubmitted: (_) => submit(),
+                      decoration: const InputDecoration(
+                        prefixIcon: Icon(Icons.business_outlined),
+                        hintText: 'Sekolah',
+                      ),
+                      validator: (v) => v == null || v.trim().isEmpty
+                          ? 'Sekolah wajib diisi'
                           : null,
                     ),
                     const SizedBox(height: 28),

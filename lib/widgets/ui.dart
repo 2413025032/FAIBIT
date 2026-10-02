@@ -21,7 +21,7 @@ class OutlineCard extends StatelessWidget {
   final VoidCallback? onTap;
   @override
   Widget build(BuildContext context) => Material(
-    color: Colors.white,
+    color: Theme.of(context).colorScheme.surface,
     borderRadius: BorderRadius.circular(AppTheme.radius),
     child: InkWell(
       onTap: onTap,
@@ -29,8 +29,15 @@ class OutlineCard extends StatelessWidget {
       child: Container(
         padding: padding,
         decoration: BoxDecoration(
-          border: Border.all(color: AppTheme.line),
+          color: Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(AppTheme.radius),
+          boxShadow: const [
+            BoxShadow(
+              color: Color(0x120F9D78),
+              blurRadius: 14,
+              offset: Offset(0, 4),
+            ),
+          ],
         ),
         child: child,
       ),
@@ -39,18 +46,31 @@ class OutlineCard extends StatelessWidget {
 }
 
 class PageTitle extends StatelessWidget implements PreferredSizeWidget {
-  const PageTitle({super.key, required this.title});
+  const PageTitle({
+    super.key,
+    required this.title,
+    this.showBack = true,
+    this.actions,
+    this.onBack,
+  });
   final String title;
+  final bool showBack;
+  final List<Widget>? actions;
+  final VoidCallback? onBack;
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
   @override
   Widget build(BuildContext context) => AppBar(
     centerTitle: true,
+    automaticallyImplyLeading: false,
     title: Text(title, style: const TextStyle(fontWeight: FontWeight.w700)),
-    leading: IconButton(
-      icon: const Icon(Icons.arrow_back_ios_new, size: 19),
-      onPressed: () => Navigator.maybePop(context),
-    ),
+    leading: showBack
+        ? IconButton(
+            icon: const Icon(Icons.arrow_back_ios_new, size: 19),
+            onPressed: onBack ?? () => Navigator.maybePop(context),
+          )
+        : null,
+    actions: actions,
   );
 }
 
@@ -63,8 +83,8 @@ class ProgressLine extends StatelessWidget {
     child: LinearProgressIndicator(
       value: value,
       minHeight: 10,
-      color: AppTheme.ink,
-      backgroundColor: const Color(0xFFE5E5E5),
+      color: Theme.of(context).colorScheme.primary,
+      backgroundColor: AppTheme.tealSurface,
     ),
   );
 }

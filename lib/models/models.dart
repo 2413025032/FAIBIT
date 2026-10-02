@@ -1,3 +1,22 @@
+class UserProfile {
+  const UserProfile({
+    required this.name,
+    required this.schoolClass,
+    required this.school,
+  });
+
+  final String name;
+  final String schoolClass;
+  final String school;
+
+  UserProfile copyWith({String? name, String? schoolClass, String? school}) =>
+      UserProfile(
+        name: name ?? this.name,
+        schoolClass: schoolClass ?? this.schoolClass,
+        school: school ?? this.school,
+      );
+}
+
 class LearningMaterial {
   const LearningMaterial(this.title, this.description, this.example);
   final String title, description, example;
