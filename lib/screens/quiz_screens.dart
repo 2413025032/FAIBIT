@@ -360,16 +360,20 @@ class ChallengePage extends StatefulWidget {
 
   final UserProfile profile;
   final String materialTitle;
+
   @override
   State<ChallengePage> createState() => _ChallengePageState();
 }
 
 class _ChallengePageState extends State<ChallengePage> {
-  int seconds = 90, selected = -1;
+  int seconds = 10 * 60;
+  int selected = -1;
   Timer? timer;
+
   @override
   void initState() {
     super.initState();
+
     timer = Timer.periodic(const Duration(seconds: 1), (t) {
       if (seconds <= 1) {
         t.cancel();
@@ -386,50 +390,81 @@ class _ChallengePageState extends State<ChallengePage> {
     super.dispose();
   }
 
+  String get formattedTime {
+    final minutes = seconds ~/ 60;
+    final remainingSeconds = seconds % 60;
+
+    return '${minutes.toString().padLeft(2, '0')}:'
+        '${remainingSeconds.toString().padLeft(2, '0')}';
+  }
+
   void finish() {
-    if (mounted) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (_) => ChallengeResultPage(profile: widget.profile),
+    timer?.cancel();
+
+    if (!mounted) return;
+
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (_) => ChallengeResultPage(
+          profile: widget.profile,
         ),
-      );
-    }
+      ),
+    );
   }
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-    body: SafeArea(
-      child: Column(
-        children: [
-          PageTitle(title: 'Challenge'),
-          Padding(
-            padding: const EdgeInsets.all(20),
-            child: Row(
-              children: [
-                const Text('Soal 2 dari 10'),
-                const Spacer(),
-                const Icon(Icons.timer_outlined),
-                Text(' 00:${seconds.toString().padLeft(2, '0')}'),
-              ],
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: SafeArea(
+        child: Column(
+          children: [
+            const PageTitle(
+              title: 'Challenge',
             ),
-          ),
-          Expanded(
-            child: _QuestionScreen(
-              showHeader: false,
-              title: '',
-              number: '',
-              value: .2,
-              question: questions[1],
-              selected: selected,
-              onSelected: (i) => setState(() => selected = i),
-              onNext: selected < 0 ? null : finish,
+
+            Padding(
+              padding: const EdgeInsets.all(20),
+              child: Row(
+                children: [
+                  const Text(
+                    'Soal 1 dari 10',
+                    style: TextStyle(
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  const Spacer(),
+                  const Icon(Icons.timer_outlined),
+                  const SizedBox(width: 5),
+                  Text(
+                    formattedTime,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+
+            Expanded(
+              child: _QuestionScreen(
+                showHeader: false,
+                title: '',
+                number: '',
+                value: .1,
+                question: questions[0],
+                selected: selected,
+                onSelected: (i) {
+                  setState(() => selected = i);
+                },
+                onNext: selected < 0 ? null : finish,
+              ),
+            ),
+          ],
+        ),
       ),
-    ),
-  );
+    );
+  }
 }
 
 class ChallengeResultPage extends StatelessWidget {
