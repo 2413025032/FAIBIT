@@ -182,7 +182,7 @@ class HomePage extends StatelessWidget {
                       Icons.emoji_events_outlined,
                       () => _openChildPage(
                         context,
-                        ChallengePage(profile: profile),
+                        ChallengePreparationPage(profile: profile),
                       ),
                     ),
                     _menu(

@@ -198,9 +198,168 @@ class QuizResultPage extends StatelessWidget {
       ResultPage(challenge: false, onRetry: () => Navigator.pop(context));
 }
 
-class ChallengePage extends StatefulWidget {
-  const ChallengePage({super.key, required this.profile});
+class ChallengePreparationPage extends StatefulWidget {
+  const ChallengePreparationPage({
+    super.key,
+    required this.profile,
+  });
+
   final UserProfile profile;
+
+  @override
+  State<ChallengePreparationPage> createState() =>
+      _ChallengePreparationPageState();
+}
+
+class _ChallengePreparationPageState
+    extends State<ChallengePreparationPage> {
+  String selectedMaterial = materials.first.title;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: const PageTitle(
+        title: 'Persiapan Challenge',
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            OutlineCard(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Icon(Icons.bolt_outlined, size: 42),
+                  const SizedBox(height: 10),
+                  const Text(
+                    'Siap untuk Challenge?',
+                    style: TextStyle(
+                      fontSize: 21,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Uji pemahamanmu tentang sistem bilangan '
+                    'dengan waktu yang terbatas.',
+                  ),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 20),
+
+            const Text(
+              'Pilih Materi',
+              style: TextStyle(
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            const SizedBox(height: 8),
+
+            DropdownButtonFormField<String>(
+              value: selectedMaterial,
+              decoration: const InputDecoration(
+                prefixIcon: Icon(Icons.menu_book_outlined),
+                border: OutlineInputBorder(),
+              ),
+              items: materials
+                  .map(
+                    (material) => DropdownMenuItem(
+                      value: material.title,
+                      child: Text(material.title),
+                    ),
+                  )
+                  .toList(),
+              onChanged: (value) {
+                if (value != null) {
+                  setState(() => selectedMaterial = value);
+                }
+              },
+            ),
+
+            const SizedBox(height: 20),
+
+            OutlineCard(
+              child: Column(
+                children: const [
+                  _ChallengeInfo(
+                    icon: Icons.quiz_outlined,
+                    title: 'Jumlah Soal',
+                    value: '10 soal',
+                  ),
+                  SizedBox(height: 14),
+                  _ChallengeInfo(
+                    icon: Icons.timer_outlined,
+                    title: 'Batas Waktu',
+                    value: '10 menit',
+                  ),
+                ],
+              ),
+            ),
+
+            const Spacer(),
+
+            FilledButton(
+              onPressed: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => ChallengePage(
+                      profile: widget.profile,
+                      materialTitle: selectedMaterial,
+                    ),
+                  ),
+                );
+              },
+              child: const Text('Mulai Challenge'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ChallengeInfo extends StatelessWidget {
+  const _ChallengeInfo({
+    required this.icon,
+    required this.title,
+    required this.value,
+  });
+
+  final IconData icon;
+  final String title;
+  final String value;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Icon(icon),
+        const SizedBox(width: 12),
+        Expanded(child: Text(title)),
+        Text(
+          value,
+          style: const TextStyle(
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class ChallengePage extends StatefulWidget {
+  const ChallengePage({
+    super.key,
+    required this.profile,
+    this.materialTitle = 'Biner',
+  });
+
+  final UserProfile profile;
+  final String materialTitle;
   @override
   State<ChallengePage> createState() => _ChallengePageState();
 }
