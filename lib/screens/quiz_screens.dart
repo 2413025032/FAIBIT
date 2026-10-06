@@ -367,8 +367,14 @@ class ChallengePage extends StatefulWidget {
 
 class _ChallengePageState extends State<ChallengePage> {
   int seconds = 10 * 60;
+  int currentQuestion = 0;
   int selected = -1;
+
   Timer? timer;
+
+  final List<int> answers = [];
+
+  List<Question> get challengeQuestions => questions;
 
   @override
   void initState() {
@@ -398,6 +404,19 @@ class _ChallengePageState extends State<ChallengePage> {
         '${remainingSeconds.toString().padLeft(2, '0')}';
   }
 
+  void nextQuestion() {
+    answers.add(selected);
+
+    if (currentQuestion < challengeQuestions.length - 1) {
+      setState(() {
+        currentQuestion++;
+        selected = -1;
+      });
+    } else {
+      finish();
+    }
+  }
+
   void finish() {
     timer?.cancel();
 
@@ -415,6 +434,8 @@ class _ChallengePageState extends State<ChallengePage> {
 
   @override
   Widget build(BuildContext context) {
+    final question = challengeQuestions[currentQuestion];
+
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -424,12 +445,12 @@ class _ChallengePageState extends State<ChallengePage> {
             ),
 
             Padding(
-              padding: const EdgeInsets.all(20),
+              padding: const EdgeInsets.fromLTRB(20, 10, 20, 8),
               child: Row(
                 children: [
-                  const Text(
-                    'Soal 1 dari 10',
-                    style: TextStyle(
+                  Text(
+                    'Soal ${currentQuestion + 1} dari ${challengeQuestions.length}',
+                    style: const TextStyle(
                       fontWeight: FontWeight.w700,
                     ),
                   ),
@@ -446,18 +467,26 @@ class _ChallengePageState extends State<ChallengePage> {
               ),
             ),
 
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: ProgressLine(
+                value: (currentQuestion + 1) /
+                    challengeQuestions.length,
+              ),
+            ),
+
             Expanded(
               child: _QuestionScreen(
                 showHeader: false,
                 title: '',
                 number: '',
-                value: .1,
-                question: questions[0],
+                value: 0,
+                question: question,
                 selected: selected,
                 onSelected: (i) {
                   setState(() => selected = i);
                 },
-                onNext: selected < 0 ? null : finish,
+                onNext: selected < 0 ? null : nextQuestion,
               ),
             ),
           ],

@@ -30,16 +30,73 @@ const materials = [
 
 const questions = [
   Question(
-    '(1011)₂ = …₁₀',
+    'Bilangan biner menggunakan basis ...',
+    ['2', '8', '10', '16'],
+    0,
+    'Sistem bilangan biner menggunakan basis 2.',
+  ),
+
+  Question(
+    'Simbol yang digunakan dalam bilangan biner adalah ...',
+    ['1 dan 2', '0 dan 1', '0 dan 2', '1 dan 10'],
+    1,
+    'Bilangan biner hanya menggunakan dua simbol, yaitu 0 dan 1.',
+  ),
+
+  Question(
+    '(1011)₂ = ...₁₀',
     ['9', '10', '11', '12'],
     2,
-    'Nilai biner 1011 adalah 8 + 0 + 2 + 1, sehingga hasilnya 11.',
+    '1011₂ = 1×8 + 0×4 + 1×2 + 1×1 = 11₁₀.',
   ),
+
   Question(
-    '(17)₈ = …₁₀',
-    ['13', '14', '15', '16'],
+    '(11010)₂ = ...₁₀',
+    ['24', '25', '26', '27'],
     2,
-    'Nilai oktal 17 adalah 1×8 + 7, sehingga hasilnya 15.',
+    '11010₂ = 16 + 8 + 0 + 2 + 0 = 26₁₀.',
+  ),
+
+  Question(
+    '(100001)₂ = ...₁₀',
+    ['31', '32', '33', '34'],
+    2,
+    '100001₂ = 32 + 1 = 33₁₀.',
+  ),
+
+  Question(
+    '(11111)₂ = ...₁₀',
+    ['29', '30', '31', '32'],
+    2,
+    '11111₂ = 16 + 8 + 4 + 2 + 1 = 31₁₀.',
+  ),
+
+  Question(
+    'Bilangan 1010 terdiri dari ... bit.',
+    ['2', '3', '4', '8'],
+    2,
+    'Bilangan 1010 memiliki empat digit biner, sehingga terdiri dari 4 bit.',
+  ),
+
+  Question(
+    'Bilangan 11001100 terdiri dari ... bit.',
+    ['4', '6', '8', '10'],
+    2,
+    'Bilangan 11001100 memiliki delapan digit biner, sehingga terdiri dari 8 bit.',
+  ),
+
+  Question(
+    'Delapan bit dikenal sebagai satu ...',
+    ['word', 'byte', 'nibble', 'digit'],
+    1,
+    'Dalam materi FAIBIT, delapan bit dikenal sebagai satu byte.',
+  ),
+
+  Question(
+    'Bilangan yang muncul setelah 111₂ dalam urutan biner adalah ...',
+    ['1111₂', '1000₂', '1010₂', '1100₂'],
+    1,
+    'Setelah 111₂, semua posisi bernilai 1 sehingga penambahan satu membentuk posisi baru di sebelah kiri: 1000₂.',
   ),
 ];
 
