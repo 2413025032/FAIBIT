@@ -539,20 +539,208 @@ class ChallengeResultPage extends StatelessWidget {
   final Duration duration;
 
   @override
-  Widget build(BuildContext context) => ResultPage(
-    challenge: true,
-    materialTitle: materialTitle,
-    totalQuestions: totalQuestions,
-    correctAnswers: correctAnswers,
-    incorrectAnswers: incorrectAnswers,
-    score: score,
-    duration: duration,
-    onRetry: () => Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (_) => ChallengePreparationPage(profile: profile),
+  Widget build(BuildContext context) {
+    final durationLabel = _formatDuration(duration);
+
+    return Scaffold(
+      appBar: const PageTitle(title: 'Hasil Challenge'),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.fromLTRB(20, 10, 20, 20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              OutlineCard(
+                child: Column(
+                  children: [
+                    Icon(
+                      Icons.emoji_events_outlined,
+                      size: 64,
+                      color: AppTheme.challenge.primary,
+                    ),
+                    const SizedBox(height: 10),
+                    const Text(
+                      'Challenge Selesai!',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 23,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      'Kerja bagus! Kamu berhasil menyelesaikan challenge ini.',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(color: AppTheme.challenge.accentDark),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 16),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 18,
+                ),
+                decoration: BoxDecoration(
+                  color: AppTheme.challenge.surface,
+                  borderRadius: BorderRadius.circular(AppTheme.radius),
+                ),
+                child: Column(
+                  children: [
+                    const Text(
+                      'SKOR AKHIR',
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 1.1,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      '$score%',
+                      style: TextStyle(
+                        color: AppTheme.challenge.primaryDark,
+                        fontSize: 48,
+                        fontWeight: FontWeight.w800,
+                        height: 1.1,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  Expanded(
+                    child: _ChallengeResultStat(
+                      icon: Icons.check_circle_outline,
+                      label: 'Benar',
+                      value: '$correctAnswers',
+                      color: AppTheme.challenge.primary,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: _ChallengeResultStat(
+                      icon: Icons.cancel_outlined,
+                      label: 'Salah',
+                      value: '$incorrectAnswers',
+                      color: AppTheme.challenge.accentDark,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              OutlineCard(
+                child: Column(
+                  children: [
+                    _ChallengeResultInfo(
+                      icon: Icons.menu_book_outlined,
+                      label: 'Materi',
+                      value: materialTitle,
+                    ),
+                    const SizedBox(height: 14),
+                    _ChallengeResultInfo(
+                      icon: Icons.quiz_outlined,
+                      label: 'Jumlah Soal',
+                      value: '$totalQuestions soal',
+                    ),
+                    const SizedBox(height: 14),
+                    _ChallengeResultInfo(
+                      icon: Icons.timer_outlined,
+                      label: 'Waktu',
+                      value: durationLabel,
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 24),
+              OutlinedButton(
+                onPressed: () =>
+                    Navigator.popUntil(context, (route) => route.isFirst),
+                child: const Text('Kembali ke Menu'),
+              ),
+              const SizedBox(height: 10),
+              FilledButton(
+                onPressed: () => Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => ChallengePreparationPage(profile: profile),
+                  ),
+                ),
+                style: FilledButton.styleFrom(
+                  backgroundColor: AppTheme.challenge.primary,
+                ),
+                child: const Text('Coba Lagi'),
+              ),
+            ],
+          ),
+        ),
       ),
+    );
+  }
+}
+
+class _ChallengeResultStat extends StatelessWidget {
+  const _ChallengeResultStat({
+    required this.icon,
+    required this.label,
+    required this.value,
+    required this.color,
+  });
+
+  final IconData icon;
+  final String label;
+  final String value;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) => OutlineCard(
+    child: Column(
+      children: [
+        Icon(icon, color: color, size: 26),
+        const SizedBox(height: 6),
+        Text(
+          value,
+          style: TextStyle(
+            color: color,
+            fontSize: 24,
+            fontWeight: FontWeight.w800,
+          ),
+        ),
+        const SizedBox(height: 2),
+        Text(label, style: const TextStyle(fontWeight: FontWeight.w600)),
+      ],
     ),
+  );
+}
+
+class _ChallengeResultInfo extends StatelessWidget {
+  const _ChallengeResultInfo({
+    required this.icon,
+    required this.label,
+    required this.value,
+  });
+
+  final IconData icon;
+  final String label;
+  final String value;
+
+  @override
+  Widget build(BuildContext context) => Row(
+    children: [
+      Icon(icon, color: AppTheme.challenge.primary),
+      const SizedBox(width: 12),
+      Expanded(child: Text(label)),
+      Flexible(
+        child: Text(
+          value,
+          textAlign: TextAlign.end,
+          style: const TextStyle(fontWeight: FontWeight.w700),
+        ),
+      ),
+    ],
   );
 }
 
