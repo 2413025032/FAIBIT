@@ -61,14 +61,14 @@ class _QuestionScreen extends StatelessWidget {
     children: [
       if (showHeader) PageTitle(title: title),
       Expanded(
-        child: Padding(
+        child: SingleChildScrollView(
           padding: const EdgeInsets.all(20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Text(number, style: const TextStyle(fontWeight: FontWeight.w700)),
               const SizedBox(height: 8),
-              ProgressLine(value: value),
+              if (value > 0) ProgressLine(value: value),
               const SizedBox(height: 24),
               OutlineCard(
                 child: Text(
@@ -111,9 +111,12 @@ class _QuestionScreen extends StatelessWidget {
                   ),
                 ),
               ),
-              const Spacer(),
-              FilledButton(onPressed: onNext, child: const Text('Selanjutnya')),
-            ],
+              const SizedBox(height: 16),
+              FilledButton(
+                onPressed: onNext,
+                child: const Text('Selanjutnya'),
+              ),
+            ]
           ),
         ),
       ),
