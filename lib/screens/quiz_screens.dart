@@ -583,7 +583,9 @@ class ChallengeResultPage extends StatelessWidget {
                   vertical: 18,
                 ),
                 decoration: BoxDecoration(
-                  color: AppTheme.challenge.surface,
+                  color: score >= 70
+                      ? AppTheme.tealSurface
+                      : AppTheme.challenge.surface,
                   borderRadius: BorderRadius.circular(AppTheme.radius),
                 ),
                 child: Column(
@@ -600,7 +602,9 @@ class ChallengeResultPage extends StatelessWidget {
                     Text(
                       '$score%',
                       style: TextStyle(
-                        color: AppTheme.challenge.primaryDark,
+                        color: score >= 70
+                            ? AppTheme.greenTeal
+                            : AppTheme.challenge.primaryDark,
                         fontSize: 48,
                         fontWeight: FontWeight.w800,
                         height: 1.1,
