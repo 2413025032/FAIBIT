@@ -7,36 +7,190 @@ import '../models/models.dart';
 import '../theme/app_theme.dart';
 import '../widgets/ui.dart';
 
+class PracticePreparationPage extends StatefulWidget {
+  const PracticePreparationPage({super.key});
+
+  @override
+  State<PracticePreparationPage> createState() =>
+      _PracticePreparationPageState();
+}
+
+class _PracticePreparationPageState extends State<PracticePreparationPage> {
+  static const materials = [
+    'Semua Materi',
+    'Desimal',
+    'Biner',
+    'Oktal',
+    'Heksadesimal',
+    'Konversi',
+  ];
+
+  String selectedMaterial = materials.first;
+
+  @override
+  Widget build(BuildContext context) => Scaffold(
+    appBar: const PageTitle(title: 'Persiapan Latihan'),
+    body: SafeArea(
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            OutlineCard(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Icon(Icons.edit_note_outlined, size: 42),
+                  const SizedBox(height: 10),
+                  const Text(
+                    'Siap untuk Latihan Santai?',
+                    style: TextStyle(fontSize: 21, fontWeight: FontWeight.w800),
+                  ),
+                  const SizedBox(height: 8),
+                  const Text(
+                    'Latih pemahamanmu tentang sistem bilangan '
+                    'tanpa batas waktu.',
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 20),
+            const Text(
+              'Pilih Materi',
+              style: TextStyle(fontWeight: FontWeight.w700),
+            ),
+            const SizedBox(height: 8),
+            DropdownButtonFormField<String>(
+              initialValue: selectedMaterial,
+              decoration: const InputDecoration(
+                prefixIcon: Icon(Icons.menu_book_outlined),
+                border: OutlineInputBorder(),
+              ),
+              items: materials
+                  .map(
+                    (material) => DropdownMenuItem(
+                      value: material,
+                      child: Text(material),
+                    ),
+                  )
+                  .toList(),
+              onChanged: (value) {
+                if (value != null) {
+                  setState(() => selectedMaterial = value);
+                }
+              },
+            ),
+            const SizedBox(height: 20),
+            const OutlineCard(
+              child: Column(
+                children: [
+                  _PracticeInfo(
+                    icon: Icons.quiz_outlined,
+                    title: 'Jumlah Soal',
+                    value: '10 soal',
+                  ),
+                  SizedBox(height: 14),
+                  _PracticeInfo(
+                    icon: Icons.all_inclusive,
+                    title: 'Waktu',
+                    value: 'Tanpa batas waktu',
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 28),
+            FilledButton(
+              onPressed: () => Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => QuizPage(materialTitle: selectedMaterial),
+                ),
+              ),
+              child: const Text('Mulai Latihan'),
+            ),
+          ],
+        ),
+      ),
+    ),
+  );
+}
+
+class _PracticeInfo extends StatelessWidget {
+  const _PracticeInfo({
+    required this.icon,
+    required this.title,
+    required this.value,
+  });
+
+  final IconData icon;
+  final String title;
+  final String value;
+
+  @override
+  Widget build(BuildContext context) => Row(
+    children: [
+      Icon(icon),
+      const SizedBox(width: 12),
+      Expanded(child: Text(title)),
+      Flexible(
+        child: Text(
+          value,
+          textAlign: TextAlign.end,
+          style: const TextStyle(fontWeight: FontWeight.w700),
+        ),
+      ),
+    ],
+  );
+}
+
 class QuizPage extends StatefulWidget {
-  const QuizPage({super.key});
+  const QuizPage({super.key, this.materialTitle = 'Semua Materi'});
+
+  final String materialTitle;
+
   @override
   State<QuizPage> createState() => _QuizPageState();
 }
 
 class _QuizPageState extends State<QuizPage> {
+  static const totalQuestions = 10;
+
+  int currentQuestion = 0;
   int selected = -1;
+
+  void nextQuestion() {
+    if (currentQuestion == totalQuestions - 1) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const QuizResultPage()),
+      );
+      return;
+    }
+
+    setState(() {
+      currentQuestion++;
+      selected = -1;
+    });
+  }
+
   @override
-  Widget build(BuildContext context) => Scaffold(
-    body: SafeArea(
-      child: _QuestionScreen(
-        title: 'Latihan Santai',
-        number: 'Soal 3 dari 10',
-        value: .3,
-        question: questions[0],
-        selected: selected,
-        onSelected: (i) => setState(() => selected = i),
-        onNext: selected < 0
-            ? null
-            : () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) =>
-                      FeedbackPage(question: questions[0], selected: selected),
-                ),
-              ),
+  Widget build(BuildContext context) {
+    final question = questions[currentQuestion];
+
+    return Scaffold(
+      body: SafeArea(
+        child: _QuestionScreen(
+          title: 'Latihan Santai',
+          number: 'Soal ${currentQuestion + 1} dari $totalQuestions',
+          value: (currentQuestion + 1) / totalQuestions,
+          question: question,
+          selected: selected,
+          onSelected: (i) => setState(() => selected = i),
+          onNext: selected < 0 ? null : nextQuestion,
+        ),
       ),
-    ),
-  );
+    );
+  }
 }
 
 class _QuestionScreen extends StatelessWidget {

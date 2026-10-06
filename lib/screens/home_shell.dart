@@ -175,7 +175,10 @@ class HomePage extends StatelessWidget {
                     _menu(
                       'Latihan Santai',
                       Icons.edit_note_outlined,
-                      () => _openChildPage(context, const QuizPage()),
+                      () => _openChildPage(
+                        context,
+                        const PracticePreparationPage(),
+                      ),
                     ),
                     _menu(
                       'Challenge',
