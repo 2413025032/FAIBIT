@@ -124,7 +124,7 @@ class _QuestionScreen extends StatelessWidget {
                     : FilledButton.styleFrom(backgroundColor: buttonColor),
                 child: const Text('Selanjutnya'),
               ),
-            ]
+            ],
           ),
         ),
       ),
@@ -210,10 +210,7 @@ class QuizResultPage extends StatelessWidget {
 }
 
 class ChallengePreparationPage extends StatefulWidget {
-  const ChallengePreparationPage({
-    super.key,
-    required this.profile,
-  });
+  const ChallengePreparationPage({super.key, required this.profile});
 
   final UserProfile profile;
 
@@ -222,16 +219,13 @@ class ChallengePreparationPage extends StatefulWidget {
       _ChallengePreparationPageState();
 }
 
-class _ChallengePreparationPageState
-    extends State<ChallengePreparationPage> {
+class _ChallengePreparationPageState extends State<ChallengePreparationPage> {
   String selectedMaterial = materials.first.title;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const PageTitle(
-        title: 'Persiapan Challenge',
-      ),
+      appBar: const PageTitle(title: 'Persiapan Challenge'),
       body: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
@@ -245,10 +239,7 @@ class _ChallengePreparationPageState
                   const SizedBox(height: 10),
                   const Text(
                     'Siap untuk Challenge?',
-                    style: TextStyle(
-                      fontSize: 21,
-                      fontWeight: FontWeight.w800,
-                    ),
+                    style: TextStyle(fontSize: 21, fontWeight: FontWeight.w800),
                   ),
                   const SizedBox(height: 8),
                   Text(
@@ -263,9 +254,7 @@ class _ChallengePreparationPageState
 
             const Text(
               'Pilih Materi',
-              style: TextStyle(
-                fontWeight: FontWeight.w700,
-              ),
+              style: TextStyle(fontWeight: FontWeight.w700),
             ),
             const SizedBox(height: 8),
 
@@ -354,12 +343,7 @@ class _ChallengeInfo extends StatelessWidget {
         Icon(icon),
         const SizedBox(width: 12),
         Expanded(child: Text(title)),
-        Text(
-          value,
-          style: const TextStyle(
-            fontWeight: FontWeight.w700,
-          ),
-        ),
+        Text(value, style: const TextStyle(fontWeight: FontWeight.w700)),
       ],
     );
   }
@@ -397,7 +381,7 @@ class _ChallengePageState extends State<ChallengePage> {
     timer = Timer.periodic(const Duration(seconds: 1), (t) {
       if (seconds <= 1) {
         t.cancel();
-        finish();
+        finish(timeExpired: true);
       } else if (mounted) {
         setState(() => seconds--);
       }
@@ -431,16 +415,39 @@ class _ChallengePageState extends State<ChallengePage> {
     }
   }
 
-  void finish() {
+  void finish({bool timeExpired = false}) {
     timer?.cancel();
 
     if (!mounted) return;
+
+    if (answers.length == currentQuestion) {
+      answers.add(selected);
+    }
+
+    final correctAnswers = challengeQuestions
+        .asMap()
+        .entries
+        .where(
+          (entry) =>
+              entry.key < answers.length &&
+              answers[entry.key] == entry.value.correct,
+        )
+        .length;
+    final totalQuestions = challengeQuestions.length;
 
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
         builder: (_) => ChallengeResultPage(
           profile: widget.profile,
+          materialTitle: widget.materialTitle,
+          totalQuestions: totalQuestions,
+          correctAnswers: correctAnswers,
+          incorrectAnswers: totalQuestions - correctAnswers,
+          score: (correctAnswers * 100 / totalQuestions).round(),
+          duration: Duration(
+            seconds: timeExpired ? 10 * 60 : 10 * 60 - seconds,
+          ),
         ),
       ),
     );
@@ -454,9 +461,7 @@ class _ChallengePageState extends State<ChallengePage> {
       body: SafeArea(
         child: Column(
           children: [
-            const PageTitle(
-              title: 'Challenge',
-            ),
+            const PageTitle(title: 'Challenge'),
 
             Padding(
               padding: const EdgeInsets.fromLTRB(20, 10, 20, 8),
@@ -464,18 +469,14 @@ class _ChallengePageState extends State<ChallengePage> {
                 children: [
                   Text(
                     'Soal ${currentQuestion + 1} dari ${challengeQuestions.length}',
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w700,
-                    ),
+                    style: const TextStyle(fontWeight: FontWeight.w700),
                   ),
                   const Spacer(),
                   const Icon(Icons.timer_outlined),
                   const SizedBox(width: 5),
                   Text(
                     formattedTime,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w700,
-                    ),
+                    style: const TextStyle(fontWeight: FontWeight.w700),
                   ),
                 ],
               ),
@@ -518,23 +519,65 @@ class _ChallengePageState extends State<ChallengePage> {
 }
 
 class ChallengeResultPage extends StatelessWidget {
-  const ChallengeResultPage({super.key, required this.profile});
+  const ChallengeResultPage({
+    super.key,
+    required this.profile,
+    required this.materialTitle,
+    required this.totalQuestions,
+    required this.correctAnswers,
+    required this.incorrectAnswers,
+    required this.score,
+    required this.duration,
+  });
 
   final UserProfile profile;
+  final String materialTitle;
+  final int totalQuestions;
+  final int correctAnswers;
+  final int incorrectAnswers;
+  final int score;
+  final Duration duration;
+
   @override
   Widget build(BuildContext context) => ResultPage(
     challenge: true,
+    materialTitle: materialTitle,
+    totalQuestions: totalQuestions,
+    correctAnswers: correctAnswers,
+    incorrectAnswers: incorrectAnswers,
+    score: score,
+    duration: duration,
     onRetry: () => Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (_) => ChallengePage(profile: profile)),
+      MaterialPageRoute(
+        builder: (_) => ChallengePreparationPage(profile: profile),
+      ),
     ),
   );
 }
 
 class ResultPage extends StatelessWidget {
-  const ResultPage({super.key, required this.challenge, required this.onRetry});
+  const ResultPage({
+    super.key,
+    required this.challenge,
+    required this.onRetry,
+    this.materialTitle,
+    this.totalQuestions,
+    this.correctAnswers,
+    this.incorrectAnswers,
+    this.score,
+    this.duration,
+  });
+
   final bool challenge;
   final VoidCallback onRetry;
+  final String? materialTitle;
+  final int? totalQuestions;
+  final int? correctAnswers;
+  final int? incorrectAnswers;
+  final int? score;
+  final Duration? duration;
+
   @override
   Widget build(BuildContext context) {
     final label = challenge ? 'Challenge' : 'Latihan';
@@ -553,14 +596,17 @@ class ResultPage extends StatelessWidget {
             ),
             const SizedBox(height: 14),
             OutlineCard(
-              child: const Column(
+              child: Column(
                 children: [
-                  _Stat('Materi', 'Biner'),
-                  _Stat('Jumlah Soal', '10'),
-                  _Stat('Jawaban Benar', '8'),
-                  _Stat('Jawaban Salah', '2'),
-                  _Stat('Skor', '80%'),
-                  _Stat('Waktu', '05:12'),
+                  _Stat('Materi', materialTitle ?? 'Biner'),
+                  _Stat('Jumlah Soal', '${totalQuestions ?? 10}'),
+                  _Stat('Jawaban Benar', '${correctAnswers ?? 8}'),
+                  _Stat('Jawaban Salah', '${incorrectAnswers ?? 2}'),
+                  _Stat('Skor', '${score ?? 80}%'),
+                  _Stat(
+                    'Waktu',
+                    duration == null ? '05:12' : _formatDuration(duration!),
+                  ),
                 ],
               ),
             ),
@@ -578,6 +624,12 @@ class ResultPage extends StatelessWidget {
       ),
     );
   }
+}
+
+String _formatDuration(Duration duration) {
+  final minutes = duration.inMinutes.toString().padLeft(2, '0');
+  final seconds = (duration.inSeconds % 60).toString().padLeft(2, '0');
+  return '$minutes:$seconds';
 }
 
 class _Stat extends StatelessWidget {
