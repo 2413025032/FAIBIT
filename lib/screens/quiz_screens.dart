@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../data/mock_data.dart';
 import '../models/models.dart';
+import '../theme/app_theme.dart';
 import '../widgets/ui.dart';
 
 class QuizPage extends StatefulWidget {
@@ -48,6 +49,8 @@ class _QuestionScreen extends StatelessWidget {
     required this.selected,
     required this.onSelected,
     required this.onNext,
+    this.buttonColor,
+    this.radioActiveColor,
   });
   final bool showHeader;
   final String title, number;
@@ -56,6 +59,8 @@ class _QuestionScreen extends StatelessWidget {
   final int selected;
   final ValueChanged<int> onSelected;
   final VoidCallback? onNext;
+  final Color? buttonColor;
+  final Color? radioActiveColor;
   @override
   Widget build(BuildContext context) => Column(
     children: [
@@ -104,7 +109,7 @@ class _QuestionScreen extends StatelessWidget {
                             '${String.fromCharCode(65 + i)}.   ${question.options[i]}',
                           ),
                           contentPadding: EdgeInsets.zero,
-                          activeColor: Colors.black,
+                          activeColor: radioActiveColor ?? Colors.black,
                         ),
                       ),
                     ),
@@ -114,6 +119,9 @@ class _QuestionScreen extends StatelessWidget {
               const SizedBox(height: 16),
               FilledButton(
                 onPressed: onNext,
+                style: buttonColor == null
+                    ? null
+                    : FilledButton.styleFrom(backgroundColor: buttonColor),
                 child: const Text('Selanjutnya'),
               ),
             ]
@@ -316,6 +324,9 @@ class _ChallengePreparationPageState
                   ),
                 );
               },
+              style: FilledButton.styleFrom(
+                backgroundColor: AppTheme.challenge.primary,
+              ),
               child: const Text('Mulai Challenge'),
             ),
           ],
@@ -472,9 +483,14 @@ class _ChallengePageState extends State<ChallengePage> {
 
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: ProgressLine(
-                value: (currentQuestion + 1) /
-                    challengeQuestions.length,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(9),
+                child: LinearProgressIndicator(
+                  value: (currentQuestion + 1) / challengeQuestions.length,
+                  minHeight: 10,
+                  color: AppTheme.challenge.primary,
+                  backgroundColor: AppTheme.challenge.surface,
+                ),
               ),
             ),
 
@@ -490,6 +506,8 @@ class _ChallengePageState extends State<ChallengePage> {
                   setState(() => selected = i);
                 },
                 onNext: selected < 0 ? null : nextQuestion,
+                buttonColor: AppTheme.challenge.primary,
+                radioActiveColor: AppTheme.challenge.primary,
               ),
             ),
           ],
