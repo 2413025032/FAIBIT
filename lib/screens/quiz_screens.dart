@@ -61,7 +61,10 @@ class PracticeMaterialSelectionPage extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(title, style: const TextStyle(fontWeight: FontWeight.w800)),
+                      Text(
+                        title,
+                        style: const TextStyle(fontWeight: FontWeight.w800),
+                      ),
                       const SizedBox(height: 3),
                       Text(description, style: const TextStyle(fontSize: 12)),
                     ],
@@ -455,13 +458,12 @@ class QuizResultPage extends StatelessWidget {
   final Duration duration;
 
   @override
-  Widget build(BuildContext context) =>
-      ResultPage(
-        materialTitle: materialTitle,
-        questions: questions,
-        answers: answers,
-        duration: duration,
-      );
+  Widget build(BuildContext context) => ResultPage(
+    materialTitle: materialTitle,
+    questions: questions,
+    answers: answers,
+    duration: duration,
+  );
 }
 
 class ChallengePreparationPage extends StatefulWidget {
@@ -1049,7 +1051,10 @@ class ResultPage extends StatelessWidget {
                     const SizedBox(height: 8),
                     const Text(
                       'Latihan Selesai!',
-                      style: TextStyle(fontSize: 23, fontWeight: FontWeight.w800),
+                      style: TextStyle(
+                        fontSize: 23,
+                        fontWeight: FontWeight.w800,
+                      ),
                     ),
                     const SizedBox(height: 4),
                     Text(
@@ -1072,7 +1077,10 @@ class ResultPage extends StatelessWidget {
                   children: [
                     const Text(
                       'SKOR LATIHAN',
-                      style: TextStyle(fontWeight: FontWeight.w700, letterSpacing: 1.1),
+                      style: TextStyle(
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 1.1,
+                      ),
                     ),
                     Text(
                       '$score%',
@@ -1145,6 +1153,16 @@ class ResultPage extends StatelessWidget {
               ),
               const SizedBox(height: 10),
               FilledButton(
+                onPressed: () => Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => QuizPage(materialTitle: materialTitle),
+                  ),
+                ),
+                child: const Text('Coba Latihan Lagi'),
+              ),
+              const SizedBox(height: 10),
+              OutlinedButton(
                 onPressed: () => Navigator.popUntil(context, (r) => r.isFirst),
                 child: const Text('Kembali ke Menu'),
               ),
@@ -1264,7 +1282,9 @@ class QuizReviewPage extends StatelessWidget {
               Text(
                 correct ? 'Benar' : 'Belum tepat',
                 style: TextStyle(
-                  color: correct ? AppTheme.greenTeal : AppTheme.challengeAccentDark,
+                  color: correct
+                      ? AppTheme.greenTeal
+                      : AppTheme.challengeAccentDark,
                   fontWeight: FontWeight.w800,
                 ),
               ),
