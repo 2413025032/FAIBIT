@@ -629,7 +629,10 @@ class _ChallengePageState extends State<ChallengePage> {
 
   final List<int> answers = [];
 
-  List<Question> get challengeQuestions => questions.take(10).toList();
+ List<Question> get challengeQuestions => questions
+    .where((question) => question.material == widget.materialTitle)
+    .take(10)
+    .toList();
 
   @override
   void initState() {
