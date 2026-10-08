@@ -384,59 +384,72 @@ class FeedbackPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ok = selected == question.correct;
-    return Scaffold(
-      appBar: const PageTitle(title: 'Latihan Santai'),
-      body: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Icon(
-              ok ? Icons.check_circle_outline : Icons.error_outline,
-              size: 58,
-            ),
-            Text(
-              ok ? 'Benar!' : 'Belum tepat',
-              textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 23, fontWeight: FontWeight.w800),
-            ),
-            const SizedBox(height: 18),
-            OutlineCard(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('Jawabanmu: ${question.options[selected]}'),
-                  Text('Jawaban benar: ${question.options[question.correct]}'),
-                  const Divider(),
-                  const Text(
-                    'Pembahasan:',
-                    style: TextStyle(fontWeight: FontWeight.w800),
-                  ),
-                  Text(question.explanation),
-                ],
-              ),
-            ),
-            const SizedBox(height: 20),
-            const Row(
+    return PopScope(
+      canPop: false,
+      child: Scaffold(
+        body: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                EmptySlot(width: 62, height: 74),
-                SizedBox(width: 10),
-                Expanded(
-                  child: OutlineCard(
-                    child: Text(
-                      'Fai siap menemanimu. Pahami pembahasannya, lalu lanjutkan '
-                      'ke soal berikutnya!',
-                    ),
+                Icon(
+                  ok ? Icons.check_circle_outline : Icons.lightbulb_outline,
+                  size: 58,
+                  color: AppTheme.greenTeal,
+                ),
+                Text(
+                  ok ? 'Benar!' : 'Belum tepat',
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    fontSize: 23,
+                    fontWeight: FontWeight.w800,
                   ),
+                ),
+                const SizedBox(height: 18),
+                OutlineCard(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('Jawabanmu: ${question.options[selected]}'),
+                      Text(
+                        'Jawaban benar: ${question.options[question.correct]}',
+                      ),
+                      const Divider(),
+                      const Text(
+                        'Pembahasan:',
+                        style: TextStyle(fontWeight: FontWeight.w800),
+                      ),
+                      Text(question.explanation),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Row(
+                  children: [
+                    const EmptySlot(width: 62, height: 74),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: OutlineCard(
+                        child: Text(
+                          ok
+                              ? 'Fai ikut senang! Pertahankan pemahamanmu '
+                                    'dan lanjutkan dengan percaya diri.'
+                              : 'Tidak apa-apa, proses belajar memang bertahap. '
+                                    'Fai mendukungmu untuk mencoba lagi di soal berikutnya.',
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 14),
+                FilledButton(
+                  onPressed: onContinue,
+                  child: const Text('Lanjut ke Soal Berikutnya'),
                 ),
               ],
             ),
-            const SizedBox(height: 14),
-            FilledButton(
-              onPressed: onContinue,
-              child: const Text('Lanjut ke Soal Berikutnya'),
-            ),
-          ],
+          ),
         ),
       ),
     );
@@ -629,10 +642,10 @@ class _ChallengePageState extends State<ChallengePage> {
 
   final List<int> answers = [];
 
- List<Question> get challengeQuestions => questions
-    .where((question) => question.material == widget.materialTitle)
-    .take(10)
-    .toList();
+  List<Question> get challengeQuestions => questions
+      .where((question) => question.material == widget.materialTitle)
+      .take(10)
+      .toList();
 
   @override
   void initState() {
