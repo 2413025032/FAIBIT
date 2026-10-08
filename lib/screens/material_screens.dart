@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../data/mock_data.dart';
 import '../models/models.dart';
-import '../theme/app_theme.dart';
 import 'quiz_screens.dart';
 import '../widgets/ui.dart';
 
@@ -86,7 +85,11 @@ class MaterialDetailPage extends StatelessWidget {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const EmptySlot(width: 62, height: 74),
+                  Icon(
+                    Icons.smart_toy_outlined,
+                    size: 58,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Column(
@@ -214,26 +217,88 @@ class MaterialReaderPage extends StatefulWidget {
   State<MaterialReaderPage> createState() => _MaterialReaderPageState();
 }
 
-class _MaterialReaderPageState extends State<MaterialReaderPage> {
-  final PageController pageController = PageController();
+class _MaterialReaderPageState extends State<MaterialReaderPage>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController turnController;
   int currentPage = 0;
   bool showSwipeTutorial = true;
+  int? targetPage;
+  double dragProgress = 0;
+  double dragDirection = -1;
 
   int get sectionCount => widget.material.sections.length;
 
   @override
+  void initState() {
+    super.initState();
+    turnController =
+        AnimationController(
+            vsync: this,
+            duration: const Duration(milliseconds: 360),
+          )
+          ..addListener(() {
+            setState(() {});
+          })
+          ..addStatusListener(finishTurnIfNeeded);
+  }
+
+  @override
   void dispose() {
-    pageController.dispose();
+    turnController.dispose();
     super.dispose();
   }
 
   void changePage(int page) {
-    if (page < 0 || page >= sectionCount) return;
-    pageController.animateToPage(
-      page,
-      duration: const Duration(milliseconds: 260),
-      curve: Curves.easeOut,
-    );
+    if (page < 0 || page >= sectionCount || targetPage != null) return;
+    dragDirection = page > currentPage ? -1 : 1;
+    targetPage = page;
+    dragProgress = 0;
+    turnController.forward(from: 0);
+  }
+
+  void handleDragUpdate(DragUpdateDetails details, double width) {
+    if (targetPage != null || width <= 0) return;
+    final delta = details.primaryDelta ?? 0;
+    if (dragProgress == 0 && delta.abs() > 0) {
+      dragDirection = delta < 0 ? -1 : 1;
+    }
+    final nextProgress = (dragProgress + (delta.abs() / width)).clamp(0.0, 1.0);
+    final nextPage = dragDirection < 0 ? currentPage + 1 : currentPage - 1;
+    if (nextPage < 0 || nextPage >= sectionCount) return;
+    setState(() {
+      targetPage = nextPage;
+      dragProgress = nextProgress;
+    });
+  }
+
+  void handleDragEnd() {
+    if (targetPage == null) return;
+    turnController.value = dragProgress;
+    if (dragProgress > 0.22) {
+      turnController.forward(from: dragProgress);
+    } else {
+      turnController.reverse(from: dragProgress).then((_) {
+        if (!mounted) return;
+        setState(() {
+          targetPage = null;
+          dragProgress = 0;
+        });
+      });
+    }
+  }
+
+  double get turnProgress => targetPage == null
+      ? 0
+      : (turnController.value > 0 ? turnController.value : dragProgress);
+
+  void finishTurnIfNeeded(AnimationStatus status) {
+    if (status != AnimationStatus.completed || targetPage == null) return;
+    setState(() {
+      currentPage = targetPage!;
+      targetPage = null;
+      dragProgress = 0;
+    });
+    turnController.reset();
   }
 
   void completeMaterial() {
@@ -267,16 +332,26 @@ class _MaterialReaderPageState extends State<MaterialReaderPage> {
                     ),
                   ),
                   Expanded(
-                    child: PageView.builder(
-                      controller: pageController,
-                      itemCount: sectionCount,
-                      onPageChanged: (page) {
-                        setState(() => currentPage = page);
-                      },
-                      itemBuilder: (_, index) => _MaterialReaderItem(
-                        index: index,
-                        controller: pageController,
-                        section: widget.material.sections[index],
+                    child: LayoutBuilder(
+                      builder: (context, constraints) => GestureDetector(
+                        onHorizontalDragUpdate: (details) =>
+                            handleDragUpdate(details, constraints.maxWidth),
+                        onHorizontalDragEnd: (_) => handleDragEnd(),
+                        child: Stack(
+                          fit: StackFit.expand,
+                          children: [
+                            if (targetPage != null)
+                              _MaterialSheet(
+                                section: widget.material.sections[targetPage!],
+                                elevated: false,
+                              ),
+                            _TurningSheet(
+                              section: widget.material.sections[currentPage],
+                              progress: turnProgress,
+                              direction: dragDirection,
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -340,57 +415,61 @@ class _MaterialReaderPageState extends State<MaterialReaderPage> {
   }
 }
 
-class _MaterialReaderItem extends StatelessWidget {
-  const _MaterialReaderItem({
-    required this.index,
-    required this.controller,
+class _TurningSheet extends StatelessWidget {
+  const _TurningSheet({
     required this.section,
+    required this.progress,
+    required this.direction,
   });
 
-  final int index;
-  final PageController controller;
   final MaterialSection section;
+  final double progress;
+  final double direction;
 
   @override
-  Widget build(BuildContext context) => AnimatedBuilder(
-    animation: controller,
-    child: _MaterialSectionPage(section: section),
-    builder: (context, child) {
-      final page = controller.hasClients && controller.page != null
-          ? controller.page!
-          : index.toDouble();
-      final distance = (index - page).clamp(-1.0, 1.0);
-      final rotation = distance * 0.075;
-      final scale = 1 - distance.abs() * 0.035;
-      final translateY = distance.abs() * 5;
+  Widget build(BuildContext context) {
+    final angle = direction * progress * (3.141592653589793 / 2);
+    return Transform(
+      alignment: direction < 0 ? Alignment.centerRight : Alignment.centerLeft,
+      transform: Matrix4.identity()
+        ..setEntry(3, 2, 0.0018)
+        ..rotateY(angle),
+      child: _MaterialSheet(section: section, elevated: true),
+    );
+  }
+}
 
-      return Transform(
-        alignment: distance >= 0 ? Alignment.centerLeft : Alignment.centerRight,
-        transform: Matrix4.identity()
-          ..setEntry(3, 2, 0.0012)
-          ..translateByDouble(0.0, translateY, 0.0, 1.0)
-          ..rotateY(rotation)
-          ..scaleByDouble(scale, scale, scale, 1.0),
-        child: Container(
-          margin: const EdgeInsets.symmetric(horizontal: 9, vertical: 8),
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.surface,
-            borderRadius: BorderRadius.circular(AppTheme.radius),
-            boxShadow: [
+class _MaterialSheet extends StatelessWidget {
+  const _MaterialSheet({required this.section, required this.elevated});
+
+  final MaterialSection section;
+  final bool elevated;
+
+  @override
+  Widget build(BuildContext context) => Container(
+    margin: const EdgeInsets.fromLTRB(16, 10, 16, 8),
+    decoration: BoxDecoration(
+      color: const Color(0xFFFFFEF9),
+      borderRadius: BorderRadius.circular(5),
+      border: Border.all(color: const Color(0xFFE6E1D5)),
+      boxShadow: elevated
+          ? [
               BoxShadow(
-                color: Colors.black.withValues(
-                  alpha: 0.11 * (1 - distance.abs()),
-                ),
-                blurRadius: 16,
-                offset: Offset(0, 7 + distance.abs() * 3),
+                color: Colors.black.withValues(alpha: 0.16),
+                blurRadius: 14,
+                offset: const Offset(2, 7),
+              ),
+            ]
+          : [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.08),
+                blurRadius: 7,
+                offset: const Offset(1, 3),
               ),
             ],
-          ),
-          clipBehavior: Clip.antiAlias,
-          child: child,
-        ),
-      );
-    },
+    ),
+    clipBehavior: Clip.antiAlias,
+    child: _MaterialSectionPage(section: section),
   );
 }
 
@@ -410,7 +489,10 @@ class _MaterialSectionPage extends StatelessWidget {
           style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w800),
         ),
         const SizedBox(height: 14),
-        Text(section.content),
+        Text(
+          section.content,
+          style: const TextStyle(fontSize: 16, height: 1.55),
+        ),
         if (section.example != null) ...[
           const SizedBox(height: 18),
           OutlineCard(
@@ -514,7 +596,6 @@ class MaterialCompletedPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: PageTitle(title: 'Materi Selesai'),
     body: SafeArea(
       child: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
@@ -524,7 +605,11 @@ class MaterialCompletedPage extends StatelessWidget {
             OutlineCard(
               child: Column(
                 children: [
-                  const EmptySlot(width: 82, height: 100),
+                  Icon(
+                    Icons.celebration_outlined,
+                    size: 76,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
                   const SizedBox(height: 10),
                   Text(
                     'Materi ${material.title} Selesai!',
@@ -552,29 +637,15 @@ class MaterialCompletedPage extends StatelessWidget {
                       PracticePreparationPage(materialTitle: material.title),
                 ),
               ),
-              child: const Text('Latihan Materi Ini'),
+              child: const Text('Mulai Latihan'),
             ),
             const SizedBox(height: 10),
-            OutlinedButton(
-              onPressed: () => ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text(
-                    'Challenge materi ini dapat dimulai dari menu Challenge.',
-                  ),
-                ),
+            Center(
+              child: TextButton(
+                onPressed: () =>
+                    Navigator.popUntil(context, (route) => route.isFirst),
+                child: const Text('Kembali ke Beranda'),
               ),
-              child: const Text('Challenge Materi Ini'),
-            ),
-            const SizedBox(height: 18),
-            TextButton(
-              onPressed: () =>
-                  Navigator.popUntil(context, (route) => route.isFirst),
-              child: const Text('Kembali ke Materi'),
-            ),
-            TextButton(
-              onPressed: () =>
-                  Navigator.popUntil(context, (route) => route.isFirst),
-              child: const Text('Kembali ke Beranda'),
             ),
           ],
         ),
