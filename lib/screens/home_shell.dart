@@ -42,10 +42,7 @@ class _HomeShellState extends State<HomeShell> {
       child: IndexedStack(
         index: destination.index,
         children: [
-          HomePage(
-            profile: profile,
-            onDestinationSelected: selectDestination,
-          ),
+          HomePage(profile: profile, onDestinationSelected: selectDestination),
           const MaterialListPage(),
           const HistoryPage(),
           ProfilePage(profile: profile, onProfileChanged: updateProfile),
@@ -177,7 +174,7 @@ class HomePage extends StatelessWidget {
                       Icons.edit_note_outlined,
                       () => _openChildPage(
                         context,
-                        const PracticePreparationPage(),
+                        const PracticeMaterialSelectionPage(),
                       ),
                     ),
                     _menu(

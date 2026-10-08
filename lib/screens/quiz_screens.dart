@@ -15,25 +15,72 @@ const practiceMaterials = [
   'Konversi',
 ];
 
-class PracticePreparationPage extends StatefulWidget {
-  const PracticePreparationPage({super.key});
+class PracticeMaterialSelectionPage extends StatelessWidget {
+  const PracticeMaterialSelectionPage({super.key});
+
+  static const choices = ['Semua Materi', ...practiceMaterials];
 
   @override
-  State<PracticePreparationPage> createState() =>
-      _PracticePreparationPageState();
+  Widget build(BuildContext context) => Scaffold(
+    appBar: const PageTitle(title: 'Pilih Materi Latihan'),
+    body: SafeArea(
+      child: ListView.separated(
+        padding: const EdgeInsets.fromLTRB(20, 10, 20, 20),
+        itemCount: choices.length,
+        separatorBuilder: (_, _) => const SizedBox(height: 10),
+        itemBuilder: (context, index) {
+          final title = choices[index];
+          final description = title == 'Semua Materi'
+              ? 'Latihan dari seluruh materi sistem bilangan'
+              : materials.firstWhere((item) => item.title == title).description;
+          return OutlineCard(
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => PracticePreparationPage(materialTitle: title),
+              ),
+            ),
+            child: Row(
+              children: [
+                Container(
+                  width: 48,
+                  height: 48,
+                  decoration: BoxDecoration(
+                    border: Border.all(color: const Color(0xFFD0D0D0)),
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: Center(
+                    child: Text(
+                      '${index + 1}',
+                      style: const TextStyle(fontWeight: FontWeight.w700),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 13),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(title, style: const TextStyle(fontWeight: FontWeight.w800)),
+                      const SizedBox(height: 3),
+                      Text(description, style: const TextStyle(fontSize: 12)),
+                    ],
+                  ),
+                ),
+                const Icon(Icons.chevron_right),
+              ],
+            ),
+          );
+        },
+      ),
+    ),
+  );
 }
 
-class _PracticePreparationPageState extends State<PracticePreparationPage> {
-  static const materials = [
-    'Semua Materi',
-    'Desimal',
-    'Biner',
-    'Oktal',
-    'Heksadesimal',
-    'Konversi',
-  ];
+class PracticePreparationPage extends StatelessWidget {
+  const PracticePreparationPage({super.key, required this.materialTitle});
 
-  String selectedMaterial = materials.first;
+  final String materialTitle;
 
   @override
   Widget build(BuildContext context) => Scaffold(
@@ -55,50 +102,27 @@ class _PracticePreparationPageState extends State<PracticePreparationPage> {
                     style: TextStyle(fontSize: 21, fontWeight: FontWeight.w800),
                   ),
                   const SizedBox(height: 8),
-                  const Text(
-                    'Latih pemahamanmu tentang sistem bilangan '
-                    'tanpa batas waktu.',
-                  ),
+                  Text('Latihan materi $materialTitle tanpa batas waktu.'),
                 ],
               ),
             ),
             const SizedBox(height: 20),
-            const Text(
-              'Pilih Materi',
-              style: TextStyle(fontWeight: FontWeight.w700),
-            ),
-            const SizedBox(height: 8),
-            DropdownButtonFormField<String>(
-              initialValue: selectedMaterial,
-              decoration: const InputDecoration(
-                prefixIcon: Icon(Icons.menu_book_outlined),
-                border: OutlineInputBorder(),
-              ),
-              items: materials
-                  .map(
-                    (material) => DropdownMenuItem(
-                      value: material,
-                      child: Text(material),
-                    ),
-                  )
-                  .toList(),
-              onChanged: (value) {
-                if (value != null) {
-                  setState(() => selectedMaterial = value);
-                }
-              },
-            ),
-            const SizedBox(height: 20),
-            const OutlineCard(
+            OutlineCard(
               child: Column(
                 children: [
                   _PracticeInfo(
+                    icon: Icons.menu_book_outlined,
+                    title: 'Materi',
+                    value: materialTitle,
+                  ),
+                  const SizedBox(height: 14),
+                  const _PracticeInfo(
                     icon: Icons.quiz_outlined,
                     title: 'Jumlah Soal',
                     value: '10 soal',
                   ),
-                  SizedBox(height: 14),
-                  _PracticeInfo(
+                  const SizedBox(height: 14),
+                  const _PracticeInfo(
                     icon: Icons.all_inclusive,
                     title: 'Waktu',
                     value: 'Tanpa batas waktu',
@@ -111,7 +135,7 @@ class _PracticePreparationPageState extends State<PracticePreparationPage> {
               onPressed: () => Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
-                  builder: (_) => QuizPage(materialTitle: selectedMaterial),
+                  builder: (_) => QuizPage(materialTitle: materialTitle),
                 ),
               ),
               child: const Text('Mulai Latihan'),
@@ -165,6 +189,8 @@ class _QuizPageState extends State<QuizPage> {
 
   int currentQuestion = 0;
   int selected = -1;
+  final List<int> answers = [];
+  final DateTime startedAt = DateTime.now();
 
   List<Question> get practiceQuestions {
     if (widget.materialTitle != 'Semua Materi') {
@@ -188,14 +214,41 @@ class _QuizPageState extends State<QuizPage> {
   }
 
   void nextQuestion() {
+    answers.add(selected);
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => FeedbackPage(
+          question: practiceQuestions[currentQuestion],
+          selected: selected,
+          onContinue: _continueAfterFeedback,
+        ),
+      ),
+    );
+  }
+
+  void _continueAfterFeedback() {
     if (currentQuestion == totalQuestions - 1) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => const QuizResultPage()),
-      );
+      final completedAnswers = List<int>.from(answers);
+      Navigator.pop(context);
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (_) => QuizResultPage(
+              materialTitle: widget.materialTitle,
+              questions: practiceQuestions,
+              answers: completedAnswers,
+              duration: DateTime.now().difference(startedAt),
+            ),
+          ),
+        );
+      });
       return;
     }
 
+    Navigator.pop(context);
     setState(() {
       currentQuestion++;
       selected = -1;
@@ -320,9 +373,11 @@ class FeedbackPage extends StatelessWidget {
     super.key,
     required this.question,
     required this.selected,
+    required this.onContinue,
   });
   final Question question;
   final int selected;
+  final VoidCallback onContinue;
   @override
   Widget build(BuildContext context) {
     final ok = selected == question.correct;
@@ -358,24 +413,24 @@ class FeedbackPage extends StatelessWidget {
                 ],
               ),
             ),
-            const Spacer(),
+            const SizedBox(height: 20),
             const Row(
               children: [
                 EmptySlot(width: 62, height: 74),
                 SizedBox(width: 10),
                 Expanded(
                   child: OutlineCard(
-                    child: Text('Mantap! Kamu sudah memahami konsepnya.'),
+                    child: Text(
+                      'Fai siap menemanimu. Pahami pembahasannya, lalu lanjutkan '
+                      'ke soal berikutnya!',
+                    ),
                   ),
                 ),
               ],
             ),
             const SizedBox(height: 14),
             FilledButton(
-              onPressed: () => Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (_) => const QuizResultPage()),
-              ),
+              onPressed: onContinue,
               child: const Text('Lanjut ke Soal Berikutnya'),
             ),
           ],
@@ -386,10 +441,27 @@ class FeedbackPage extends StatelessWidget {
 }
 
 class QuizResultPage extends StatelessWidget {
-  const QuizResultPage({super.key});
+  const QuizResultPage({
+    super.key,
+    required this.materialTitle,
+    required this.questions,
+    required this.answers,
+    required this.duration,
+  });
+
+  final String materialTitle;
+  final List<Question> questions;
+  final List<int> answers;
+  final Duration duration;
+
   @override
   Widget build(BuildContext context) =>
-      ResultPage(challenge: false, onRetry: () => Navigator.pop(context));
+      ResultPage(
+        materialTitle: materialTitle,
+        questions: questions,
+        answers: answers,
+        duration: duration,
+      );
 }
 
 class ChallengePreparationPage extends StatefulWidget {
@@ -934,67 +1006,150 @@ class _ChallengeResultInfo extends StatelessWidget {
 class ResultPage extends StatelessWidget {
   const ResultPage({
     super.key,
-    required this.challenge,
-    required this.onRetry,
-    this.materialTitle,
-    this.totalQuestions,
-    this.correctAnswers,
-    this.incorrectAnswers,
-    this.score,
-    this.duration,
+    required this.materialTitle,
+    required this.questions,
+    required this.answers,
+    required this.duration,
   });
 
-  final bool challenge;
-  final VoidCallback onRetry;
-  final String? materialTitle;
-  final int? totalQuestions;
-  final int? correctAnswers;
-  final int? incorrectAnswers;
-  final int? score;
-  final Duration? duration;
+  final String materialTitle;
+  final List<Question> questions;
+  final List<int> answers;
+  final Duration duration;
 
   @override
   Widget build(BuildContext context) {
-    final label = challenge ? 'Challenge' : 'Latihan';
+    final correct = questions
+        .asMap()
+        .entries
+        .where((entry) => answers[entry.key] == entry.value.correct)
+        .length;
+    final incorrect = questions.length - correct;
+    final score = (correct * 100 / questions.length).round();
+
     return Scaffold(
-      appBar: PageTitle(title: 'Hasil $label'),
-      body: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            const Icon(Icons.emoji_events_outlined, size: 68),
-            Text(
-              '$label Selesai!',
-              textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 21, fontWeight: FontWeight.w800),
-            ),
-            const SizedBox(height: 14),
-            OutlineCard(
-              child: Column(
+      appBar: const PageTitle(title: 'Hasil Latihan'),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.fromLTRB(20, 10, 20, 20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              OutlineCard(
+                child: Column(
+                  children: [
+                    const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        EmptySlot(width: 64, height: 80),
+                        SizedBox(width: 12),
+                        Icon(Icons.emoji_events_outlined, size: 54),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    const Text(
+                      'Latihan Selesai!',
+                      style: TextStyle(fontSize: 23, fontWeight: FontWeight.w800),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      score >= 70
+                          ? 'Fai bangga melihat progres belajarmu.'
+                          : 'Tetap semangat, Fai siap menemanimu belajar lagi.',
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 16),
+              Container(
+                padding: const EdgeInsets.symmetric(vertical: 18),
+                decoration: BoxDecoration(
+                  color: AppTheme.tealSurface,
+                  borderRadius: BorderRadius.circular(AppTheme.radius),
+                ),
+                child: Column(
+                  children: [
+                    const Text(
+                      'SKOR LATIHAN',
+                      style: TextStyle(fontWeight: FontWeight.w700, letterSpacing: 1.1),
+                    ),
+                    Text(
+                      '$score%',
+                      style: const TextStyle(
+                        color: AppTheme.greenTeal,
+                        fontSize: 50,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 16),
+              Row(
                 children: [
-                  _Stat('Materi', materialTitle ?? 'Biner'),
-                  _Stat('Jumlah Soal', '${totalQuestions ?? 10}'),
-                  _Stat('Jawaban Benar', '${correctAnswers ?? 8}'),
-                  _Stat('Jawaban Salah', '${incorrectAnswers ?? 2}'),
-                  _Stat('Skor', '${score ?? 80}%'),
-                  _Stat(
-                    'Waktu',
-                    duration == null ? '05:12' : _formatDuration(duration!),
+                  Expanded(
+                    child: _PracticeResultStat(
+                      icon: Icons.check_circle_outline,
+                      label: 'Benar',
+                      value: '$correct',
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: _PracticeResultStat(
+                      icon: Icons.cancel_outlined,
+                      label: 'Salah',
+                      value: '$incorrect',
+                    ),
                   ),
                 ],
               ),
-            ),
-            const Spacer(),
-            OutlinedButton(
-              onPressed: () => Navigator.popUntil(context, (r) => r.isFirst),
-              child: const Text('Kembali ke Menu'),
-            ),
-            FilledButton(
-              onPressed: onRetry,
-              child: Text(challenge ? 'Coba Lagi' : 'Lihat Pembahasan'),
-            ),
-          ],
+              const SizedBox(height: 16),
+              OutlineCard(
+                child: Column(
+                  children: [
+                    _PracticeResultInfo(
+                      icon: Icons.menu_book_outlined,
+                      label: 'Materi',
+                      value: materialTitle,
+                    ),
+                    const SizedBox(height: 14),
+                    _PracticeResultInfo(
+                      icon: Icons.quiz_outlined,
+                      label: 'Jumlah Soal',
+                      value: '${questions.length} soal',
+                    ),
+                    const SizedBox(height: 14),
+                    _PracticeResultInfo(
+                      icon: Icons.timer_outlined,
+                      label: 'Durasi',
+                      value: _formatDuration(duration),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 24),
+              OutlinedButton(
+                onPressed: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => QuizReviewPage(
+                      materialTitle: materialTitle,
+                      questions: questions,
+                      answers: answers,
+                    ),
+                  ),
+                ),
+                child: const Text('Lihat Pembahasan'),
+              ),
+              const SizedBox(height: 10),
+              FilledButton(
+                onPressed: () => Navigator.popUntil(context, (r) => r.isFirst),
+                child: const Text('Kembali ke Menu'),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -1007,14 +1162,123 @@ String _formatDuration(Duration duration) {
   return '$minutes:$seconds';
 }
 
-class _Stat extends StatelessWidget {
-  const _Stat(this.a, this.b);
-  final String a, b;
+class _PracticeResultStat extends StatelessWidget {
+  const _PracticeResultStat({
+    required this.icon,
+    required this.label,
+    required this.value,
+  });
+
+  final IconData icon;
+  final String label;
+  final String value;
+
+  @override
+  Widget build(BuildContext context) => OutlineCard(
+    child: Column(
+      children: [
+        Icon(icon, color: AppTheme.greenTeal, size: 28),
+        const SizedBox(height: 6),
+        Text(
+          value,
+          style: const TextStyle(
+            color: AppTheme.greenTeal,
+            fontSize: 25,
+            fontWeight: FontWeight.w800,
+          ),
+        ),
+        Text(label, style: const TextStyle(fontWeight: FontWeight.w600)),
+      ],
+    ),
+  );
+}
+
+class _PracticeResultInfo extends StatelessWidget {
+  const _PracticeResultInfo({
+    required this.icon,
+    required this.label,
+    required this.value,
+  });
+
+  final IconData icon;
+  final String label;
+  final String value;
+
   @override
   Widget build(BuildContext context) => Row(
     children: [
-      Expanded(child: Text(a)),
-      Text(': $b'),
+      Icon(icon, color: AppTheme.greenTeal),
+      const SizedBox(width: 12),
+      Expanded(child: Text(label)),
+      Flexible(
+        child: Text(
+          value,
+          textAlign: TextAlign.end,
+          style: const TextStyle(fontWeight: FontWeight.w700),
+        ),
+      ),
     ],
+  );
+}
+
+class QuizReviewPage extends StatelessWidget {
+  const QuizReviewPage({
+    super.key,
+    required this.materialTitle,
+    required this.questions,
+    required this.answers,
+  });
+
+  final String materialTitle;
+  final List<Question> questions;
+  final List<int> answers;
+
+  @override
+  Widget build(BuildContext context) => Scaffold(
+    appBar: const PageTitle(title: 'Pembahasan Latihan'),
+    body: ListView.separated(
+      padding: const EdgeInsets.fromLTRB(20, 10, 20, 20),
+      itemCount: questions.length,
+      separatorBuilder: (_, _) => const SizedBox(height: 12),
+      itemBuilder: (_, index) {
+        final question = questions[index];
+        final answer = answers[index];
+        final correct = answer == question.correct;
+        return OutlineCard(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Soal ${index + 1}',
+                style: const TextStyle(fontWeight: FontWeight.w800),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                question.question,
+                style: const TextStyle(fontWeight: FontWeight.w700),
+              ),
+              const SizedBox(height: 10),
+              Text('Jawabanmu: ${question.options[answer]}'),
+              Text('Jawaban benar: ${question.options[question.correct]}'),
+              const SizedBox(height: 8),
+              Text(
+                correct ? 'Benar' : 'Belum tepat',
+                style: TextStyle(
+                  color: correct ? AppTheme.greenTeal : AppTheme.challengeAccentDark,
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+              const Divider(),
+              const Text(
+                'Pembahasan',
+                style: TextStyle(fontWeight: FontWeight.w800),
+              ),
+              const SizedBox(height: 4),
+              Text(question.explanation),
+            ],
+          ),
+        );
+      },
+    ),
   );
 }
