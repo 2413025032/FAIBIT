@@ -25,8 +25,16 @@ class LearningMaterial {
 }
 
 class Question {
-  const Question(this.question, this.options, this.correct, this.explanation);
-  final String question, explanation;
+  const Question(
+    this.id,
+    this.material,
+    this.question,
+    this.options,
+    this.correct,
+    this.explanation,
+  );
+
+  final String id, material, question, explanation;
   final List<String> options;
   final int correct;
 }

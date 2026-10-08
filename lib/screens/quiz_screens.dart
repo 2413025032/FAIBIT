@@ -7,6 +7,14 @@ import '../models/models.dart';
 import '../theme/app_theme.dart';
 import '../widgets/ui.dart';
 
+const practiceMaterials = [
+  'Desimal',
+  'Biner',
+  'Oktal',
+  'Heksadesimal',
+  'Konversi',
+];
+
 class PracticePreparationPage extends StatefulWidget {
   const PracticePreparationPage({super.key});
 
@@ -158,6 +166,27 @@ class _QuizPageState extends State<QuizPage> {
   int currentQuestion = 0;
   int selected = -1;
 
+  List<Question> get practiceQuestions {
+    if (widget.materialTitle != 'Semua Materi') {
+      return questions
+          .where((question) => question.material == widget.materialTitle)
+          .take(totalQuestions)
+          .toList();
+    }
+
+    final byMaterial = <String, List<Question>>{};
+    for (final question in questions) {
+      byMaterial.putIfAbsent(question.material, () => []).add(question);
+    }
+
+    return [
+      for (var index = 0; index < 2; index++)
+        for (final material in practiceMaterials)
+          if (index < (byMaterial[material]?.length ?? 0))
+            byMaterial[material]![index],
+    ];
+  }
+
   void nextQuestion() {
     if (currentQuestion == totalQuestions - 1) {
       Navigator.pushReplacement(
@@ -175,7 +204,7 @@ class _QuizPageState extends State<QuizPage> {
 
   @override
   Widget build(BuildContext context) {
-    final question = questions[currentQuestion];
+    final question = practiceQuestions[currentQuestion];
 
     return Scaffold(
       body: SafeArea(
@@ -526,7 +555,7 @@ class _ChallengePageState extends State<ChallengePage> {
 
   final List<int> answers = [];
 
-  List<Question> get challengeQuestions => questions;
+  List<Question> get challengeQuestions => questions.take(10).toList();
 
   @override
   void initState() {
