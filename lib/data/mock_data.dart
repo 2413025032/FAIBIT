@@ -1,33 +1,665 @@
 import '../models/models.dart';
 
 const materials = [
+  // ============================================================
+  // 1. DESIMAL
+  // ============================================================
   LearningMaterial(
     'Desimal',
     'Pengenalan sistem bilangan desimal',
     '125₁₀ = 1×10² + 2×10¹ + 5×10⁰',
+    sections: [
+      MaterialSection(
+        title: 'Pengertian Bilangan Desimal',
+        content: '''
+Bilangan desimal adalah sistem bilangan yang paling sering digunakan dalam kehidupan sehari-hari. Sistem ini menggunakan basis 10, sehingga mempunyai sepuluh simbol angka, yaitu 0, 1, 2, 3, 4, 5, 6, 7, 8, dan 9.
+
+Setiap angka dalam suatu bilangan memiliki nilai yang bergantung pada posisinya. Karena itu, angka yang sama dapat mempunyai nilai berbeda ketika berada di posisi yang berbeda.
+''',
+        example: '''
+7 → 7
+70 → 70
+700 → 700
+7.000 → 7.000
+''',
+      ),
+      MaterialSection(
+        title: 'Basis pada Bilangan Desimal',
+        content: '''
+Bilangan desimal memiliki basis 10 karena terdapat sepuluh simbol yang digunakan. Setelah angka 9, penulisan berlanjut dengan menambah posisi baru di sebelah kiri.
+''',
+        example: '''
+7 → 8 → 9 → 10 → 11
+
+18 → 19 → 20 → 21
+
+98 → 99 → 100 → 101
+''',
+      ),
+      MaterialSection(
+        title: 'Nilai Tempat Bilangan Desimal',
+        content: '''
+Nilai tempat menunjukkan nilai suatu angka berdasarkan posisinya. Pada sistem desimal, nilai tempat menggunakan pangkat 10. Perhitungan dimulai dari posisi paling kanan dengan pangkat 10⁰.
+''',
+        example: '''
+10⁰ = 1
+10¹ = 10
+10² = 100
+10³ = 1.000
+10⁴ = 10.000
+10⁵ = 100.000
+''',
+      ),
+      MaterialSection(
+        title: 'Cara Menentukan Nilai Sebuah Bilangan Desimal',
+        content: '''
+Untuk menguraikan sebuah bilangan desimal, setiap digit dikalikan dengan nilai tempatnya, kemudian seluruh hasil dijumlahkan.
+''',
+        example: '''
+347 = 3 × 10² + 4 × 10¹ + 7 × 10⁰
+= 3 × 100 + 4 × 10 + 7 × 1
+= 300 + 40 + 7
+= 347
+''',
+      ),
+      MaterialSection(
+        title: 'Memahami Perubahan Nilai Berdasarkan Posisi',
+        content: '''
+Posisi digit menentukan besar nilai yang diwakilinya. Semakin ke kiri suatu digit berada, semakin besar nilai tempatnya.
+''',
+        example: '''
+Bilangan    Nilai Digit 7
+7           7
+70          70
+700         700
+7.000       7.000
+70.000      70.000
+''',
+      ),
+      MaterialSection(
+        title: 'Contoh Penguraian Bilangan Desimal',
+        content: '''
+Penguraian bilangan desimal dapat dilakukan dengan menjumlahkan nilai setiap digit sesuai nilai tempatnya.
+''',
+        example: '''
+648 = 600 + 40 + 8
+
+9.071 = 9.000 + 0 + 70 + 1
+
+45.608 = 40.000 + 5.000 + 600 + 0 + 8
+''',
+      ),
+    ],
   ),
+
+  // ============================================================
+  // 2. BINER
+  // ============================================================
   LearningMaterial(
     'Biner',
     'Pengenalan sistem bilangan biner',
     '1011₂ = 8 + 0 + 2 + 1 = 11₁₀',
+    sections: [
+      MaterialSection(
+        title: 'Pengertian Bilangan Biner',
+        content: '''
+Bilangan biner adalah sistem bilangan yang menggunakan basis 2. Sistem ini hanya mempunyai dua simbol, yaitu 0 dan 1.
+
+Setiap satu angka dalam bilangan biner disebut bit (binary digit). Contoh penulisan bilangan biner adalah 0₂, 1₂, 10₂, 101₂, dan 11010₂. Angka kecil ₂ menunjukkan bahwa bilangan menggunakan basis 2.
+''',
+        example: '''
+0₂
+1₂
+10₂
+101₂
+11010₂
+''',
+      ),
+      MaterialSection(
+        title: 'Mengapa Biner Digunakan pada Komputer?',
+        content: '''
+Sistem digital bekerja dengan keadaan yang dapat dibedakan menjadi dua kondisi. Dalam representasi digital, dua kondisi tersebut dapat dinyatakan menggunakan 0 dan 1. Karena itu, biner menjadi dasar penting dalam representasi dan pengolahan informasi digital.
+''',
+      ),
+      MaterialSection(
+        title: 'Nilai Tempat Bilangan Biner',
+        content: '''
+Nilai tempat pada bilangan biner menggunakan pangkat 2. Perhitungannya dimulai dari posisi paling kanan dengan pangkat 2⁰, lalu meningkat satu pangkat setiap berpindah ke kiri.
+''',
+        example: '''
+2⁰ = 1
+2¹ = 2
+2² = 4
+2³ = 8
+2⁴ = 16
+2⁵ = 32
+2⁶ = 64
+2⁷ = 128
+''',
+      ),
+      MaterialSection(
+        title: 'Cara Menentukan Nilai Bilangan Biner',
+        content: '''
+Setiap digit biner dikalikan dengan nilai tempatnya. Digit 1 menunjukkan bahwa nilai tempat tersebut digunakan, sedangkan digit 0 tidak memberikan nilai pada penjumlahan.
+''',
+        example: '''
+1011₂
+= 1 × 2³ + 0 × 2² + 1 × 2¹ + 1 × 2⁰
+= 8 + 0 + 2 + 1
+= 11₁₀
+''',
+      ),
+      MaterialSection(
+        title: 'Pola Bilangan Biner',
+        content: '''
+Perubahan nilai pada bilangan biner terjadi ketika digit 1 pada posisi tertentu tidak dapat bertambah lagi. Ketika semua posisi bernilai 1 dan ditambah satu, akan terbentuk posisi baru di sebelah kiri.
+''',
+        example: '''
+0₂ → 1₂ → 10₂ → 11₂ → 100₂ → 101₂ → 110₂ → 111₂ → 1000₂
+''',
+      ),
+      MaterialSection(
+        title: 'Bit dan Kelompok Biner',
+        content: '''
+Bilangan biner dapat terdiri dari beberapa bit. Sebagai contoh, 1010 merupakan bilangan 4 bit, sedangkan 11001100 merupakan bilangan 8 bit. Delapan bit dikenal sebagai satu byte.
+''',
+        example: '''
+1010           = 4 bit
+11001100       = 8 bit
+101010101111   = 12 bit
+''',
+      ),
+    ],
   ),
+
+  // ============================================================
+  // 3. OKTAL
+  // ============================================================
   LearningMaterial(
     'Oktal',
     'Pengenalan sistem bilangan oktal',
     '17₈ = 1×8 + 7 = 15₁₀',
+    sections: [
+      MaterialSection(
+        title: 'Pengertian Bilangan Oktal',
+        content: '''
+Bilangan oktal adalah sistem bilangan yang menggunakan basis 8. Sistem ini menggunakan delapan simbol, yaitu 0, 1, 2, 3, 4, 5, 6, dan 7. Angka 8 dan 9 tidak digunakan sebagai digit dalam bilangan oktal.
+
+Contoh penulisan bilangan oktal: 7₈, 12₈, 45₈, dan 157₈. Angka kecil ₈ menunjukkan bahwa bilangan menggunakan basis 8.
+''',
+        example: '''
+7₈
+12₈
+45₈
+157₈
+''',
+      ),
+      MaterialSection(
+        title: 'Cara Kerja Basis 8',
+        content: '''
+Karena oktal mempunyai delapan simbol, setelah angka 7 bilangan berikutnya menggunakan posisi baru di sebelah kiri.
+''',
+        example: '''
+5₈ → 6₈ → 7₈ → 10₈ → 11₈ → 12₈
+
+17₈ = 1 × 8 + 7 = 15₁₀
+
+20₈ = 2 × 8 + 0 = 16₁₀
+''',
+      ),
+      MaterialSection(
+        title: 'Nilai Tempat Bilangan Oktal',
+        content: '''
+Nilai tempat pada bilangan oktal menggunakan pangkat 8 dan dimulai dari 8⁰ pada posisi paling kanan.
+''',
+        example: '''
+8⁰ = 1
+8¹ = 8
+8² = 64
+8³ = 512
+8⁴ = 4.096
+''',
+      ),
+      MaterialSection(
+        title: 'Cara Menentukan Nilai Bilangan Oktal',
+        content: '''
+Untuk menentukan nilai sebuah bilangan oktal, setiap digit dikalikan dengan nilai tempatnya, kemudian seluruh hasil dijumlahkan.
+''',
+        example: '''
+157₈
+= 1 × 8² + 5 × 8¹ + 7 × 8⁰
+= 64 + 40 + 7
+= 111₁₀
+
+245₈
+= 2 × 8² + 4 × 8¹ + 5 × 8⁰
+= 128 + 32 + 5
+= 165₁₀
+''',
+      ),
+      MaterialSection(
+        title: 'Hubungan Oktal dengan Biner',
+        content: '''
+Oktal memiliki hubungan yang dekat dengan biner karena 2³ = 8. Artinya, satu digit oktal dapat direpresentasikan menggunakan tiga bit biner.
+''',
+        example: '''
+Oktal    Biner
+0        000
+1        001
+2        010
+3        011
+4        100
+5        101
+6        110
+7        111
+''',
+      ),
+    ],
   ),
+
+  // ============================================================
+  // 4. HEKSADESIMAL
+  // ============================================================
   LearningMaterial(
     'Heksadesimal',
     'Pengenalan sistem bilangan heksadesimal',
     '1A₁₆ = 1×16 + 10 = 26₁₀',
+    sections: [
+      MaterialSection(
+        title: 'Pengertian Bilangan Heksadesimal',
+        content: '''
+Heksadesimal adalah sistem bilangan yang menggunakan basis 16. Sistem ini menggunakan angka 0–9 dan enam simbol tambahan, yaitu A, B, C, D, E, dan F.
+
+Contoh penulisan bilangan heksadesimal: 2A₁₆, 3F₁₆, dan FF₁₆. Angka kecil ₁₆ menunjukkan bahwa bilangan menggunakan basis 16.
+''',
+        example: '''
+2A₁₆
+3F₁₆
+FF₁₆
+''',
+      ),
+      MaterialSection(
+        title: 'Nilai A sampai F',
+        content: '''
+Dalam heksadesimal, huruf A sampai F digunakan untuk mewakili nilai 10 sampai 15.
+''',
+        example: '''
+A = 10
+B = 11
+C = 12
+D = 13
+E = 14
+F = 15
+
+A₁₆ = 10₁₀
+C₁₆ = 12₁₀
+F₁₆ = 15₁₀
+''',
+      ),
+      MaterialSection(
+        title: 'Mengapa Menggunakan Huruf?',
+        content: '''
+Satu digit heksadesimal harus menggunakan satu simbol. Setelah angka 9 masih terdapat nilai 10–15. Nilai tersebut ditulis dengan A–F agar setiap nilai tetap direpresentasikan oleh satu digit.
+''',
+      ),
+      MaterialSection(
+        title: 'Nilai Tempat Bilangan Heksadesimal',
+        content: '''
+Nilai tempat pada bilangan heksadesimal menggunakan pangkat 16. Perhitungan dimulai dari posisi paling kanan dengan pangkat 16⁰, kemudian meningkat satu pangkat setiap berpindah ke kiri.
+''',
+        example: '''
+16⁰ = 1
+16¹ = 16
+16² = 256
+16³ = 4.096
+''',
+      ),
+      MaterialSection(
+        title: 'Cara Menentukan Nilai Bilangan Heksadesimal',
+        content: '''
+Untuk menentukan nilai desimal dari bilangan heksadesimal, ubah terlebih dahulu huruf A–F menjadi nilainya, lalu kalikan setiap digit dengan nilai tempatnya.
+''',
+        example: '''
+2A₁₆
+= 2 × 16¹ + 10 × 16⁰
+= 32 + 10
+= 42₁₀
+
+3F₁₆
+= 3 × 16¹ + 15 × 16⁰
+= 48 + 15
+= 63₁₀
+''',
+      ),
+      MaterialSection(
+        title: 'Hubungan Heksadesimal dengan Biner',
+        content: '''
+Heksadesimal berhubungan langsung dengan biner karena 2⁴ = 16. Oleh karena itu, satu digit heksadesimal dapat direpresentasikan menggunakan empat bit biner.
+''',
+        example: '''
+0  = 0000
+1  = 0001
+2  = 0010
+3  = 0011
+4  = 0100
+5  = 0101
+6  = 0110
+7  = 0111
+8  = 1000
+9  = 1001
+A  = 1010
+B  = 1011
+C  = 1100
+D  = 1101
+E  = 1110
+F  = 1111
+''',
+      ),
+    ],
   ),
+
+  // ============================================================
+  // 5. KONVERSI
+  // ============================================================
   LearningMaterial(
     'Konversi',
     'Konversi antar sistem bilangan',
     '10₁₀ = 1010₂',
+    sections: [
+      MaterialSection(
+        title: 'Pengertian Konversi Sistem Bilangan',
+        content: '''
+Konversi sistem bilangan adalah proses mengubah bentuk penulisan suatu bilangan dari satu sistem bilangan ke sistem lainnya tanpa mengubah nilai bilangan tersebut.
+
+Bentuk penulisannya berbeda, tetapi nilainya tetap sama.
+''',
+        example: '''
+25₁₀ = 11001₂ = 31₈ = 19₁₆
+''',
+      ),
+      MaterialSection(
+        title: 'Desimal ke Biner',
+        content: '''
+Gunakan metode pembagian berulang dengan 2. Setiap sisa pembagian dicatat, lalu hasil akhirnya dibaca dari bawah ke atas.
+
+Langkah-langkah:
+1. Bagi bilangan desimal dengan 2.
+2. Catat hasil bagi dan sisanya.
+3. Bagi kembali hasil bagi dengan 2.
+4. Ulangi sampai hasil bagi menjadi 0.
+5. Baca sisa pembagian dari bawah ke atas.
+''',
+        example: '''
+25 ÷ 2 = 12 sisa 1
+12 ÷ 2 = 6 sisa 0
+6 ÷ 2 = 3 sisa 0
+3 ÷ 2 = 1 sisa 1
+1 ÷ 2 = 0 sisa 1
+
+Baca dari bawah → 11001₂
+''',
+      ),
+      MaterialSection(
+        title: 'Biner ke Desimal',
+        content: '''
+Gunakan nilai tempat berdasarkan pangkat 2. Mulai dari kanan dengan 2⁰, lalu kalikan setiap digit dengan nilai tempatnya dan jumlahkan.
+''',
+        example: '''
+1011₂
+= 1 × 2³ + 0 × 2² + 1 × 2¹ + 1 × 2⁰
+= 8 + 0 + 2 + 1
+= 11₁₀
+
+11010₂
+= 1 × 2⁴ + 1 × 2³ + 0 × 2² + 1 × 2¹ + 0 × 2⁰
+= 16 + 8 + 0 + 2 + 0
+= 26₁₀
+''',
+      ),
+      MaterialSection(
+        title: 'Desimal ke Oktal',
+        content: '''
+Gunakan pembagian berulang dengan 8. Catat semua sisa dan baca dari bawah ke atas.
+''',
+        example: '''
+83 ÷ 8 = 10 sisa 3
+10 ÷ 8 = 1 sisa 2
+1 ÷ 8 = 0 sisa 1
+
+Baca dari bawah → 123₈
+''',
+      ),
+      MaterialSection(
+        title: 'Oktal ke Desimal',
+        content: '''
+Gunakan nilai tempat berdasarkan pangkat 8. Kalikan setiap digit dengan posisi masing-masing lalu jumlahkan.
+''',
+        example: '''
+157₈
+= 1 × 8² + 5 × 8¹ + 7 × 8⁰
+= 64 + 40 + 7
+= 111₁₀
+
+245₈
+= 2 × 8² + 4 × 8¹ + 5 × 8⁰
+= 128 + 32 + 5
+= 165₁₀
+''',
+      ),
+      MaterialSection(
+        title: 'Desimal ke Heksadesimal',
+        content: '''
+Gunakan pembagian berulang dengan 16. Jika sisa 10–15, ubah menjadi A–F.
+''',
+        example: '''
+254 ÷ 16 = 15 sisa 14 → E
+15 ÷ 16 = 0 sisa 15 → F
+
+Baca dari bawah → FE₁₆
+
+100 ÷ 16 = 6 sisa 4
+6 ÷ 16 = 0 sisa 6
+
+Baca dari bawah → 64₁₆
+''',
+      ),
+      MaterialSection(
+        title: 'Heksadesimal ke Desimal',
+        content: '''
+Ubah A–F menjadi 10–15, kemudian gunakan nilai tempat berdasarkan pangkat 16.
+''',
+        example: '''
+2A₁₆
+= 2 × 16¹ + 10 × 16⁰
+= 32 + 10
+= 42₁₀
+
+3F₁₆
+= 3 × 16¹ + 15 × 16⁰
+= 48 + 15
+= 63₁₀
+''',
+      ),
+      MaterialSection(
+        title: 'Biner ke Oktal',
+        content: '''
+Karena 2³ = 8, setiap 3 bit biner dapat dipetakan menjadi satu digit oktal. Pengelompokan dimulai dari kanan.
+
+Langkah:
+1. Mulai dari bit paling kanan.
+2. Kelompokkan menjadi 3 bit.
+3. Jika kelompok paling kiri kurang dari 3 bit, tambahkan 0 di depan.
+4. Ubah setiap kelompok menjadi satu digit oktal.
+''',
+        example: '''
+1011011₂
+
+Kelompok: 1 | 011 | 011
+Lengkapi: 001 | 011 | 011
+
+001 = 1
+011 = 3
+011 = 3
+
+Hasil → 133₈
+''',
+      ),
+      MaterialSection(
+        title: 'Oktal ke Biner',
+        content: '''
+Karena satu digit oktal dapat direpresentasikan dengan 3 bit, setiap digit oktal diganti dengan pasangan biner tiga bit.
+''',
+        example: '''
+57₈
+5 = 101
+7 = 111
+
+Hasil → 101111₂
+
+123₈
+1 = 001
+2 = 010
+3 = 011
+
+Hasil → 001010011₂
+''',
+      ),
+      MaterialSection(
+        title: 'Biner ke Heksadesimal',
+        content: '''
+Karena 2⁴ = 16, kelompokkan bit biner menjadi 4 bit dari kanan. Kelompok paling kiri dapat dilengkapi dengan 0.
+''',
+        example: '''
+1011011₂
+
+Kelompok: 1011 | 011
+Lengkapi: 0101 | 1011
+
+0101 = 5
+1011 = B
+
+Hasil → 5B₁₆
+''',
+      ),
+      MaterialSection(
+        title: 'Heksadesimal ke Biner',
+        content: '''
+Setiap digit heksadesimal diganti dengan representasi biner sebanyak 4 bit.
+''',
+        example: '''
+3A₁₆
+
+3 = 0011
+A = 1010
+
+Hasil → 00111010₂
+
+5F₁₆
+
+5 = 0101
+F = 1111
+
+Hasil → 01011111₂
+''',
+      ),
+      MaterialSection(
+        title: 'Oktal ke Heksadesimal',
+        content: '''
+Konversi oktal ke heksadesimal dapat dilakukan melalui biner sebagai perantara: Oktal → Biner → Heksadesimal.
+
+Langkah:
+1. Ubah setiap digit oktal menjadi 3 bit biner.
+2. Gabungkan seluruh bit.
+3. Kelompokkan biner menjadi 4 bit dari kanan.
+4. Ubah setiap kelompok menjadi digit heksadesimal.
+''',
+        example: '''
+725₈
+
+7 = 111
+2 = 010
+5 = 101
+
+725₈ = 111010101₂
+
+Kelompok:
+0001 | 1101 | 0101
+
+0001 = 1
+1101 = D
+0101 = 5
+
+Hasil → 1D5₁₆
+''',
+      ),
+      MaterialSection(
+        title: 'Heksadesimal ke Oktal',
+        content: '''
+Konversi heksadesimal ke oktal dilakukan melalui biner sebagai perantara: Heksadesimal → Biner → Oktal.
+
+Langkah:
+1. Ubah setiap digit heksadesimal menjadi 4 bit biner.
+2. Gabungkan seluruh bit.
+3. Kelompokkan biner menjadi 3 bit dari kanan.
+4. Ubah setiap kelompok menjadi digit oktal.
+''',
+        example: '''
+2F₁₆
+
+2 = 0010
+F = 1111
+
+2F₁₆ = 00101111₂
+
+Hilangkan nol di depan:
+101111₂
+
+Kelompok:
+101 | 111
+
+101 = 5
+111 = 7
+
+Hasil → 57₈
+''',
+      ),
+      MaterialSection(
+        title: 'Pola Cepat Konversi',
+        content: '''
+Pola berikut dapat digunakan untuk mengingat metode setiap jenis konversi.
+''',
+        example: '''
+Desimal → Biner
+Bagi 2 berulang, baca sisa dari bawah ke atas
+
+Biner → Desimal
+Gunakan pangkat 2 dan jumlahkan
+
+Desimal → Oktal
+Bagi 8 berulang, baca sisa dari bawah ke atas
+
+Oktal → Desimal
+Gunakan pangkat 8 dan jumlahkan
+
+Desimal → Heksadesimal
+Bagi 16 berulang, ubah sisa 10–15 menjadi A–F
+
+Heksadesimal → Desimal
+Gunakan pangkat 16 dan ubah A–F menjadi 10–15
+
+Biner dan Oktal
+3 bit untuk 1 digit oktal
+
+Biner dan Heksadesimal
+4 bit untuk 1 digit heksadesimal
+
+Oktal dan Heksadesimal
+Gunakan biner sebagai perantara
+''',
+      ),
+    ],
   ),
 ];
-
 const questions = [
   // Desimal
   Question(

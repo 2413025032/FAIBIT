@@ -19,9 +19,30 @@ class UserProfile {
       );
 }
 
+class MaterialSection {
+  const MaterialSection({
+    required this.title,
+    required this.content,
+    this.example,
+  });
+
+  final String title;
+  final String content;
+  final String? example;
+}
+
 class LearningMaterial {
-  const LearningMaterial(this.title, this.description, this.example);
-  final String title, description, example;
+  const LearningMaterial(
+    this.title,
+    this.description,
+    this.example, {
+    this.sections = const [],
+  });
+
+  final String title;
+  final String description;
+  final String example;
+  final List<MaterialSection> sections;
 }
 
 class Question {
