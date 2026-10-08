@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_page_curl/flutter_page_curl.dart';
 
 import '../data/mock_data.dart';
 import '../models/models.dart';
@@ -217,88 +218,26 @@ class MaterialReaderPage extends StatefulWidget {
   State<MaterialReaderPage> createState() => _MaterialReaderPageState();
 }
 
-class _MaterialReaderPageState extends State<MaterialReaderPage>
-    with SingleTickerProviderStateMixin {
-  late final AnimationController turnController;
+class _MaterialReaderPageState extends State<MaterialReaderPage> {
+  final PageCurlController pageController = PageCurlController();
   int currentPage = 0;
   bool showSwipeTutorial = true;
-  int? targetPage;
-  double dragProgress = 0;
-  double dragDirection = -1;
 
   int get sectionCount => widget.material.sections.length;
 
   @override
-  void initState() {
-    super.initState();
-    turnController =
-        AnimationController(
-            vsync: this,
-            duration: const Duration(milliseconds: 360),
-          )
-          ..addListener(() {
-            setState(() {});
-          })
-          ..addStatusListener(finishTurnIfNeeded);
-  }
-
-  @override
   void dispose() {
-    turnController.dispose();
+    pageController.dispose();
     super.dispose();
   }
 
   void changePage(int page) {
-    if (page < 0 || page >= sectionCount || targetPage != null) return;
-    dragDirection = page > currentPage ? -1 : 1;
-    targetPage = page;
-    dragProgress = 0;
-    turnController.forward(from: 0);
-  }
-
-  void handleDragUpdate(DragUpdateDetails details, double width) {
-    if (targetPage != null || width <= 0) return;
-    final delta = details.primaryDelta ?? 0;
-    if (dragProgress == 0 && delta.abs() > 0) {
-      dragDirection = delta < 0 ? -1 : 1;
-    }
-    final nextProgress = (dragProgress + (delta.abs() / width)).clamp(0.0, 1.0);
-    final nextPage = dragDirection < 0 ? currentPage + 1 : currentPage - 1;
-    if (nextPage < 0 || nextPage >= sectionCount) return;
-    setState(() {
-      targetPage = nextPage;
-      dragProgress = nextProgress;
-    });
-  }
-
-  void handleDragEnd() {
-    if (targetPage == null) return;
-    turnController.value = dragProgress;
-    if (dragProgress > 0.22) {
-      turnController.forward(from: dragProgress);
+    if (page < 0 || page >= sectionCount || page == currentPage) return;
+    if (page > currentPage) {
+      pageController.nextPage();
     } else {
-      turnController.reverse(from: dragProgress).then((_) {
-        if (!mounted) return;
-        setState(() {
-          targetPage = null;
-          dragProgress = 0;
-        });
-      });
+      pageController.previousPage();
     }
-  }
-
-  double get turnProgress => targetPage == null
-      ? 0
-      : (turnController.value > 0 ? turnController.value : dragProgress);
-
-  void finishTurnIfNeeded(AnimationStatus status) {
-    if (status != AnimationStatus.completed || targetPage == null) return;
-    setState(() {
-      currentPage = targetPage!;
-      targetPage = null;
-      dragProgress = 0;
-    });
-    turnController.reset();
   }
 
   void completeMaterial() {
@@ -332,27 +271,20 @@ class _MaterialReaderPageState extends State<MaterialReaderPage>
                     ),
                   ),
                   Expanded(
-                    child: LayoutBuilder(
-                      builder: (context, constraints) => GestureDetector(
-                        onHorizontalDragUpdate: (details) =>
-                            handleDragUpdate(details, constraints.maxWidth),
-                        onHorizontalDragEnd: (_) => handleDragEnd(),
-                        child: Stack(
-                          fit: StackFit.expand,
-                          children: [
-                            if (targetPage != null)
-                              _MaterialSheet(
-                                section: widget.material.sections[targetPage!],
-                                elevated: false,
-                              ),
-                            _TurningSheet(
-                              section: widget.material.sections[currentPage],
-                              progress: turnProgress,
-                              direction: dragDirection,
-                            ),
-                          ],
-                        ),
-                      ),
+                    child: PageCurlView(
+                      controller: pageController,
+                      radius: 0.06,
+                      shadowWidth: 0.12,
+                      backOpacity: 0.58,
+                      edgeZoneWidth: 0.3,
+                      animationDuration: const Duration(milliseconds: 420),
+                      onPageChanged: (page) {
+                        setState(() => currentPage = page);
+                      },
+                      children: [
+                        for (final section in widget.material.sections)
+                          _MaterialSectionPage(section: section),
+                      ],
                     ),
                   ),
                   Row(
@@ -413,64 +345,6 @@ class _MaterialReaderPageState extends State<MaterialReaderPage>
       ),
     );
   }
-}
-
-class _TurningSheet extends StatelessWidget {
-  const _TurningSheet({
-    required this.section,
-    required this.progress,
-    required this.direction,
-  });
-
-  final MaterialSection section;
-  final double progress;
-  final double direction;
-
-  @override
-  Widget build(BuildContext context) {
-    final angle = direction * progress * (3.141592653589793 / 2);
-    return Transform(
-      alignment: direction < 0 ? Alignment.centerRight : Alignment.centerLeft,
-      transform: Matrix4.identity()
-        ..setEntry(3, 2, 0.0018)
-        ..rotateY(angle),
-      child: _MaterialSheet(section: section, elevated: true),
-    );
-  }
-}
-
-class _MaterialSheet extends StatelessWidget {
-  const _MaterialSheet({required this.section, required this.elevated});
-
-  final MaterialSection section;
-  final bool elevated;
-
-  @override
-  Widget build(BuildContext context) => Container(
-    margin: const EdgeInsets.fromLTRB(16, 10, 16, 8),
-    decoration: BoxDecoration(
-      color: const Color(0xFFFFFEF9),
-      borderRadius: BorderRadius.circular(5),
-      border: Border.all(color: const Color(0xFFE6E1D5)),
-      boxShadow: elevated
-          ? [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.16),
-                blurRadius: 14,
-                offset: const Offset(2, 7),
-              ),
-            ]
-          : [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.08),
-                blurRadius: 7,
-                offset: const Offset(1, 3),
-              ),
-            ],
-    ),
-    clipBehavior: Clip.antiAlias,
-    child: _MaterialSectionPage(section: section),
-  );
 }
 
 class _MaterialSectionPage extends StatelessWidget {
