@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_page_curl/flutter_page_curl.dart';
+import 'package:real_page_flip/real_page_flip.dart';
 
 import '../data/mock_data.dart';
 import '../models/models.dart';
@@ -219,7 +219,7 @@ class MaterialReaderPage extends StatefulWidget {
 }
 
 class _MaterialReaderPageState extends State<MaterialReaderPage> {
-  final PageCurlController pageController = PageCurlController();
+  final PageFlipController pageController = PageFlipController();
   int currentPage = 0;
   bool showSwipeTutorial = true;
 
@@ -227,7 +227,6 @@ class _MaterialReaderPageState extends State<MaterialReaderPage> {
 
   @override
   void dispose() {
-    pageController.dispose();
     super.dispose();
   }
 
@@ -271,20 +270,20 @@ class _MaterialReaderPageState extends State<MaterialReaderPage> {
                     ),
                   ),
                   Expanded(
-                    child: PageCurlView(
-                      controller: pageController,
-                      radius: 0.06,
-                      shadowWidth: 0.12,
-                      backOpacity: 0.58,
-                      edgeZoneWidth: 0.3,
-                      animationDuration: const Duration(milliseconds: 420),
-                      onPageChanged: (page) {
-                        setState(() => currentPage = page);
+                    child: LayoutBuilder(
+                      builder: (context, constraints) {
+                        return PageFlipWidget(
+                          controller: pageController,
+                          itemCount: sectionCount,
+                          isDoubleSpread: false,
+                          onPageChanged: (page) {
+                            setState(() => currentPage = page);
+                          },
+                          itemBuilder: (context, index) => _MaterialSectionPage(
+                            section: widget.material.sections[index],
+                          ),
+                        );
                       },
-                      children: [
-                        for (final section in widget.material.sections)
-                          _MaterialSectionPage(section: section),
-                      ],
                     ),
                   ),
                   Row(
