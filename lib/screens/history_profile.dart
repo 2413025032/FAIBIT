@@ -183,25 +183,6 @@ class _ProfilePageState extends State<ProfilePage> {
           _ProfileDetail(label: 'Nama', value: profile.name),
           _ProfileDetail(label: 'Kelas', value: profile.schoolClass),
           _ProfileDetail(label: 'Sekolah', value: profile.school),
-          const SizedBox(height: 20),
-          OutlineCard(
-            onTap: () => Navigator.of(context).push(
-              MaterialPageRoute(builder: (_) => const SettingsPage()),
-            ),
-            child: const Row(
-              children: [
-                Icon(Icons.settings_outlined),
-                SizedBox(width: 14),
-                Expanded(
-                  child: Text(
-                    'Pengaturan',
-                    style: TextStyle(fontWeight: FontWeight.w700),
-                  ),
-                ),
-                Icon(Icons.chevron_right),
-              ],
-            ),
-          ),
         ],
       ),
     ),

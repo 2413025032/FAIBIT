@@ -84,7 +84,7 @@ class ProgressLine extends StatelessWidget {
       value: value,
       minHeight: 10,
       color: Theme.of(context).colorScheme.primary,
-      backgroundColor: AppTheme.tealSurface,
+      backgroundColor: Theme.of(context).colorScheme.primaryContainer,
     ),
   );
 }

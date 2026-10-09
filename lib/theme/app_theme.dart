@@ -37,6 +37,20 @@ class AppTheme {
     outline: line,
   );
 
+  static const ColorScheme darkScheme = ColorScheme.dark(
+    primary: greenTeal,
+    onPrimary: Colors.white,
+    primaryContainer: Color(0xFF145B4B),
+    onPrimaryContainer: Colors.white,
+    secondary: Color(0xFFB8E9DC),
+    onSecondary: Color(0xFF12332C),
+    tertiary: Color(0xFFFFA66E),
+    onTertiary: Color(0xFF3A1708),
+    surface: Color(0xFF17211F),
+    onSurface: Color(0xFFE8F1EE),
+    outline: Color(0xFF536761),
+  );
+
   /// Tokens reserved for the Challenge visual mode in a later phase.
   static const ChallengeColors challenge = ChallengeColors(
     primary: challengeOrange,
@@ -186,6 +200,95 @@ class AppTheme {
       secondarySelectedColor: tealSurface,
       side: const BorderSide(color: line),
       labelStyle: const TextStyle(fontFamily: bodyFont, color: darkGray),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+    ),
+  );
+
+  static ThemeData get dark => ThemeData(
+    useMaterial3: true,
+    fontFamily: bodyFont,
+    colorScheme: darkScheme,
+    scaffoldBackgroundColor: const Color(0xFF101615),
+    textTheme: _textTheme.apply(
+      bodyColor: darkScheme.onSurface,
+      displayColor: darkScheme.onSurface,
+    ),
+    appBarTheme: const AppBarTheme(
+      backgroundColor: Color(0xFF101615),
+      foregroundColor: Color(0xFFE8F1EE),
+      surfaceTintColor: Colors.transparent,
+      elevation: 0,
+      centerTitle: true,
+      titleTextStyle: TextStyle(
+        fontFamily: headingFont,
+        color: Color(0xFFE8F1EE),
+        fontSize: 20,
+        fontWeight: FontWeight.w700,
+      ),
+    ),
+    iconTheme: const IconThemeData(color: Color(0xFFE8F1EE)),
+    filledButtonTheme: FilledButtonThemeData(
+      style: FilledButton.styleFrom(
+        backgroundColor: greenTeal,
+        foregroundColor: Colors.white,
+        minimumSize: const Size.fromHeight(52),
+        textStyle: const TextStyle(
+          fontFamily: headingFont,
+          fontSize: 18,
+          fontWeight: FontWeight.w700,
+        ),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(radius),
+        ),
+      ),
+    ),
+    outlinedButtonTheme: OutlinedButtonThemeData(
+      style: OutlinedButton.styleFrom(
+        foregroundColor: darkScheme.onSurface,
+        minimumSize: const Size.fromHeight(48),
+        side: const BorderSide(color: Color(0xFF536761)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(radius),
+        ),
+      ),
+    ),
+    inputDecorationTheme: InputDecorationTheme(
+      filled: true,
+      fillColor: const Color(0xFF202D2A),
+      hintStyle: const TextStyle(
+        fontFamily: bodyFont,
+        color: Color(0xFFB5C4C0),
+      ),
+      labelStyle: const TextStyle(
+        fontFamily: bodyFont,
+        color: Color(0xFFE8F1EE),
+      ),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(radius),
+        borderSide: const BorderSide(color: Color(0xFF536761)),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(radius),
+        borderSide: const BorderSide(color: Color(0xFF536761)),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(radius),
+        borderSide: const BorderSide(color: greenTeal, width: 2),
+      ),
+    ),
+    navigationBarTheme: const NavigationBarThemeData(
+      backgroundColor: Color(0xFF17211F),
+      indicatorColor: Color(0xFF145B4B),
+      height: 72,
+    ),
+    chipTheme: ChipThemeData(
+      backgroundColor: const Color(0xFF202D2A),
+      selectedColor: const Color(0xFF145B4B),
+      side: const BorderSide(color: Color(0xFF536761)),
+      labelStyle: const TextStyle(
+        fontFamily: bodyFont,
+        color: Color(0xFFE8F1EE),
+      ),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
     ),
   );

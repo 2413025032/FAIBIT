@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../models/models.dart';
+import '../settings/app_settings.dart';
 import '../theme/app_theme.dart';
 import '../widgets/ui.dart';
 
@@ -333,47 +334,74 @@ class SettingsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final settings = AppSettingsScope.of(context);
     return Scaffold(
-      appBar: const PageTitle(
-        title: 'Pengaturan',
-        showBack: true,
-      ),
+      appBar: const PageTitle(title: 'Pengaturan', showBack: true),
       body: ListView(
         padding: const EdgeInsets.all(20),
         children: [
+          const Text('Tampilan', style: TextStyle(fontWeight: FontWeight.w700)),
+          const SizedBox(height: 10),
+          OutlineCard(
+            child: RadioGroup<ThemeMode>(
+              groupValue: settings.themeMode,
+              onChanged: (value) {
+                if (value != null) settings.setThemeMode(value);
+              },
+              child: const Column(
+                children: [
+                  RadioListTile<ThemeMode>(
+                    value: ThemeMode.light,
+                    title: Text('Light Mode'),
+                    subtitle: Text('Gunakan tampilan terang'),
+                    contentPadding: EdgeInsets.zero,
+                  ),
+                  RadioListTile<ThemeMode>(
+                    value: ThemeMode.dark,
+                    title: Text('Dark Mode'),
+                    subtitle: Text('Gunakan tampilan gelap'),
+                    contentPadding: EdgeInsets.zero,
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 24),
           const Text(
-            'Tampilan',
+            'Kenyamanan Membaca',
             style: TextStyle(fontWeight: FontWeight.w700),
           ),
           const SizedBox(height: 10),
           OutlineCard(
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                RadioListTile<String>(
-                  value: 'light',
-                  groupValue: 'system',
-                  onChanged: (_) {},
-                  title: const Text('Light'),
-                  subtitle: const Text('Gunakan tampilan terang'),
-                  contentPadding: EdgeInsets.zero,
+                const Text('Pratinjau teks materi'),
+                const SizedBox(height: 8),
+                Text(
+                  'Nilai tempat membantu memahami posisi setiap digit.',
+                  style: Theme.of(context).textTheme.bodyLarge,
                 ),
-                RadioListTile<String>(
-                  value: 'dark',
-                  groupValue: 'system',
-                  onChanged: (_) {},
-                  title: const Text('Dark'),
-                  subtitle: const Text('Gunakan tampilan gelap'),
-                  contentPadding: EdgeInsets.zero,
-                ),
-                RadioListTile<String>(
-                  value: 'system',
-                  groupValue: 'system',
-                  onChanged: (_) {},
-                  title: const Text('System'),
-                  subtitle: const Text(
-                    'Ikuti pengaturan tampilan perangkat',
+                const SizedBox(height: 12),
+                RadioGroup<ReadingSize>(
+                  groupValue: settings.readingSize,
+                  onChanged: (value) {
+                    if (value != null) settings.setReadingSize(value);
+                  },
+                  child: Column(
+                    children: [
+                      for (final size in ReadingSize.values)
+                        RadioListTile<ReadingSize>(
+                          value: size,
+                          title: Text(size.label),
+                          subtitle: Text(
+                            'Contoh ukuran teks ${size.label.toLowerCase()}',
+                            style: TextStyle(fontSize: 13 * size.scale),
+                          ),
+                          contentPadding: EdgeInsets.zero,
+                        ),
+                    ],
                   ),
-                  contentPadding: EdgeInsets.zero,
                 ),
               ],
             ),
@@ -386,9 +414,7 @@ class SettingsPage extends StatelessWidget {
           const SizedBox(height: 10),
           OutlineCard(
             onTap: () => Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (_) => const MaterialSourcesPage(),
-              ),
+              MaterialPageRoute(builder: (_) => const MaterialSourcesPage()),
             ),
             child: const Row(
               children: [
@@ -407,9 +433,7 @@ class SettingsPage extends StatelessWidget {
           const SizedBox(height: 10),
           OutlineCard(
             onTap: () => Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (_) => const AboutPage(),
-              ),
+              MaterialPageRoute(builder: (_) => const AboutPage()),
             ),
             child: const Row(
               children: [
@@ -426,10 +450,7 @@ class SettingsPage extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 24),
-          const Text(
-            'Data',
-            style: TextStyle(fontWeight: FontWeight.w700),
-          ),
+          const Text('Data', style: TextStyle(fontWeight: FontWeight.w700)),
           const SizedBox(height: 10),
           OutlineCard(
             onTap: () => _showDeleteConfirmation(context),

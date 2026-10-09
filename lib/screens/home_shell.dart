@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../models/models.dart';
+import '../screens/profile_settings_screens.dart';
 import '../widgets/ui.dart';
 import 'history_profile.dart';
 import 'material_screens.dart';
@@ -101,9 +102,20 @@ class HomePage extends StatelessWidget {
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const Text(
-          'FAIBIT',
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800),
+        Row(
+          children: [
+            const Expanded(
+              child: Text(
+                'FAIBIT',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800),
+              ),
+            ),
+            IconButton(
+              tooltip: 'Pengaturan',
+              onPressed: () => _openChildPage(context, const SettingsPage()),
+              icon: const Icon(Icons.settings_outlined),
+            ),
+          ],
         ),
         Expanded(
           child: SingleChildScrollView(
