@@ -86,10 +86,11 @@ class MaterialDetailPage extends StatelessWidget {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Icon(
-                    Icons.smart_toy_outlined,
-                    size: 58,
-                    color: Theme.of(context).colorScheme.primary,
+                  const FaiMascot(
+                    assetName: 'faibit_reading.png',
+                    width: 74,
+                    height: 94,
+                    semanticLabel: 'Fai sedang membaca',
                   ),
                   const SizedBox(width: 12),
                   Expanded(
@@ -478,10 +479,11 @@ class MaterialCompletedPage extends StatelessWidget {
             OutlineCard(
               child: Column(
                 children: [
-                  Icon(
-                    Icons.celebration_outlined,
-                    size: 76,
-                    color: Theme.of(context).colorScheme.primary,
+                  const FaiMascot(
+                    assetName: 'faibit_celebrate.png',
+                    width: 86,
+                    height: 100,
+                    semanticLabel: 'Fai merayakan',
                   ),
                   const SizedBox(height: 10),
                   Text(

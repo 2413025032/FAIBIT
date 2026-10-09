@@ -104,6 +104,16 @@ class HomePage extends StatelessWidget {
       children: [
         Row(
           children: [
+            const SizedBox(
+              width: 38,
+              height: 38,
+              child: Image(
+                image: AssetImage('assets/images/branding/logo_faibit.png'),
+                fit: BoxFit.contain,
+                semanticLabel: 'Logo FAIBIT',
+              ),
+            ),
+            const SizedBox(width: 8),
             const Expanded(
               child: Text(
                 'FAIBIT',
@@ -144,7 +154,12 @@ class HomePage extends StatelessWidget {
                           ],
                         ),
                       ),
-                      const EmptySlot(width: 58, height: 96),
+                      const FaiMascot(
+                        assetName: 'faibit_melambai.png',
+                        width: 58,
+                        height: 96,
+                        semanticLabel: 'Fai melambai',
+                      ),
                     ],
                   ),
                 ),

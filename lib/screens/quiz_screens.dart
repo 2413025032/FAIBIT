@@ -98,7 +98,12 @@ class PracticePreparationPage extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Icon(Icons.edit_note_outlined, size: 42),
+                  FaiMascot(
+                    assetName: 'faibit_thinking.png',
+                    width: 78,
+                    height: 92,
+                    semanticLabel: 'Fai sedang berpikir',
+                  ),
                   const SizedBox(height: 10),
                   const Text(
                     'Siap untuk Latihan Santai?',
@@ -427,7 +432,14 @@ class FeedbackPage extends StatelessWidget {
                 const SizedBox(height: 20),
                 Row(
                   children: [
-                    const EmptySlot(width: 62, height: 74),
+                    FaiMascot(
+                      assetName: ok
+                          ? 'faibit_happy.png'
+                          : 'faibit_encourage.png',
+                      width: 62,
+                      height: 74,
+                      semanticLabel: ok ? 'Fai senang' : 'Fai menyemangati',
+                    ),
                     const SizedBox(width: 10),
                     Expanded(
                       child: OutlineCard(
@@ -505,7 +517,12 @@ class _ChallengePreparationPageState extends State<ChallengePreparationPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Icon(Icons.bolt_outlined, size: 42),
+                  const FaiMascot(
+                    assetName: 'faibit_challenge.png',
+                    width: 78,
+                    height: 92,
+                    semanticLabel: 'Fai untuk challenge',
+                  ),
                   const SizedBox(height: 10),
                   const Text(
                     'Siap untuk Challenge?',
@@ -826,10 +843,11 @@ class ChallengeResultPage extends StatelessWidget {
               OutlineCard(
                 child: Column(
                   children: [
-                    Icon(
-                      Icons.emoji_events_outlined,
-                      size: 64,
-                      color: AppTheme.challenge.primary,
+                    const FaiMascot(
+                      assetName: 'faibit_celebrate.png',
+                      width: 86,
+                      height: 100,
+                      semanticLabel: 'Fai merayakan hasil challenge',
                     ),
                     const SizedBox(height: 10),
                     const Text(
@@ -1059,7 +1077,12 @@ class ResultPage extends StatelessWidget {
                     const Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        EmptySlot(width: 64, height: 80),
+                        FaiMascot(
+                          assetName: 'faibit_celebrate.png',
+                          width: 64,
+                          height: 80,
+                          semanticLabel: 'Fai merayakan hasil latihan',
+                        ),
                         SizedBox(width: 12),
                         Icon(Icons.emoji_events_outlined, size: 54),
                       ],

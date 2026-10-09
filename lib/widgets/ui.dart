@@ -2,6 +2,32 @@ import 'package:flutter/material.dart';
 
 import '../theme/app_theme.dart';
 
+class FaiMascot extends StatelessWidget {
+  const FaiMascot({
+    super.key,
+    required this.assetName,
+    this.width = 80,
+    this.height = 100,
+    this.semanticLabel,
+  });
+
+  final String assetName;
+  final double width;
+  final double height;
+  final String? semanticLabel;
+
+  @override
+  Widget build(BuildContext context) => SizedBox(
+    width: width,
+    height: height,
+    child: Image.asset(
+      'assets/images/fai/$assetName',
+      fit: BoxFit.contain,
+      semanticLabel: semanticLabel,
+    ),
+  );
+}
+
 class EmptySlot extends StatelessWidget {
   const EmptySlot({super.key, this.width = double.infinity, this.height = 100});
   final double width, height;
