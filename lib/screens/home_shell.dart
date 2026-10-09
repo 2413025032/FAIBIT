@@ -104,20 +104,10 @@ class HomePage extends StatelessWidget {
       children: [
         Row(
           children: [
-            const SizedBox(
-              width: 38,
-              height: 38,
-              child: Image(
-                image: AssetImage('assets/images/branding/logo_faibit.png'),
-                fit: BoxFit.contain,
-                semanticLabel: 'Logo FAIBIT',
-              ),
-            ),
-            const SizedBox(width: 8),
             const Expanded(
               child: Text(
                 'FAIBIT',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800),
+                style: TextStyle(fontSize: 22, fontWeight: FontWeight.w800),
               ),
             ),
             IconButton(
@@ -132,36 +122,69 @@ class HomePage extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                OutlineCard(
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Hai, ${profile.name}!',
-                              style: const TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w800,
+                LayoutBuilder(
+                  builder: (context, constraints) {
+                    final mascotWidth = (constraints.maxWidth * 0.32).clamp(
+                      100.0,
+                      142.0,
+                    );
+                    return OutlineCard(
+                      padding: const EdgeInsets.fromLTRB(18, 16, 12, 16),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.only(right: 8),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    'Hai,',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleMedium
+                                        ?.copyWith(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .primary,
+                                        ),
+                                  ),
+                                  const SizedBox(height: 2),
+                                  Text(
+                                    '${profile.name}!',
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .headlineSmall
+                                        ?.copyWith(fontWeight: FontWeight.w800),
+                                  ),
+                                  const SizedBox(height: 3),
+                                  Text('Kelas ${profile.schoolClass}'),
+                                  const SizedBox(height: 12),
+                                  Text(
+                                    'Semangat belajar hari ini! '
+                                    'Sedikit demi sedikit, hasilnya pasti terasa.',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyMedium,
+                                  ),
+                                ],
                               ),
                             ),
-                            Text('Kelas ${profile.schoolClass}'),
-                            const SizedBox(height: 12),
-                            const Text(
-                              'Semangat belajar hari ini! Konsisten sedikit demi sedikit, hasilnya pasti terasa.',
-                            ),
-                          ],
-                        ),
+                          ),
+                          FaiMascot(
+                            assetName: 'faibit_melambai.png',
+                            width: mascotWidth,
+                            height: 164,
+                            semanticLabel: 'Fai melambai',
+                          ),
+                        ],
                       ),
-                      const FaiMascot(
-                        assetName: 'faibit_melambai.png',
-                        width: 58,
-                        height: 96,
-                        semanticLabel: 'Fai melambai',
-                      ),
-                    ],
-                  ),
+                    );
+                  },
                 ),
                 const SizedBox(height: 12),
                 OutlineCard(
@@ -192,11 +215,13 @@ class HomePage extends StatelessWidget {
                   mainAxisSpacing: 10,
                   children: [
                     _menu(
+                      context,
                       'Materi',
                       Icons.menu_book_outlined,
                       () => onDestinationSelected(RootDestination.materials),
                     ),
                     _menu(
+                      context,
                       'Latihan Santai',
                       Icons.edit_note_outlined,
                       () => _openChildPage(
@@ -205,6 +230,7 @@ class HomePage extends StatelessWidget {
                       ),
                     ),
                     _menu(
+                      context,
                       'Challenge',
                       Icons.emoji_events_outlined,
                       () => _openChildPage(
@@ -213,6 +239,7 @@ class HomePage extends StatelessWidget {
                       ),
                     ),
                     _menu(
+                      context,
                       'Riwayat Aktivitas',
                       Icons.history_outlined,
                       () => onDestinationSelected(RootDestination.history),
@@ -227,17 +254,23 @@ class HomePage extends StatelessWidget {
     ),
   );
 
-  Widget _menu(String text, IconData icon, VoidCallback tap) => OutlineCard(
+  Widget _menu(
+    BuildContext context,
+    String text,
+    IconData icon,
+    VoidCallback tap,
+  ) => OutlineCard(
     onTap: tap,
+    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 14),
     child: Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Icon(icon, size: 30),
-        const SizedBox(height: 7),
+        Icon(icon, size: 30, color: Theme.of(context).colorScheme.primary),
+        const SizedBox(height: 9),
         Text(
           text,
           textAlign: TextAlign.center,
-          style: const TextStyle(fontWeight: FontWeight.w700),
+          style: Theme.of(context).textTheme.titleMedium,
         ),
       ],
     ),

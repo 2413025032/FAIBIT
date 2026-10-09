@@ -1,6 +1,6 @@
 import 'dart:io';
+
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 
 import '../data/mock_data.dart';
 import '../models/models.dart';
@@ -100,29 +100,11 @@ class _ProfilePageState extends State<ProfilePage> {
   UserProfile get profile => widget.profile;
   ValueChanged<UserProfile> get onProfileChanged => widget.onProfileChanged;
 
-  File? _profileImage;
-
-  Future<void> _pickProfileImage() async {
-    final picker = ImagePicker();
-
-    final pickedFile = await picker.pickImage(
-      source: ImageSource.gallery,
-    );
-
-    if (pickedFile == null) return;
-
-    setState(() {
-      _profileImage = File(pickedFile.path);
-    });
-  }
-
   void _openEdit(BuildContext context) {
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (_) => EditProfilePage(
-          profile: profile,
-          onSaved: onProfileChanged,
-        ),
+        builder: (_) =>
+            EditProfilePage(profile: profile, onSaved: onProfileChanged),
       ),
     );
   }
@@ -147,17 +129,16 @@ class _ProfilePageState extends State<ProfilePage> {
           OutlineCard(
             child: Row(
               children: [
-              CircleAvatar(
-                radius: 34,
-                backgroundColor: AppTheme.tealSurface,
-                foregroundColor: AppTheme.darkGray,
-                backgroundImage: profile.photoPath != null
-                    ? FileImage(File(profile.photoPath!))
-                    : null,
-                child: profile.photoPath == null
-                    ? const Icon(Icons.person_outline, size: 38)
-                    : null,
-              ),
+                CircleAvatar(
+                  radius: 34,
+                  backgroundColor: AppTheme.tealSurface,
+                  foregroundColor: AppTheme.darkGray,
+                  backgroundImage: profile.photoPath != null
+                      ? FileImage(File(profile.photoPath!))
+                      : const AssetImage(
+                          'assets/images/branding/logo_faibit.png',
+                        ),
+                ),
 
                 const SizedBox(width: 16),
                 Expanded(
@@ -170,7 +151,10 @@ class _ProfilePageState extends State<ProfilePage> {
                       ),
                       const SizedBox(height: 3),
                       Text('Kelas ${profile.schoolClass}'),
-                      Text(profile.school, style: Theme.of(context).textTheme.bodySmall),
+                      Text(
+                        profile.school,
+                        style: Theme.of(context).textTheme.bodySmall,
+                      ),
                     ],
                   ),
                 ),
@@ -178,7 +162,10 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
           ),
           const SizedBox(height: 20),
-          const Text('Akun Saya', style: TextStyle(fontWeight: FontWeight.w700)),
+          const Text(
+            'Akun Saya',
+            style: TextStyle(fontWeight: FontWeight.w700),
+          ),
           const SizedBox(height: 8),
           _ProfileDetail(label: 'Nama', value: profile.name),
           _ProfileDetail(label: 'Kelas', value: profile.schoolClass),
