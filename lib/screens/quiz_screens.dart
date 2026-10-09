@@ -95,22 +95,32 @@ class PracticePreparationPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             OutlineCard(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  FaiMascot(
+                  const FaiMascot(
                     assetName: 'faibit_thinking.png',
-                    width: 78,
-                    height: 92,
+                    width: 126,
+                    height: 152,
                     semanticLabel: 'Fai sedang berpikir',
                   ),
-                  const SizedBox(height: 10),
-                  const Text(
-                    'Siap untuk Latihan Santai?',
-                    style: TextStyle(fontSize: 21, fontWeight: FontWeight.w800),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Latihan Santai',
+                          style: Theme.of(context).textTheme.headlineSmall
+                              ?.copyWith(fontWeight: FontWeight.w800),
+                        ),
+                        const SizedBox(height: 7),
+                        Text(
+                          'Latihan materi $materialTitle tanpa batas waktu.',
+                        ),
+                      ],
+                    ),
                   ),
-                  const SizedBox(height: 8),
-                  Text('Latihan materi $materialTitle tanpa batas waktu.'),
                 ],
               ),
             ),
@@ -393,15 +403,16 @@ class FeedbackPage extends StatelessWidget {
       canPop: false,
       child: Scaffold(
         body: SafeArea(
-          child: Padding(
+          child: SingleChildScrollView(
             padding: const EdgeInsets.all(20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Icon(
-                  ok ? Icons.check_circle_outline : Icons.lightbulb_outline,
-                  size: 58,
-                  color: AppTheme.greenTeal,
+                FaiMascot(
+                  assetName: ok ? 'faibit_happy.png' : 'faibit_encourage.png',
+                  width: 132,
+                  height: 150,
+                  semanticLabel: ok ? 'Fai senang' : 'Fai menyemangati',
                 ),
                 Text(
                   ok ? 'Benar!' : 'Belum tepat',
@@ -430,29 +441,14 @@ class FeedbackPage extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 20),
-                Row(
-                  children: [
-                    FaiMascot(
-                      assetName: ok
-                          ? 'faibit_happy.png'
-                          : 'faibit_encourage.png',
-                      width: 62,
-                      height: 74,
-                      semanticLabel: ok ? 'Fai senang' : 'Fai menyemangati',
-                    ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: OutlineCard(
-                        child: Text(
-                          ok
-                              ? 'Fai ikut senang! Pertahankan pemahamanmu '
-                                    'dan lanjutkan dengan percaya diri.'
-                              : 'Tidak apa-apa, proses belajar memang bertahap. '
-                                    'Fai mendukungmu untuk mencoba lagi di soal berikutnya.',
-                        ),
-                      ),
-                    ),
-                  ],
+                OutlineCard(
+                  child: Text(
+                    ok
+                        ? 'Fai ikut senang! Pertahankan pemahamanmu '
+                              'dan lanjutkan dengan percaya diri.'
+                        : 'Tidak apa-apa, proses belajar memang bertahap. '
+                              'Fai mendukungmu untuk mencoba lagi di soal berikutnya.',
+                  ),
                 ),
                 const SizedBox(height: 14),
                 FilledButton(
@@ -508,104 +504,115 @@ class _ChallengePreparationPageState extends State<ChallengePreparationPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: const PageTitle(title: 'Persiapan Challenge'),
-      body: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            OutlineCard(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const FaiMascot(
-                    assetName: 'faibit_challenge.png',
-                    width: 78,
-                    height: 92,
-                    semanticLabel: 'Fai untuk challenge',
-                  ),
-                  const SizedBox(height: 10),
-                  const Text(
-                    'Siap untuk Challenge?',
-                    style: TextStyle(fontSize: 21, fontWeight: FontWeight.w800),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'Uji pemahamanmu tentang sistem bilangan '
-                    'dengan waktu yang terbatas.',
-                  ),
-                ],
-              ),
-            ),
-
-            const SizedBox(height: 20),
-
-            const Text(
-              'Pilih Materi',
-              style: TextStyle(fontWeight: FontWeight.w700),
-            ),
-            const SizedBox(height: 8),
-
-            DropdownButtonFormField<String>(
-              value: selectedMaterial,
-              decoration: const InputDecoration(
-                prefixIcon: Icon(Icons.menu_book_outlined),
-                border: OutlineInputBorder(),
-              ),
-              items: materials
-                  .map(
-                    (material) => DropdownMenuItem(
-                      value: material.title,
-                      child: Text(material.title),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              OutlineCard(
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    const FaiMascot(
+                      assetName: 'faibit_challenge.png',
+                      width: 132,
+                      height: 144,
+                      semanticLabel: 'Fai untuk challenge',
                     ),
-                  )
-                  .toList(),
-              onChanged: (value) {
-                if (value != null) {
-                  setState(() => selectedMaterial = value);
-                }
-              },
-            ),
-
-            const SizedBox(height: 20),
-
-            OutlineCard(
-              child: Column(
-                children: const [
-                  _ChallengeInfo(
-                    icon: Icons.quiz_outlined,
-                    title: 'Jumlah Soal',
-                    value: '10 soal',
-                  ),
-                  SizedBox(height: 14),
-                  _ChallengeInfo(
-                    icon: Icons.timer_outlined,
-                    title: 'Batas Waktu',
-                    value: '10 menit',
-                  ),
-                ],
-              ),
-            ),
-
-            const Spacer(),
-
-            FilledButton(
-              onPressed: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => ChallengePage(
-                      profile: widget.profile,
-                      materialTitle: selectedMaterial,
+                    const SizedBox(width: 14),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Challenge',
+                            style: Theme.of(context).textTheme.headlineSmall
+                                ?.copyWith(
+                                  color: AppTheme.challenge.primaryDark,
+                                  fontWeight: FontWeight.w800,
+                                ),
+                          ),
+                          const SizedBox(height: 7),
+                          const Text(
+                            'Uji pemahamanmu tentang sistem bilangan '
+                            'dengan waktu yang terbatas.',
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                );
-              },
-              style: FilledButton.styleFrom(
-                backgroundColor: AppTheme.challenge.primary,
+                  ],
+                ),
               ),
-              child: const Text('Mulai Challenge'),
-            ),
-          ],
+
+              const SizedBox(height: 20),
+
+              const Text(
+                'Pilih Materi',
+                style: TextStyle(fontWeight: FontWeight.w700),
+              ),
+              const SizedBox(height: 8),
+
+              DropdownButtonFormField<String>(
+                value: selectedMaterial,
+                decoration: const InputDecoration(
+                  prefixIcon: Icon(Icons.menu_book_outlined),
+                  border: OutlineInputBorder(),
+                ),
+                items: materials
+                    .map(
+                      (material) => DropdownMenuItem(
+                        value: material.title,
+                        child: Text(material.title),
+                      ),
+                    )
+                    .toList(),
+                onChanged: (value) {
+                  if (value != null) {
+                    setState(() => selectedMaterial = value);
+                  }
+                },
+              ),
+
+              const SizedBox(height: 20),
+
+              OutlineCard(
+                child: Column(
+                  children: const [
+                    _ChallengeInfo(
+                      icon: Icons.quiz_outlined,
+                      title: 'Jumlah Soal',
+                      value: '10 soal',
+                    ),
+                    SizedBox(height: 14),
+                    _ChallengeInfo(
+                      icon: Icons.timer_outlined,
+                      title: 'Batas Waktu',
+                      value: '10 menit',
+                    ),
+                  ],
+                ),
+              ),
+
+              FilledButton(
+                onPressed: () {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => ChallengePage(
+                        profile: widget.profile,
+                        materialTitle: selectedMaterial,
+                      ),
+                    ),
+                  );
+                },
+                style: FilledButton.styleFrom(
+                  backgroundColor: AppTheme.challenge.primary,
+                ),
+                child: const Text('Mulai Challenge'),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -845,8 +852,8 @@ class ChallengeResultPage extends StatelessWidget {
                   children: [
                     const FaiMascot(
                       assetName: 'faibit_celebrate.png',
-                      width: 86,
-                      height: 100,
+                      width: 150,
+                      height: 174,
                       semanticLabel: 'Fai merayakan hasil challenge',
                     ),
                     const SizedBox(height: 10),
@@ -1079,8 +1086,8 @@ class ResultPage extends StatelessWidget {
                       children: [
                         FaiMascot(
                           assetName: 'faibit_celebrate.png',
-                          width: 64,
-                          height: 80,
+                          width: 132,
+                          height: 154,
                           semanticLabel: 'Fai merayakan hasil latihan',
                         ),
                         SizedBox(width: 12),

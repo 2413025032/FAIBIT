@@ -135,9 +135,10 @@ class _ProfilePageState extends State<ProfilePage> {
                   foregroundColor: AppTheme.darkGray,
                   backgroundImage: profile.photoPath != null
                       ? FileImage(File(profile.photoPath!))
-                      : const AssetImage(
-                          'assets/images/branding/logo_faibit.png',
-                        ),
+                      : null,
+                  child: profile.photoPath == null
+                      ? const Icon(Icons.person_outline, size: 38)
+                      : null,
                 ),
 
                 const SizedBox(width: 16),

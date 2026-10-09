@@ -78,47 +78,63 @@ class MaterialDetailPage extends StatelessWidget {
     appBar: PageTitle(title: material.title),
     body: SafeArea(
       child: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            OutlineCard(
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const FaiMascot(
-                    assetName: 'faibit_reading.png',
-                    width: 74,
-                    height: 94,
-                    semanticLabel: 'Fai sedang membaca',
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'Fai siap menemanimu!',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w800,
-                          ),
-                        ),
-                        const SizedBox(height: 6),
-                        Text(
-                          'Pelajari ${material.title} dengan tenang, '
-                          'selangkah demi selangkah.',
-                        ),
-                      ],
+            LayoutBuilder(
+              builder: (context, constraints) {
+                final wide = constraints.maxWidth >= 380;
+                final copy = Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Teman belajarmu',
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
                     ),
+                    const SizedBox(height: 4),
+                    Text(
+                      'Siap belajar ${material.title}?',
+                      style: Theme.of(context).textTheme.headlineSmall
+                          ?.copyWith(fontWeight: FontWeight.w800),
+                    ),
+                    const SizedBox(height: 7),
+                    const Text(
+                      'Pelajari konsepnya dengan tenang, '
+                      'selangkah demi selangkah bersama Fai.',
+                    ),
+                  ],
+                );
+                return OutlineCard(
+                  padding: const EdgeInsets.fromLTRB(18, 16, 14, 16),
+                  child: Flex(
+                    direction: wide ? Axis.horizontal : Axis.vertical,
+                    crossAxisAlignment: wide
+                        ? CrossAxisAlignment.center
+                        : CrossAxisAlignment.start,
+                    children: [
+                      FaiMascot(
+                        assetName: 'faibit_reading.png',
+                        width: wide ? 142 : 118,
+                        height: wide ? 174 : 142,
+                        semanticLabel: 'Fai sedang membaca',
+                      ),
+                      SizedBox(
+                        width: wide ? 18 : 0,
+                        height: wide ? 0 : 12,
+                      ),
+                      if (wide) Expanded(child: copy) else copy,
+                    ],
                   ),
-                ],
-              ),
+                );
+              },
             ),
             const SizedBox(height: 18),
-            const Text(
+            Text(
               'Yang akan kamu pelajari',
-              style: TextStyle(fontSize: 19, fontWeight: FontWeight.w800),
+              style: Theme.of(context).textTheme.titleLarge,
             ),
             const SizedBox(height: 8),
             Text(material.description),
@@ -142,9 +158,9 @@ class MaterialDetailPage extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 16),
-            const Text(
+            Text(
               'Topik materi',
-              style: TextStyle(fontWeight: FontWeight.w800),
+              style: Theme.of(context).textTheme.titleMedium,
             ),
             const SizedBox(height: 8),
             if (material.sections.isEmpty)
@@ -481,8 +497,8 @@ class MaterialCompletedPage extends StatelessWidget {
                 children: [
                   const FaiMascot(
                     assetName: 'faibit_celebrate.png',
-                    width: 86,
-                    height: 100,
+                    width: 150,
+                    height: 176,
                     semanticLabel: 'Fai merayakan',
                   ),
                   const SizedBox(height: 10),
