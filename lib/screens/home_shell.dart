@@ -176,7 +176,8 @@ class HomePage extends StatelessWidget {
                             ),
                           ),
                           FaiMascot(
-                            assetName: 'faibit_melambai.png',
+                            assetName: 'faibit_nyapa.png',
+                            fallbackAssetName: 'faibit_melambai.png',
                             width: mascotWidth,
                             height: 164,
                             semanticLabel: 'Fai melambai',

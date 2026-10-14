@@ -163,14 +163,32 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
           ),
           const SizedBox(height: 20),
-          const Text(
-            'Akun Saya',
-            style: TextStyle(fontWeight: FontWeight.w700),
+          Text(
+            'Informasi Akun',
+            style: Theme.of(context).textTheme.titleMedium,
           ),
           const SizedBox(height: 8),
-          _ProfileDetail(label: 'Nama', value: profile.name),
-          _ProfileDetail(label: 'Kelas', value: profile.schoolClass),
-          _ProfileDetail(label: 'Sekolah', value: profile.school),
+          OutlineCard(
+            child: Column(
+              children: [
+                _ProfileDetail(
+                  icon: Icons.person_outline,
+                  label: 'Nama',
+                  value: profile.name,
+                ),
+                _ProfileDetail(
+                  icon: Icons.school_outlined,
+                  label: 'Kelas',
+                  value: profile.schoolClass,
+                ),
+                _ProfileDetail(
+                  icon: Icons.business_outlined,
+                  label: 'Sekolah',
+                  value: profile.school,
+                ),
+              ],
+            ),
+          ),
         ],
       ),
     ),
@@ -178,7 +196,13 @@ class _ProfilePageState extends State<ProfilePage> {
 }
 
 class _ProfileDetail extends StatelessWidget {
-  const _ProfileDetail({required this.label, required this.value});
+  const _ProfileDetail({
+    required this.icon,
+    required this.label,
+    required this.value,
+  });
+
+  final IconData icon;
   final String label;
   final String value;
 
@@ -187,8 +211,10 @@ class _ProfileDetail extends StatelessWidget {
     padding: const EdgeInsets.only(bottom: 8),
     child: Row(
       children: [
+        Icon(icon, color: Theme.of(context).colorScheme.primary),
+        const SizedBox(width: 12),
         SizedBox(
-          width: 78,
+          width: 70,
           child: Text(label, style: Theme.of(context).textTheme.bodySmall),
         ),
         Expanded(child: Text(value)),

@@ -661,8 +661,12 @@ class _ChallengePageState extends State<ChallengePage> {
   int seconds = 10 * 60;
   int currentQuestion = 0;
   int selected = -1;
+  int countdown = 3;
+  bool isCountingDown = true;
+  bool isExitDialogVisible = false;
 
   Timer? timer;
+  Timer? countdownTimer;
 
   final List<int> answers = [];
 
@@ -675,6 +679,22 @@ class _ChallengePageState extends State<ChallengePage> {
   void initState() {
     super.initState();
 
+    countdownTimer = Timer.periodic(const Duration(seconds: 1), (t) {
+      if (!mounted) return;
+      if (countdown <= 1) {
+        t.cancel();
+        setState(() {
+          countdown = 0;
+          isCountingDown = false;
+        });
+        _startTimer();
+      } else {
+        setState(() => countdown--);
+      }
+    });
+  }
+
+  void _startTimer() {
     timer = Timer.periodic(const Duration(seconds: 1), (t) {
       if (seconds <= 1) {
         t.cancel();
@@ -687,8 +707,39 @@ class _ChallengePageState extends State<ChallengePage> {
 
   @override
   void dispose() {
+    countdownTimer?.cancel();
     timer?.cancel();
     super.dispose();
+  }
+
+  Future<void> _confirmExit() async {
+    if (isExitDialogVisible || !mounted) return;
+    isExitDialogVisible = true;
+    final shouldExit = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Keluar dari Challenge?'),
+        content: const Text(
+          'Sesi challenge akan dibatalkan dan progres sesi ini tidak disimpan.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, false),
+            child: const Text('Lanjut'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(dialogContext, true),
+            child: const Text('Keluar'),
+          ),
+        ],
+      ),
+    );
+    isExitDialogVisible = false;
+    if (shouldExit == true && mounted) {
+      countdownTimer?.cancel();
+      timer?.cancel();
+      Navigator.pop(context);
+    }
   }
 
   String get formattedTime {
@@ -754,61 +805,89 @@ class _ChallengePageState extends State<ChallengePage> {
   Widget build(BuildContext context) {
     final question = challengeQuestions[currentQuestion];
 
-    return Scaffold(
-      body: SafeArea(
-        child: Column(
-          children: [
-            const PageTitle(title: 'Challenge'),
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        if (!didPop) _confirmExit();
+      },
+      child: Scaffold(
+        body: SafeArea(
+          child: Column(
+            children: [
+              const PageTitle(title: 'Challenge', showBack: false),
 
-            Padding(
-              padding: const EdgeInsets.fromLTRB(20, 10, 20, 8),
-              child: Row(
-                children: [
-                  Text(
-                    'Soal ${currentQuestion + 1} dari ${challengeQuestions.length}',
-                    style: const TextStyle(fontWeight: FontWeight.w700),
-                  ),
-                  const Spacer(),
-                  const Icon(Icons.timer_outlined),
-                  const SizedBox(width: 5),
-                  Text(
-                    formattedTime,
-                    style: const TextStyle(fontWeight: FontWeight.w700),
-                  ),
-                ],
-              ),
-            ),
-
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(9),
-                child: LinearProgressIndicator(
-                  value: (currentQuestion + 1) / challengeQuestions.length,
-                  minHeight: 10,
-                  color: AppTheme.challenge.primary,
-                  backgroundColor: AppTheme.challenge.surface,
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 10, 20, 8),
+                child: Row(
+                  children: [
+                    Text(
+                      'Soal ${currentQuestion + 1} dari ${challengeQuestions.length}',
+                      style: const TextStyle(fontWeight: FontWeight.w700),
+                    ),
+                    const Spacer(),
+                    const Icon(Icons.timer_outlined),
+                    const SizedBox(width: 5),
+                    Text(
+                      isCountingDown ? 'Siap...' : formattedTime,
+                      style: const TextStyle(fontWeight: FontWeight.w700),
+                    ),
+                  ],
                 ),
               ),
-            ),
 
-            Expanded(
-              child: _QuestionScreen(
-                showHeader: false,
-                title: '',
-                number: '',
-                value: 0,
-                question: question,
-                selected: selected,
-                onSelected: (i) {
-                  setState(() => selected = i);
-                },
-                onNext: selected < 0 ? null : nextQuestion,
-                buttonColor: AppTheme.challenge.primary,
-                radioActiveColor: AppTheme.challenge.primary,
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(9),
+                  child: LinearProgressIndicator(
+                    value: (currentQuestion + 1) / challengeQuestions.length,
+                    minHeight: 10,
+                    color: AppTheme.challenge.primary,
+                    backgroundColor: AppTheme.challenge.surface,
+                  ),
+                ),
               ),
-            ),
-          ],
+
+              Expanded(
+                child: isCountingDown
+                    ? Center(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const FaiMascot(
+                              assetName: 'faibit_challenge.png',
+                              width: 150,
+                              height: 150,
+                              semanticLabel: 'Fai bersiap untuk challenge',
+                            ),
+                            Text(
+                              '$countdown',
+                              style: Theme.of(context).textTheme.displaySmall
+                                  ?.copyWith(
+                                    color: AppTheme.challenge.primary,
+                                    fontWeight: FontWeight.w800,
+                                  ),
+                            ),
+                          ],
+                        ),
+                      )
+                    : _QuestionScreen(
+                        showHeader: false,
+                        title: '',
+                        number: '',
+                        value: 0,
+                        question: question,
+                        selected: selected,
+                        onSelected: (i) {
+                          setState(() => selected = i);
+                        },
+                        onNext: selected < 0 ? null : nextQuestion,
+                        buttonColor: AppTheme.challenge.primary,
+                        radioActiveColor: AppTheme.challenge.primary,
+                      ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -851,7 +930,8 @@ class ChallengeResultPage extends StatelessWidget {
                 child: Column(
                   children: [
                     const FaiMascot(
-                      assetName: 'faibit_celebrate.png',
+                      assetName: 'faibit_celebrate2.png',
+                      fallbackAssetName: 'faibit_celebrate.png',
                       width: 150,
                       height: 174,
                       semanticLabel: 'Fai merayakan hasil challenge',
@@ -1081,18 +1161,11 @@ class ResultPage extends StatelessWidget {
               OutlineCard(
                 child: Column(
                   children: [
-                    const Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        FaiMascot(
-                          assetName: 'faibit_celebrate.png',
-                          width: 132,
-                          height: 154,
-                          semanticLabel: 'Fai merayakan hasil latihan',
-                        ),
-                        SizedBox(width: 12),
-                        Icon(Icons.emoji_events_outlined, size: 54),
-                      ],
+                    const FaiMascot(
+                      assetName: 'faibit_celebrate.png',
+                      width: 132,
+                      height: 154,
+                      semanticLabel: 'Fai merayakan hasil latihan',
                     ),
                     const SizedBox(height: 8),
                     const Text(

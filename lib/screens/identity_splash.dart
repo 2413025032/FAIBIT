@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../theme/app_theme.dart';
 import '../models/models.dart';
+import '../widgets/ui.dart';
 import 'home_shell.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -176,15 +177,38 @@ class _IdentityPageState extends State<IdentityPage> {
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 22),
-                    const Center(
-                      child: CircleAvatar(
-                        radius: 34,
-                        backgroundColor: Color(0xFFF3F3F3),
-                        child: Icon(
-                          Icons.person_outline,
-                          size: 38,
-                          color: AppTheme.ink,
-                        ),
+                    Container(
+                      height: 156,
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.primaryContainer,
+                        borderRadius: BorderRadius.circular(AppTheme.radius),
+                      ),
+                      clipBehavior: Clip.hardEdge,
+                      child: Stack(
+                        children: [
+                          const Positioned(
+                            left: 18,
+                            top: 24,
+                            child: Text(
+                              'Yuk, kenalan\ndengan Fai!',
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.w800,
+                              ),
+                            ),
+                          ),
+                          Positioned(
+                            right: -8,
+                            bottom: -6,
+                            child: FaiMascot(
+                              assetName: 'faibit_login.png',
+                              fallbackAssetName: 'faibit_melambai.png',
+                              width: 154,
+                              height: 160,
+                              semanticLabel: 'Fai menyapa pengguna baru',
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                     const SizedBox(height: 28),

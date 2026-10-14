@@ -9,12 +9,14 @@ class FaiMascot extends StatelessWidget {
     this.width = 80,
     this.height = 100,
     this.semanticLabel,
+    this.fallbackAssetName,
   });
 
   final String assetName;
   final double width;
   final double height;
   final String? semanticLabel;
+  final String? fallbackAssetName;
 
   @override
   Widget build(BuildContext context) => SizedBox(
@@ -24,6 +26,13 @@ class FaiMascot extends StatelessWidget {
       'assets/images/fai/$assetName',
       fit: BoxFit.contain,
       semanticLabel: semanticLabel,
+      errorBuilder: fallbackAssetName == null
+          ? null
+          : (_, _, _) => Image.asset(
+              'assets/images/fai/$fallbackAssetName',
+              fit: BoxFit.contain,
+              semanticLabel: semanticLabel,
+            ),
     ),
   );
 }
