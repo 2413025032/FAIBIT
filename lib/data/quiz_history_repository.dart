@@ -8,6 +8,8 @@ class QuizHistoryRepository {
   QuizHistoryRepository(this.preferences);
 
   static const _storageKey = 'quiz_attempts_v1';
+  static const practiceType = 'Latihan Santai';
+  static const challengeType = 'Challenge';
   static late QuizHistoryRepository instance;
   static QuizHistoryRepository? _configured;
   final SharedPreferences preferences;

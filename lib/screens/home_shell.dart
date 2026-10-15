@@ -57,7 +57,14 @@ class _HomeShellState extends State<HomeShell> {
     bottomNavigationBar: NavigationBar(
       selectedIndex: destination.index,
       onDestinationSelected: (index) {
-        selectDestination(RootDestination.values[index]);
+        final selectedDestination = switch (index) {
+          0 => RootDestination.home,
+          1 => RootDestination.materials,
+          2 => RootDestination.history,
+          3 => RootDestination.profile,
+          _ => RootDestination.home,
+        };
+        selectDestination(selectedDestination);
       },
       labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
       destinations: const [

@@ -20,7 +20,11 @@ class HistoryPage extends StatefulWidget {
 
 class _HistoryPageState extends State<HistoryPage> {
   int filter = 0;
-  final labels = ['Semua', 'Latihan Santai', 'Challenge'];
+  static const labels = [
+    'Semua',
+    QuizHistoryRepository.practiceType,
+    QuizHistoryRepository.challengeType,
+  ];
   late Future<List<QuizAttempt>> _attempts;
 
   @override
@@ -33,7 +37,22 @@ class _HistoryPageState extends State<HistoryPage> {
   void didUpdateWidget(covariant HistoryPage oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.refreshToken != widget.refreshToken) {
-      setState(() => _attempts = QuizHistoryRepository.loadStoredAttempts());
+      _reloadAttempts();
+    }
+  }
+
+  Future<void> _reloadAttempts() async {
+    try {
+      final attempts = await QuizHistoryRepository.loadStoredAttempts();
+      if (!mounted) return;
+      setState(() {
+        _attempts = Future<List<QuizAttempt>>.value(attempts);
+      });
+    } catch (error, stackTrace) {
+      if (!mounted) return;
+      setState(() {
+        _attempts = Future<List<QuizAttempt>>.error(error, stackTrace);
+      });
     }
   }
 
@@ -75,10 +94,9 @@ class _HistoryPageState extends State<HistoryPage> {
                   icon: Icons.error_outline,
                   title: 'Riwayat belum dapat dimuat',
                   message: '${snapshot.error}',
-                  onPressed: () => setState(
-                    () =>
-                        _attempts = QuizHistoryRepository.loadStoredAttempts(),
-                  ),
+                  onPressed: () {
+                    _reloadAttempts();
+                  },
                   buttonLabel: 'Coba lagi',
                 );
               }

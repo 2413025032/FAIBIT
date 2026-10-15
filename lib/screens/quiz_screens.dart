@@ -251,7 +251,7 @@ class _QuizPageState extends State<QuizPage> {
     return QuizAttempt(
       id: 'practice-${DateTime.now().microsecondsSinceEpoch}',
       completedAt: DateTime.now(),
-      type: 'Latihan Santai',
+      type: QuizHistoryRepository.practiceType,
       material: widget.materialTitle,
       totalQuestions: practiceQuestions.length,
       correctAnswers: practiceQuestions
@@ -878,7 +878,7 @@ class _ChallengePageState extends State<ChallengePage> {
         QuizAttempt(
           id: 'challenge-${DateTime.now().microsecondsSinceEpoch}',
           completedAt: DateTime.now(),
-          type: 'Challenge',
+          type: QuizHistoryRepository.challengeType,
           material: widget.materialTitle,
           totalQuestions: totalQuestions,
           correctAnswers: correctAnswers,
