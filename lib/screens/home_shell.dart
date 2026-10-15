@@ -20,6 +20,7 @@ class HomeShell extends StatefulWidget {
 
 class _HomeShellState extends State<HomeShell> {
   RootDestination destination = RootDestination.home;
+  int historyRefreshToken = 0;
   late UserProfile profile;
 
   @override
@@ -30,6 +31,9 @@ class _HomeShellState extends State<HomeShell> {
 
   void selectDestination(RootDestination value) {
     if (value == destination) return;
+    if (value == RootDestination.history) {
+      historyRefreshToken++;
+    }
     setState(() => destination = value);
   }
 
@@ -45,7 +49,7 @@ class _HomeShellState extends State<HomeShell> {
         children: [
           HomePage(profile: profile, onDestinationSelected: selectDestination),
           const MaterialListPage(),
-          const HistoryPage(),
+          HistoryPage(refreshToken: historyRefreshToken),
           ProfilePage(profile: profile, onProfileChanged: updateProfile),
         ],
       ),

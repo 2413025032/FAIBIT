@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
+import '../data/quiz_history_repository.dart';
 import '../data/mock_data.dart';
 import '../models/models.dart';
 import '../theme/app_theme.dart';
@@ -209,6 +210,7 @@ class _QuizPageState extends State<QuizPage> {
   int selected = -1;
   final List<int> answers = [];
   final DateTime startedAt = DateTime.now();
+  bool completionStarted = false;
 
   List<Question> get practiceQuestions {
     if (widget.materialTitle != 'Semua Materi') {
@@ -245,9 +247,64 @@ class _QuizPageState extends State<QuizPage> {
     );
   }
 
-  void _continueAfterFeedback() {
+  QuizAttempt _createAttempt(List<int> completedAnswers, Duration duration) {
+    return QuizAttempt(
+      id: 'practice-${DateTime.now().microsecondsSinceEpoch}',
+      completedAt: DateTime.now(),
+      type: 'Latihan Santai',
+      material: widget.materialTitle,
+      totalQuestions: practiceQuestions.length,
+      correctAnswers: practiceQuestions
+          .asMap()
+          .entries
+          .where((entry) => completedAnswers[entry.key] == entry.value.correct)
+          .length,
+      incorrectAnswers: practiceQuestions.length -
+          practiceQuestions
+              .asMap()
+              .entries
+              .where(
+                (entry) => completedAnswers[entry.key] == entry.value.correct,
+              )
+              .length,
+      score: (practiceQuestions
+                  .asMap()
+                  .entries
+                  .where(
+                    (entry) =>
+                        completedAnswers[entry.key] == entry.value.correct,
+                  )
+                  .length *
+              100 /
+              practiceQuestions.length)
+          .round(),
+      durationSeconds: duration.inSeconds,
+      questions: _snapshotQuestions(practiceQuestions, completedAnswers),
+    );
+  }
+
+  void _continueAfterFeedback() async {
     if (currentQuestion == totalQuestions - 1) {
+      if (completionStarted) return;
+      completionStarted = true;
       final completedAnswers = List<int>.from(answers);
+      try {
+        await QuizHistoryRepository.instance.saveAttempt(
+          _createAttempt(
+            completedAnswers,
+            DateTime.now().difference(startedAt),
+          ),
+        );
+      } catch (error) {
+        completionStarted = false;
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Riwayat gagal disimpan: $error')),
+          );
+        }
+        return;
+      }
+      if (!mounted) return;
       Navigator.pop(context);
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!mounted) return;
@@ -687,9 +744,11 @@ class _ChallengePageState extends State<ChallengePage> {
   int countdown = 3;
   bool isCountingDown = true;
   bool isExitDialogVisible = false;
+  bool completionStarted = false;
 
   Timer? timer;
   Timer? countdownTimer;
+  DateTime? startedAt;
 
   final List<int> answers = [];
 
@@ -718,6 +777,7 @@ class _ChallengePageState extends State<ChallengePage> {
   }
 
   void _startTimer() {
+    startedAt = DateTime.now();
     timer = Timer.periodic(const Duration(seconds: 1), (t) {
       if (seconds <= 1) {
         t.cancel();
@@ -786,7 +846,9 @@ class _ChallengePageState extends State<ChallengePage> {
     }
   }
 
-  void finish({bool timeExpired = false}) {
+  void finish({bool timeExpired = false}) async {
+    if (completionStarted) return;
+    completionStarted = true;
     timer?.cancel();
 
     if (!mounted) return;
@@ -805,6 +867,37 @@ class _ChallengePageState extends State<ChallengePage> {
         )
         .length;
     final totalQuestions = challengeQuestions.length;
+    final duration = Duration(
+      seconds: timeExpired
+          ? 10 * 60
+          : DateTime.now().difference(startedAt ?? DateTime.now()).inSeconds,
+    );
+
+    try {
+      await QuizHistoryRepository.instance.saveAttempt(
+        QuizAttempt(
+          id: 'challenge-${DateTime.now().microsecondsSinceEpoch}',
+          completedAt: DateTime.now(),
+          type: 'Challenge',
+          material: widget.materialTitle,
+          totalQuestions: totalQuestions,
+          correctAnswers: correctAnswers,
+          incorrectAnswers: totalQuestions - correctAnswers,
+          score: (correctAnswers * 100 / totalQuestions).round(),
+          durationSeconds: duration.inSeconds,
+          questions: _snapshotQuestions(challengeQuestions, answers),
+        ),
+      );
+    } catch (error) {
+      completionStarted = false;
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Riwayat gagal disimpan: $error')));
+      }
+      return;
+    }
+    if (!mounted) return;
 
     Navigator.pushReplacement(
       context,
@@ -816,9 +909,7 @@ class _ChallengePageState extends State<ChallengePage> {
           correctAnswers: correctAnswers,
           incorrectAnswers: totalQuestions - correctAnswers,
           score: (correctAnswers * 100 / totalQuestions).round(),
-          duration: Duration(
-            seconds: timeExpired ? 10 * 60 : 10 * 60 - seconds,
-          ),
+          duration: duration,
         ),
       ),
     );
@@ -1321,6 +1412,25 @@ String _formatDuration(Duration duration) {
   final seconds = (duration.inSeconds % 60).toString().padLeft(2, '0');
   return '$minutes:$seconds';
 }
+
+List<QuizQuestionResult> _snapshotQuestions(
+  List<Question> questions,
+  List<int> answers,
+) => questions.asMap().entries.map((entry) {
+  final question = entry.value;
+  final selectedIndex = entry.key < answers.length ? answers[entry.key] : -1;
+  final selectedAnswer =
+      selectedIndex >= 0 && selectedIndex < question.options.length
+      ? question.options[selectedIndex]
+      : 'Tidak dijawab';
+  return QuizQuestionResult(
+    question: question.question,
+    selectedAnswer: selectedAnswer,
+    correctAnswer: question.options[question.correct],
+    isCorrect: selectedIndex == question.correct,
+    explanation: question.explanation,
+  );
+}).toList();
 
 class _PracticeResultStat extends StatelessWidget {
   const _PracticeResultStat({
