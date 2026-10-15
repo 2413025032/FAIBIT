@@ -127,36 +127,56 @@ class _ProfilePageState extends State<ProfilePage> {
         padding: const EdgeInsets.all(20),
         children: [
           OutlineCard(
-            child: Row(
+            padding: const EdgeInsets.all(18),
+            child: Column(
               children: [
-                CircleAvatar(
-                  radius: 34,
-                  backgroundColor: AppTheme.tealSurface,
-                  foregroundColor: AppTheme.darkGray,
-                  backgroundImage: profile.photoPath != null
-                      ? FileImage(File(profile.photoPath!))
-                      : null,
-                  child: profile.photoPath == null
-                      ? const Icon(Icons.person_outline, size: 38)
-                      : null,
+                Row(
+                  children: [
+                    CircleAvatar(
+                      radius: 42,
+                      backgroundColor: Theme.of(context)
+                          .colorScheme
+                          .primaryContainer,
+                      foregroundColor: Theme.of(context).colorScheme.primary,
+                      backgroundImage: profile.photoPath != null
+                          ? FileImage(File(profile.photoPath!))
+                          : null,
+                      child: profile.photoPath == null
+                          ? const Icon(Icons.person_outline, size: 46)
+                          : null,
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            profile.name,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: Theme.of(context).textTheme.headlineSmall
+                                ?.copyWith(fontWeight: FontWeight.w800),
+                          ),
+                          const SizedBox(height: 5),
+                          Text('Kelas ${profile.schoolClass}'),
+                          Text(
+                            profile.school,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: Theme.of(context).textTheme.bodySmall,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
-
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        profile.name,
-                        style: Theme.of(context).textTheme.titleLarge,
-                      ),
-                      const SizedBox(height: 3),
-                      Text('Kelas ${profile.schoolClass}'),
-                      Text(
-                        profile.school,
-                        style: Theme.of(context).textTheme.bodySmall,
-                      ),
-                    ],
+                const SizedBox(height: 18),
+                SizedBox(
+                  width: double.infinity,
+                  child: OutlinedButton.icon(
+                    onPressed: () => _openEdit(context),
+                    icon: const Icon(Icons.edit_outlined),
+                    label: const Text('Edit Profil'),
                   ),
                 ),
               ],
@@ -189,9 +209,60 @@ class _ProfilePageState extends State<ProfilePage> {
               ],
             ),
           ),
+          const SizedBox(height: 20),
+          Text(
+            'Aktivitas Terbaru',
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
+          const SizedBox(height: 8),
+          OutlineCard(child: _ActivitySummary(activity: activities.first)),
         ],
       ),
     ),
+  );
+}
+
+class _ActivitySummary extends StatelessWidget {
+  const _ActivitySummary({required this.activity});
+
+  final ActivityItem activity;
+
+  @override
+  Widget build(BuildContext context) => Row(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      CircleAvatar(
+        radius: 22,
+        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+        foregroundColor: Theme.of(context).colorScheme.primary,
+        child: Icon(
+          activity.type == 'Materi'
+              ? Icons.menu_book_outlined
+              : activity.type == 'Challenge'
+              ? Icons.emoji_events_outlined
+              : Icons.edit_note_outlined,
+        ),
+      ),
+      const SizedBox(width: 12),
+      Expanded(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              activity.title,
+              style: Theme.of(context).textTheme.titleMedium
+                  ?.copyWith(fontSize: 14),
+            ),
+            if (activity.detail.isNotEmpty) ...[
+              const SizedBox(height: 3),
+              Text(activity.detail),
+            ],
+            const SizedBox(height: 3),
+            Text(activity.time, style: Theme.of(context).textTheme.bodySmall),
+          ],
+        ),
+      ),
+    ],
   );
 }
 

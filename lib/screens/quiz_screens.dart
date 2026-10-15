@@ -408,11 +408,12 @@ class FeedbackPage extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                FaiMascot(
-                  assetName: ok ? 'faibit_happy.png' : 'faibit_encourage.png',
-                  width: 132,
-                  height: 150,
-                  semanticLabel: ok ? 'Fai senang' : 'Fai menyemangati',
+                Icon(
+                  ok ? Icons.check_circle_outline : Icons.lightbulb_outline,
+                  size: 56,
+                  color: ok
+                      ? Theme.of(context).colorScheme.primary
+                      : Theme.of(context).colorScheme.tertiary,
                 ),
                 Text(
                   ok ? 'Benar!' : 'Belum tepat',
@@ -442,12 +443,34 @@ class FeedbackPage extends StatelessWidget {
                 ),
                 const SizedBox(height: 20),
                 OutlineCard(
-                  child: Text(
-                    ok
-                        ? 'Fai ikut senang! Pertahankan pemahamanmu '
-                              'dan lanjutkan dengan percaya diri.'
-                        : 'Tidak apa-apa, proses belajar memang bertahap. '
-                              'Fai mendukungmu untuk mencoba lagi di soal berikutnya.',
+                  padding: const EdgeInsets.fromLTRB(10, 12, 14, 12),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      FaiMascot(
+                        assetName: ok
+                            ? 'faibit_happy.png'
+                            : 'faibit_encourage.png',
+                        width: 106,
+                        height: 124,
+                        semanticLabel: ok
+                            ? 'Fai senang'
+                            : 'Fai menyemangati',
+                      ),
+                      const SizedBox(width: 6),
+                      Expanded(
+                        child: SpeechBubble(
+                          child: Text(
+                            ok
+                                ? 'Fai ikut senang! Pertahankan pemahamanmu '
+                                      'dan lanjutkan dengan percaya diri.'
+                                : 'Tidak apa-apa, proses belajar memang '
+                                      'bertahap. Fai mendukungmu untuk mencoba '
+                                      'lagi di soal berikutnya.',
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
                 const SizedBox(height: 14),

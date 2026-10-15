@@ -37,6 +37,64 @@ class FaiMascot extends StatelessWidget {
   );
 }
 
+class SpeechBubble extends StatelessWidget {
+  const SpeechBubble({
+    super.key,
+    required this.child,
+    this.padding = const EdgeInsets.all(14),
+  });
+
+  final Widget child;
+  final EdgeInsets padding;
+
+  @override
+  Widget build(BuildContext context) {
+    final color = Theme.of(context).colorScheme.primaryContainer;
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        Container(
+          width: double.infinity,
+          padding: padding,
+          decoration: BoxDecoration(
+            color: color,
+            borderRadius: BorderRadius.circular(AppTheme.radius),
+          ),
+          child: child,
+        ),
+        Positioned(
+          left: -7,
+          top: 24,
+          child: CustomPaint(
+            size: const Size(12, 18),
+            painter: _SpeechBubbleTailPainter(color),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _SpeechBubbleTailPainter extends CustomPainter {
+  const _SpeechBubbleTailPainter(this.color);
+
+  final Color color;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final path = Path()
+      ..moveTo(size.width, 0)
+      ..lineTo(0, size.height / 2)
+      ..lineTo(size.width, size.height)
+      ..close();
+    canvas.drawPath(path, Paint()..color = color);
+  }
+
+  @override
+  bool shouldRepaint(covariant _SpeechBubbleTailPainter oldDelegate) =>
+      oldDelegate.color != color;
+}
+
 class EmptySlot extends StatelessWidget {
   const EmptySlot({super.key, this.width = double.infinity, this.height = 100});
   final double width, height;

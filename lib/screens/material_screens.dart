@@ -85,27 +85,30 @@ class MaterialDetailPage extends StatelessWidget {
             LayoutBuilder(
               builder: (context, constraints) {
                 final wide = constraints.maxWidth >= 380;
-                final copy = Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Teman belajarmu',
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        color: Theme.of(context).colorScheme.primary,
+                final copy = SpeechBubble(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Teman belajarmu',
+                        style: Theme.of(context).textTheme.titleMedium
+                            ?.copyWith(
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
                       ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      'Siap belajar ${material.title}?',
-                      style: Theme.of(context).textTheme.headlineSmall
-                          ?.copyWith(fontWeight: FontWeight.w800),
-                    ),
-                    const SizedBox(height: 7),
-                    const Text(
-                      'Pelajari konsepnya dengan tenang, '
-                      'selangkah demi selangkah bersama Fai.',
-                    ),
-                  ],
+                      const SizedBox(height: 4),
+                      Text(
+                        'Siap belajar ${material.title}?',
+                        style: Theme.of(context).textTheme.headlineSmall
+                            ?.copyWith(fontWeight: FontWeight.w800),
+                      ),
+                      const SizedBox(height: 7),
+                      const Text(
+                        'Pelajari konsepnya dengan tenang, '
+                        'selangkah demi selangkah bersama Fai.',
+                      ),
+                    ],
+                  ),
                 );
                 return OutlineCard(
                   padding: const EdgeInsets.fromLTRB(18, 16, 14, 16),
@@ -121,10 +124,7 @@ class MaterialDetailPage extends StatelessWidget {
                         height: wide ? 174 : 142,
                         semanticLabel: 'Fai sedang membaca',
                       ),
-                      SizedBox(
-                        width: wide ? 18 : 0,
-                        height: wide ? 0 : 12,
-                      ),
+                      SizedBox(width: wide ? 18 : 0, height: wide ? 0 : 12),
                       if (wide) Expanded(child: copy) else copy,
                     ],
                   ),

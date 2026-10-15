@@ -129,16 +129,18 @@ class HomePage extends StatelessWidget {
                       142.0,
                     );
                     return OutlineCard(
-                      padding: const EdgeInsets.fromLTRB(18, 16, 12, 16),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Expanded(
-                            child: Padding(
-                              padding: const EdgeInsets.only(right: 8),
+                      padding: const EdgeInsets.fromLTRB(18, 16, 12, 14),
+                      child: SizedBox(
+                        height: 178,
+                        child: Stack(
+                          clipBehavior: Clip.none,
+                          children: [
+                            Positioned(
+                              left: 0,
+                              top: 0,
+                              right: mascotWidth * 0.55,
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Text(
                                     'Hai,',
@@ -174,15 +176,19 @@ class HomePage extends StatelessWidget {
                                 ],
                               ),
                             ),
-                          ),
-                          FaiMascot(
-                            assetName: 'faibit_nyapa.png',
-                            fallbackAssetName: 'faibit_melambai.png',
-                            width: mascotWidth,
-                            height: 164,
-                            semanticLabel: 'Fai melambai',
-                          ),
-                        ],
+                            Positioned(
+                              right: -16,
+                              bottom: -20,
+                              child: FaiMascot(
+                                assetName: 'faibit_nyapa.png',
+                                fallbackAssetName: 'faibit_melambai.png',
+                                width: mascotWidth,
+                                height: 166,
+                                semanticLabel: 'Fai menyapa',
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     );
                   },
