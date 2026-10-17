@@ -51,9 +51,42 @@ flutter run
 
 Pastikan perangkat Android atau emulator sudah terhubung.
 
+
 ## Dokumentasi Tampilan
 
-Screenshot aplikasi akan ditambahkan pada bagian ini untuk memperlihatkan halaman Beranda, Materi, Latihan, Challenge, Riwayat, dan Profil.
+### Beranda
+![Beranda FAIBIT](screenshots/beranda.jpg)
+
+### Daftar Materi
+![Daftar Materi](screenshots/list_materi.jpg)
+
+### Persiapan Materi
+![Persiapan Materi](screenshots/persiapan_materi.jpg)
+
+### Latihan Santai
+![Latihan Santai](screenshots/latihan.jpg)
+
+### Pembahasan Jawaban
+![Pembahasan Jawaban](screenshots/pembahasan.jpg)
+
+### Hasil Latihan
+![Hasil Latihan](screenshots/hasil_latihan.jpg)
+
+### Challenge
+![Challenge FAIBIT](screenshots/challenge.jpg)
+
+### Hasil Challenge
+![Hasil Challenge](screenshots/hasil_challenge.jpg)
+
+### Riwayat Kuis
+![Riwayat Kuis](screenshots/riwayat_semua.jpg)
+
+### Profil
+![Profil FAIBIT](screenshots/profil.jpg)
+
+### Pengaturan
+![Pengaturan FAIBIT](screenshots/settings.jpg)
+
 
 ## Pengujian
 
