@@ -8,13 +8,13 @@ FAIBIT dirancang untuk membantu siswa memahami sistem bilangan dan konversinya m
 
 ## Fitur Utama
 
-- **Materi Pembelajaran:** mempelajari sistem bilangan desimal, biner, oktal, dan heksadesimal beserta konversinya.
-- **Latihan Santai:** mengerjakan soal tanpa batas waktu.
-- **Challenge:** mengerjakan soal dengan batas waktu.
-- **Pembahasan Jawaban:** melihat umpan balik dan penjelasan setelah menjawab soal.
-- **Riwayat Kuis:** melihat hasil latihan dan challenge yang telah diselesaikan.
-- **Profil dan Pengaturan:** mengatur informasi profil serta preferensi aplikasi.
-- **Maskot Fai:** karakter pendamping untuk membuat pengalaman belajar lebih menarik.
+-  Materi Pembelajaran:  mempelajari sistem bilangan desimal, biner, oktal, dan heksadesimal beserta konversinya.
+-  Latihan Santai:  mengerjakan soal tanpa batas waktu.
+-  Challenge:  mengerjakan soal dengan batas waktu.
+-  Pembahasan Jawaban:  melihat umpan balik dan penjelasan setelah menjawab soal.
+-  Riwayat Kuis:  melihat hasil latihan dan challenge yang telah diselesaikan.
+-  Profil dan Pengaturan:  mengatur informasi profil serta preferensi aplikasi.
+-  Maskot Fai:  karakter pendamping untuk membuat pengalaman belajar lebih menarik.
 
 ## Teknologi yang Digunakan
 
