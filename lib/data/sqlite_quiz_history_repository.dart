@@ -2,6 +2,28 @@ import 'package:sqflite/sqflite.dart';
 
 import '../models/models.dart';
 
+class SqliteQuizQuestionRecord {
+  const SqliteQuizQuestionRecord({
+    required this.attemptId,
+    required this.questionIndex,
+    required this.result,
+  });
+
+  final String attemptId;
+  final int questionIndex;
+  final QuizQuestionResult result;
+}
+
+class SqliteQuizAttemptRecord {
+  const SqliteQuizAttemptRecord({
+    required this.attempt,
+    required this.questions,
+  });
+
+  final QuizAttempt attempt;
+  final List<SqliteQuizQuestionRecord> questions;
+}
+
 class SqliteQuizHistoryRepository {
   const SqliteQuizHistoryRepository(this.database);
 
@@ -9,12 +31,11 @@ class SqliteQuizHistoryRepository {
 
   Future<void> saveAttempt(QuizAttempt attempt) async {
     await database.transaction((transaction) async {
-      final inserted = await transaction.insert(
+      await transaction.insert(
         'quiz_attempts',
         _attemptValues(attempt),
         conflictAlgorithm: ConflictAlgorithm.ignore,
       );
-      if (inserted == 0) return;
 
       for (var index = 0; index < attempt.questions.length; index++) {
         final result = attempt.questions[index];
@@ -26,17 +47,22 @@ class SqliteQuizHistoryRepository {
           'correct_answer': result.correctAnswer,
           'is_correct': result.isCorrect ? 1 : 0,
           'explanation': result.explanation,
-        });
+        }, conflictAlgorithm: ConflictAlgorithm.ignore);
       }
     });
   }
 
   Future<List<QuizAttempt>> loadAttempts() async {
+    final records = await loadRecords();
+    return records.map((record) => record.attempt).toList();
+  }
+
+  Future<List<SqliteQuizAttemptRecord>> loadRecords() async {
     final attemptRows = await database.query(
       'quiz_attempts',
       orderBy: 'completed_at DESC',
     );
-    final attempts = <QuizAttempt>[];
+    final records = <SqliteQuizAttemptRecord>[];
 
     for (final row in attemptRows) {
       final questionRows = await database.query(
@@ -45,9 +71,14 @@ class SqliteQuizHistoryRepository {
         whereArgs: [row['id']],
         orderBy: 'question_index ASC',
       );
-      attempts.add(_attemptFromRows(row, questionRows));
+      records.add(
+        SqliteQuizAttemptRecord(
+          attempt: _attemptFromRows(row, questionRows),
+          questions: questionRows.map(_questionRecordFromRow).toList(),
+        ),
+      );
     }
-    return attempts;
+    return records;
   }
 
   Future<int> deleteAttempt(String id) =>
@@ -89,5 +120,19 @@ class SqliteQuizHistoryRepository {
           ),
         )
         .toList(),
+  );
+
+  static SqliteQuizQuestionRecord _questionRecordFromRow(
+    Map<String, Object?> row,
+  ) => SqliteQuizQuestionRecord(
+    attemptId: row['attempt_id']! as String,
+    questionIndex: row['question_index']! as int,
+    result: QuizQuestionResult(
+      question: row['question']! as String,
+      selectedAnswer: row['selected_answer']! as String,
+      correctAnswer: row['correct_answer']! as String,
+      isCorrect: row['is_correct']! as int == 1,
+      explanation: row['explanation']! as String,
+    ),
   );
 }
