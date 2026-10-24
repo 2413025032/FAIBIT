@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:faibit/main.dart';
+import 'package:faibit/data/user_profile_repository.dart';
 import 'package:faibit/models/models.dart';
 import 'package:faibit/screens/home_shell.dart';
 import 'package:faibit/settings/app_settings.dart';
@@ -28,6 +29,7 @@ void main() {
     addTearDown(tester.view.reset);
     SharedPreferences.setMockInitialValues({});
     final preferences = await SharedPreferences.getInstance();
+    UserProfileRepository.configure(UserProfileRepository(preferences));
     final settings = AppSettingsController(preferences: preferences)..load();
     await tester.pumpWidget(
       AppSettingsScope(controller: settings, child: const FaibitApp()),
@@ -58,6 +60,10 @@ void main() {
 
     expect(find.text('Hai,'), findsOneWidget);
     expect(find.text('Alya!'), findsOneWidget);
+    final restored = await UserProfileRepository(preferences).load();
+    expect(restored?.name, 'Alya');
+    expect(restored?.schoolClass, 'X TJKT 1');
+    expect(restored?.school, 'SMK Negeri 1 Bandar Lampung');
     expect(find.byType(NavigationDestination), findsNWidgets(4));
     expect(
       find.descendant(

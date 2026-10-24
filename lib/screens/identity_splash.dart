@@ -4,11 +4,14 @@ import 'package:flutter/material.dart';
 
 import '../theme/app_theme.dart';
 import '../models/models.dart';
+import '../data/user_profile_repository.dart';
 import '../widgets/ui.dart';
 import 'home_shell.dart';
 
 class SplashScreen extends StatefulWidget {
-  const SplashScreen({super.key});
+  const SplashScreen({super.key, this.initialProfile});
+
+  final UserProfile? initialProfile;
   @override
   State<SplashScreen> createState() => _SplashScreenState();
 }
@@ -37,7 +40,11 @@ class _SplashScreenState extends State<SplashScreen>
       if (mounted) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (_) => const IdentityPage()),
+          MaterialPageRoute(
+            builder: (_) => widget.initialProfile == null
+                ? const IdentityPage()
+                : HomeShell(profile: widget.initialProfile!),
+          ),
         );
       }
     });
@@ -121,19 +128,17 @@ class _IdentityPageState extends State<IdentityPage> {
     super.dispose();
   }
 
-  void submit() {
+  Future<void> submit() async {
     if (key.currentState!.validate()) {
+      final profile = UserProfile(
+        name: name.text.trim(),
+        schoolClass: schoolClass.text.trim(),
+        school: school.text.trim(),
+      );
+      await UserProfileRepository.instance.save(profile);
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(
-          builder: (_) => HomeShell(
-            profile: UserProfile(
-              name: name.text.trim(),
-              schoolClass: schoolClass.text.trim(),
-              school: school.text.trim(),
-            ),
-          ),
-        ),
+        MaterialPageRoute(builder: (_) => HomeShell(profile: profile)),
       );
     }
   }

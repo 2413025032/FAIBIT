@@ -363,7 +363,7 @@ class ProfilePage extends StatefulWidget {
   });
 
   final UserProfile profile;
-  final ValueChanged<UserProfile> onProfileChanged;
+  final Future<void> Function(UserProfile) onProfileChanged;
 
   @override
   State<ProfilePage> createState() => _ProfilePageState();
@@ -373,7 +373,8 @@ class _ProfilePageState extends State<ProfilePage> {
   late Future<List<QuizAttempt>> _recentAttempts;
 
   UserProfile get profile => widget.profile;
-  ValueChanged<UserProfile> get onProfileChanged => widget.onProfileChanged;
+  Future<void> Function(UserProfile) get onProfileChanged =>
+      widget.onProfileChanged;
 
   @override
   void initState() {

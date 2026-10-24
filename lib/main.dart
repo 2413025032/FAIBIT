@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'screens/identity_splash.dart';
+import 'data/user_profile_repository.dart';
+import 'models/models.dart';
 import 'data/sqlite_quiz_history_provider.dart';
 import 'data/quiz_history_repository.dart';
 import 'settings/app_settings.dart';
@@ -14,12 +16,22 @@ Future<void> main() async {
     preferences: preferences,
   );
   QuizHistoryRepository.configureStore(historyProvider.repository);
+  final profileRepository = UserProfileRepository(preferences);
+  final profile = await profileRepository.load();
   final settings = AppSettingsController(preferences: preferences)..load();
-  runApp(AppSettingsScope(controller: settings, child: const FaibitApp()));
+  UserProfileRepository.configure(profileRepository);
+  runApp(
+    AppSettingsScope(
+      controller: settings,
+      child: FaibitApp(initialProfile: profile),
+    ),
+  );
 }
 
 class FaibitApp extends StatelessWidget {
-  const FaibitApp({super.key});
+  const FaibitApp({super.key, this.initialProfile});
+
+  final UserProfile? initialProfile;
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +47,7 @@ class FaibitApp extends StatelessWidget {
             .copyWith(textScaler: TextScaler.linear(settings.textScale)),
         child: child!,
       ),
-      home: const SplashScreen(),
+      home: SplashScreen(initialProfile: initialProfile),
     );
   }
 }

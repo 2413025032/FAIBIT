@@ -16,7 +16,7 @@ class EditProfilePage extends StatefulWidget {
   });
 
   final UserProfile profile;
-  final ValueChanged<UserProfile> onSaved;
+  final Future<void> Function(UserProfile) onSaved;
 
   @override
   State<EditProfilePage> createState() => _EditProfilePageState();
@@ -32,9 +32,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
   Future<void> _pickProfileImage() async {
     final picker = ImagePicker();
 
-    final pickedFile = await picker.pickImage(
-      source: ImageSource.gallery,
-    );
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
 
     if (pickedFile == null) return;
 
@@ -70,16 +68,14 @@ class _EditProfilePageState extends State<EditProfilePage> {
         _profileImage?.path != widget.profile.photoPath;
   }
 
-  void _save() {
+  Future<void> _save() async {
     final name = _nameController.text.trim();
     final schoolClass = _classController.text.trim();
     final school = _schoolController.text.trim();
 
     if (name.isEmpty || schoolClass.isEmpty || school.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Nama, kelas, dan sekolah wajib diisi.'),
-        ),
+        const SnackBar(content: Text('Nama, kelas, dan sekolah wajib diisi.')),
       );
       return;
     }
@@ -91,208 +87,194 @@ class _EditProfilePageState extends State<EditProfilePage> {
       photoPath: _profileImage?.path,
     );
 
-    widget.onSaved(updatedProfile);
+    await widget.onSaved(updatedProfile);
     Navigator.of(context).pop();
   }
 
   Future<bool> _handleBack() async {
-  if (!_hasChanges) {
-    return true;
-  }
+    if (!_hasChanges) {
+      return true;
+    }
 
-  final result = await showDialog<String>(
-    context: context,
-    barrierDismissible: false,
-    builder: (dialogContext) => Dialog(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(24),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(24, 24, 24, 20),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Perubahan belum disimpan',
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.w700,
+    final result = await showDialog<String>(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogContext) => Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(24, 24, 24, 20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Perubahan belum disimpan',
+                style: Theme.of(context).textTheme.titleLarge
+                    ?.copyWith(fontWeight: FontWeight.w700),
+              ),
+              const SizedBox(height: 12),
+              Text(
+                'Kamu memiliki perubahan pada profil yang belum disimpan.',
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+              const SizedBox(height: 24),
+              Wrap(
+                alignment: WrapAlignment.end,
+                spacing: 8,
+                runSpacing: 8,
+                children: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(dialogContext).pop('cancel');
+                    },
+                    child: const Text('Batal'),
                   ),
-            ),
-            const SizedBox(height: 12),
-            Text(
-              'Kamu memiliki perubahan pada profil yang belum disimpan.',
-              style: Theme.of(context).textTheme.bodyMedium,
-            ),
-            const SizedBox(height: 24),
-            Wrap(
-              alignment: WrapAlignment.end,
-              spacing: 8,
-              runSpacing: 8,
-              children: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(dialogContext).pop('cancel');
-                  },
-                  child: const Text('Batal'),
-                ),
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(dialogContext).pop('discard');
-                  },
-                  style: TextButton.styleFrom(
-                    foregroundColor: Theme.of(context).colorScheme.error,
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(dialogContext).pop('discard');
+                    },
+                    style: TextButton.styleFrom(
+                      foregroundColor: Theme.of(context).colorScheme.error,
+                    ),
+                    child: const Text('Buang'),
                   ),
-                  child: const Text('Buang'),
-                ),
-                FilledButton(
-                  onPressed: () {
-                    Navigator.of(dialogContext).pop('save');
-                  },
-                  child: const Text('Simpan'),
-                ),
-              ],
-            ),
-          ],
+                  FilledButton(
+                    onPressed: () {
+                      Navigator.of(dialogContext).pop('save');
+                    },
+                    child: const Text('Simpan'),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
-    ),
-  );
+    );
 
-  if (result == 'save') {
-    _save();
+    if (result == 'save') {
+      _save();
+      return false;
+    }
+
+    if (result == 'discard') {
+      return true;
+    }
+
     return false;
   }
 
-  if (result == 'discard') {
-    return true;
-  }
+  @override
+  Widget build(BuildContext context) {
+    return PopScope(
+      canPop: !_hasChanges,
+      onPopInvokedWithResult: (didPop, result) async {
+        if (didPop) return;
 
-  return false;
-}
-
-@override
-Widget build(BuildContext context) {
-  return PopScope(
-    canPop: !_hasChanges,
-    onPopInvokedWithResult: (didPop, result) async {
-      if (didPop) return;
-
-      final shouldPop = await _handleBack();
-
-      if (shouldPop && mounted) {
-        Navigator.of(context).pop();
-      }
-    },
-    child: Scaffold(
-      appBar: PageTitle(
-      title: 'Edit Profil',
-      showBack: true,
-      onBack: () async {
         final shouldPop = await _handleBack();
 
         if (shouldPop && mounted) {
           Navigator.of(context).pop();
         }
       },
-    ),
-      body: SafeArea(
-        child: ListView(
-          padding: const EdgeInsets.all(20),
-          children: [
-            Center(
-              child: Stack(
-                alignment: Alignment.bottomRight,
-                children: [
-                  CircleAvatar(
-                    radius: 48,
-                    backgroundColor: AppTheme.tealSurface,
-                    foregroundColor: AppTheme.darkGray,
-                    backgroundImage:
-                        _profileImage != null ? FileImage(_profileImage!) : null,
-                    child: _profileImage == null
-                        ? const Icon(
-                            Icons.person_outline,
-                            size: 52,
-                          )
-                        : null,
-                  ),
-                  Material(
-                    color: Theme.of(context).colorScheme.primary,
-                    shape: const CircleBorder(),
-                    child: InkWell(
-                      onTap: _pickProfileImage,
-                      customBorder: const CircleBorder(),
-                      child: const Padding(
-                        padding: EdgeInsets.all(7),
-                        child: Icon(
-                          Icons.edit_outlined,
-                          color: Colors.white,
-                          size: 18,
+      child: Scaffold(
+        appBar: PageTitle(
+          title: 'Edit Profil',
+          showBack: true,
+          onBack: () async {
+            final shouldPop = await _handleBack();
+
+            if (shouldPop && mounted) {
+              Navigator.of(context).pop();
+            }
+          },
+        ),
+        body: SafeArea(
+          child: ListView(
+            padding: const EdgeInsets.all(20),
+            children: [
+              Center(
+                child: Stack(
+                  alignment: Alignment.bottomRight,
+                  children: [
+                    CircleAvatar(
+                      radius: 48,
+                      backgroundColor: AppTheme.tealSurface,
+                      foregroundColor: AppTheme.darkGray,
+                      backgroundImage: _profileImage != null
+                          ? FileImage(_profileImage!)
+                          : null,
+                      child: _profileImage == null
+                          ? const Icon(Icons.person_outline, size: 52)
+                          : null,
+                    ),
+                    Material(
+                      color: Theme.of(context).colorScheme.primary,
+                      shape: const CircleBorder(),
+                      child: InkWell(
+                        onTap: _pickProfileImage,
+                        customBorder: const CircleBorder(),
+                        child: const Padding(
+                          padding: EdgeInsets.all(7),
+                          child: Icon(
+                            Icons.edit_outlined,
+                            color: Colors.white,
+                            size: 18,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-            const SizedBox(height: 28),
-            Text(
-              'Nama',
-              style: Theme.of(context).textTheme.labelLarge,
-            ),
-            const SizedBox(height: 8),
-            TextField(
-              controller: _nameController,
-              onChanged: (_) => setState(() {}),
-              textInputAction: TextInputAction.next,
-              decoration: const InputDecoration(
-                hintText: 'Masukkan nama',
-                prefixIcon: Icon(Icons.person_outline),
+              const SizedBox(height: 28),
+              Text('Nama', style: Theme.of(context).textTheme.labelLarge),
+              const SizedBox(height: 8),
+              TextField(
+                controller: _nameController,
+                onChanged: (_) => setState(() {}),
+                textInputAction: TextInputAction.next,
+                decoration: const InputDecoration(
+                  hintText: 'Masukkan nama',
+                  prefixIcon: Icon(Icons.person_outline),
+                ),
               ),
-            ),
-            const SizedBox(height: 18),
-            Text(
-              'Kelas',
-              style: Theme.of(context).textTheme.labelLarge,
-            ),
-            const SizedBox(height: 8),
-            TextField(
-              controller: _classController,
-              onChanged: (_) => setState(() {}),
-              textInputAction: TextInputAction.next,
-              decoration: const InputDecoration(
-                hintText: 'Masukkan kelas',
-                prefixIcon: Icon(Icons.school_outlined),
+              const SizedBox(height: 18),
+              Text('Kelas', style: Theme.of(context).textTheme.labelLarge),
+              const SizedBox(height: 8),
+              TextField(
+                controller: _classController,
+                onChanged: (_) => setState(() {}),
+                textInputAction: TextInputAction.next,
+                decoration: const InputDecoration(
+                  hintText: 'Masukkan kelas',
+                  prefixIcon: Icon(Icons.school_outlined),
+                ),
               ),
-            ),
-            const SizedBox(height: 18),
-            Text(
-              'Sekolah',
-              style: Theme.of(context).textTheme.labelLarge,
-            ),
-            const SizedBox(height: 8),
-            TextField(
-              controller: _schoolController,
-              onChanged: (_) => setState(() {}),
-              textInputAction: TextInputAction.done,
-              decoration: const InputDecoration(
-                hintText: 'Masukkan sekolah',
-                prefixIcon: Icon(Icons.account_balance_outlined),
+              const SizedBox(height: 18),
+              Text('Sekolah', style: Theme.of(context).textTheme.labelLarge),
+              const SizedBox(height: 8),
+              TextField(
+                controller: _schoolController,
+                onChanged: (_) => setState(() {}),
+                textInputAction: TextInputAction.done,
+                decoration: const InputDecoration(
+                  hintText: 'Masukkan sekolah',
+                  prefixIcon: Icon(Icons.account_balance_outlined),
+                ),
               ),
-            ),
-            const SizedBox(height: 28),
-            SizedBox(
-              width: double.infinity,
-              child: FilledButton(
-                onPressed: _save,
-                child: const Text('Simpan'),
+              const SizedBox(height: 28),
+              SizedBox(
+                width: double.infinity,
+                child: FilledButton(
+                  onPressed: _save,
+                  child: const Text('Simpan'),
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
-    ),
     );
   }
 }
@@ -432,9 +414,9 @@ class SettingsPage extends StatelessWidget {
           ),
           const SizedBox(height: 10),
           OutlineCard(
-            onTap: () => Navigator.of(context).push(
-              MaterialPageRoute(builder: (_) => const AboutPage()),
-            ),
+            onTap: () =>
+                Navigator.of(context)
+                    .push(MaterialPageRoute(builder: (_) => const AboutPage())),
             child: const Row(
               children: [
                 Icon(Icons.info_outline),
@@ -480,10 +462,7 @@ class MaterialSourcesPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const PageTitle(
-        title: 'Sumber Materi',
-        showBack: true,
-      ),
+      appBar: const PageTitle(title: 'Sumber Materi', showBack: true),
       body: const Padding(
         padding: EdgeInsets.all(20),
         child: Text(
@@ -501,19 +480,13 @@ class AboutPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const PageTitle(
-        title: 'Tentang Aplikasi',
-        showBack: true,
-      ),
+      appBar: const PageTitle(title: 'Tentang Aplikasi', showBack: true),
       body: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'FAIBIT',
-              style: Theme.of(context).textTheme.headlineSmall,
-            ),
+            Text('FAIBIT', style: Theme.of(context).textTheme.headlineSmall),
             const SizedBox(height: 8),
             Text(
               'Aplikasi pembelajaran interaktif Sistem Bilangan '

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../models/models.dart';
+import '../data/user_profile_repository.dart';
 import '../screens/profile_settings_screens.dart';
 import '../widgets/ui.dart';
 import 'history_profile.dart';
@@ -37,7 +38,8 @@ class _HomeShellState extends State<HomeShell> {
     setState(() => destination = value);
   }
 
-  void updateProfile(UserProfile value) {
+  Future<void> updateProfile(UserProfile value) async {
+    await UserProfileRepository.instance.save(value);
     setState(() => profile = value);
   }
 

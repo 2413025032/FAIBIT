@@ -138,7 +138,7 @@ void main() {
             schoolClass: 'X TJKT 1',
             school: 'SMK FAIBIT',
           ),
-          onProfileChanged: (_) {},
+          onProfileChanged: (_) async {},
         ),
       ),
     );
