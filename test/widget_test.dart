@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:faibit/main.dart';
 import 'package:faibit/models/models.dart';
 import 'package:faibit/screens/home_shell.dart';
+import 'package:faibit/settings/app_settings.dart';
 
 void main() {
   test('UserProfile carries name, school class, and school', () {
@@ -21,7 +23,15 @@ void main() {
   testWidgets('validates identity and opens the four-destination home shell', (
     WidgetTester tester,
   ) async {
-    await tester.pumpWidget(const FaibitApp());
+    tester.view.physicalSize = const Size(800, 1000);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    SharedPreferences.setMockInitialValues({});
+    final preferences = await SharedPreferences.getInstance();
+    final settings = AppSettingsController(preferences: preferences)..load();
+    await tester.pumpWidget(
+      AppSettingsScope(controller: settings, child: const FaibitApp()),
+    );
 
     expect(find.text('FAIBIT'), findsOneWidget);
     await tester.pump(const Duration(seconds: 3));
@@ -35,15 +45,19 @@ void main() {
     expect(find.text('Sekolah wajib diisi'), findsOneWidget);
 
     await tester.enterText(find.byType(TextFormField).at(0), 'Alya');
+    await tester.pump();
     await tester.enterText(find.byType(TextFormField).at(1), 'X TJKT 1');
+    await tester.pump();
     await tester.enterText(
       find.byType(TextFormField).at(2),
       'SMK Negeri 1 Bandar Lampung',
     );
-    await tester.tap(find.text('Mulai Belajar'));
+    await tester.pump();
+    await tester.tap(find.byType(FilledButton).last);
     await tester.pumpAndSettle();
 
-    expect(find.text('Hai, Alya!'), findsOneWidget);
+    expect(find.text('Hai,'), findsOneWidget);
+    expect(find.text('Alya!'), findsOneWidget);
     expect(find.byType(NavigationDestination), findsNWidgets(4));
     expect(
       find.descendant(
@@ -64,8 +78,10 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Alya'), findsOneWidget);
-    expect(find.text('Kelas X TJKT 1'), findsOneWidget);
-    expect(find.text('SMK Negeri 1 Bandar Lampung'), findsOneWidget);
+    expect(
+      find.text('Kelas X TJKT 1 • SMK Negeri 1 Bandar Lampung'),
+      findsOneWidget,
+    );
     expect(find.byType(NavigationBar), findsOneWidget);
   });
 

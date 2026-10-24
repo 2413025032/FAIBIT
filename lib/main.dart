@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'screens/identity_splash.dart';
+import 'data/sqlite_quiz_history_provider.dart';
 import 'data/quiz_history_repository.dart';
 import 'settings/app_settings.dart';
 import 'theme/app_theme.dart';
@@ -9,7 +10,10 @@ import 'theme/app_theme.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final preferences = await SharedPreferences.getInstance();
-  QuizHistoryRepository.configure(preferences);
+  final historyProvider = await SqliteQuizHistoryProvider.initialize(
+    preferences: preferences,
+  );
+  QuizHistoryRepository.configureStore(historyProvider.repository);
   final settings = AppSettingsController(preferences: preferences)..load();
   runApp(AppSettingsScope(controller: settings, child: const FaibitApp()));
 }

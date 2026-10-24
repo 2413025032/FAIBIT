@@ -4,14 +4,20 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/models.dart';
 
-class QuizHistoryRepository {
+abstract interface class QuizHistoryStore {
+  Future<List<QuizAttempt>> loadAttempts();
+
+  Future<void> saveAttempt(QuizAttempt attempt);
+}
+
+class QuizHistoryRepository implements QuizHistoryStore {
   QuizHistoryRepository(this.preferences);
 
   static const _storageKey = 'quiz_attempts_v1';
   static const practiceType = 'Latihan Santai';
   static const challengeType = 'Challenge';
-  static late QuizHistoryRepository instance;
-  static QuizHistoryRepository? _configured;
+  static late QuizHistoryStore instance;
+  static QuizHistoryStore? _configured;
   final SharedPreferences preferences;
 
   static void configure(SharedPreferences preferences) {
@@ -19,11 +25,17 @@ class QuizHistoryRepository {
     instance = _configured!;
   }
 
+  static void configureStore(QuizHistoryStore store) {
+    _configured = store;
+    instance = store;
+  }
+
   static Future<List<QuizAttempt>> loadStoredAttempts() async {
     if (_configured != null) return _configured!.loadAttempts();
     return [];
   }
 
+  @override
   Future<List<QuizAttempt>> loadAttempts() async {
     final raw = preferences.getString(_storageKey);
     if (raw == null || raw.isEmpty) return [];
@@ -43,6 +55,7 @@ class QuizHistoryRepository {
     }
   }
 
+  @override
   Future<void> saveAttempt(QuizAttempt attempt) async {
     final attempts = await loadAttempts();
     if (attempts.any((stored) => stored.id == attempt.id)) return;

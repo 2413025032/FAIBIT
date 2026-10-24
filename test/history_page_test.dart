@@ -31,6 +31,23 @@ QuizAttempt _attempt({
   ],
 );
 
+class _MemoryHistoryStore implements QuizHistoryStore {
+  _MemoryHistoryStore(this.attempts);
+
+  final List<QuizAttempt> attempts;
+
+  @override
+  Future<List<QuizAttempt>> loadAttempts() async =>
+      List<QuizAttempt>.of(attempts);
+
+  @override
+  Future<void> saveAttempt(QuizAttempt attempt) async {
+    if (attempts.every((stored) => stored.id != attempt.id)) {
+      attempts.add(attempt);
+    }
+  }
+}
+
 void main() {
   testWidgets('loads history and refreshes without async setState error', (
     tester,
@@ -93,5 +110,39 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Desimal'), findsOneWidget);
     expect(find.text('Biner'), findsNothing);
+  });
+
+  testWidgets('History and Profile read attempts from SQLite store', (
+    tester,
+  ) async {
+    final store = _MemoryHistoryStore([
+      _attempt(
+        id: 'sqlite-ui-1',
+        type: QuizHistoryRepository.challengeType,
+        material: 'Desimal',
+      ),
+    ]);
+    QuizHistoryRepository.configureStore(store);
+
+    await tester.pumpWidget(
+      const MaterialApp(home: Scaffold(body: HistoryPage(refreshToken: 0))),
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('Desimal'), findsOneWidget);
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: ProfilePage(
+          profile: const UserProfile(
+            name: 'Alya',
+            schoolClass: 'X TJKT 1',
+            school: 'SMK FAIBIT',
+          ),
+          onProfileChanged: (_) {},
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('Desimal • Skor 100%'), findsOneWidget);
   });
 }

@@ -1,5 +1,6 @@
 import 'package:sqflite/sqflite.dart';
 
+import 'quiz_history_repository.dart';
 import '../models/models.dart';
 
 class SqliteQuizQuestionRecord {
@@ -24,11 +25,12 @@ class SqliteQuizAttemptRecord {
   final List<SqliteQuizQuestionRecord> questions;
 }
 
-class SqliteQuizHistoryRepository {
+class SqliteQuizHistoryRepository implements QuizHistoryStore {
   const SqliteQuizHistoryRepository(this.database);
 
   final Database database;
 
+  @override
   Future<void> saveAttempt(QuizAttempt attempt) async {
     await database.transaction((transaction) async {
       await transaction.insert(
@@ -52,6 +54,7 @@ class SqliteQuizHistoryRepository {
     });
   }
 
+  @override
   Future<List<QuizAttempt>> loadAttempts() async {
     final records = await loadRecords();
     return records.map((record) => record.attempt).toList();
