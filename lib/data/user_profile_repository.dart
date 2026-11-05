@@ -46,6 +46,14 @@ class UserProfileRepository {
     }
   }
 
+  Future<void> clear() async {
+    if (!preferences.containsKey(_storageKey)) return;
+    final removed = await preferences.remove(_storageKey);
+    if (!removed) {
+      throw StateError('Data profil pengguna tidak dapat dihapus.');
+    }
+  }
+
   Future<void> save(UserProfile profile) async {
     final saved = await preferences.setString(
       _storageKey,

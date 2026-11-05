@@ -87,6 +87,13 @@ class SqliteQuizHistoryRepository implements QuizHistoryStore {
   Future<int> deleteAttempt(String id) =>
       database.delete('quiz_attempts', where: 'id = ?', whereArgs: [id]);
 
+  Future<void> deleteAll() async {
+    await database.transaction((transaction) async {
+      await transaction.delete('quiz_question_results');
+      await transaction.delete('quiz_attempts');
+    });
+  }
+
   static Map<String, Object?> _attemptValues(QuizAttempt attempt) => {
     'id': attempt.id,
     'completed_at': attempt.completedAt.toIso8601String(),

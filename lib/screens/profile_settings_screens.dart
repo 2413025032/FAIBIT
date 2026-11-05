@@ -3,6 +3,10 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../data/sqlite_quiz_history_migrator.dart';
+import '../data/sqlite_quiz_history_provider.dart';
+import '../data/user_profile_repository.dart';
+
 import '../models/models.dart';
 import '../settings/app_settings.dart';
 import '../theme/app_theme.dart';
@@ -282,36 +286,69 @@ class _EditProfilePageState extends State<EditProfilePage> {
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
 
-  void _showDeleteConfirmation(BuildContext context) {
-    showDialog<void>(
+  Future<void> _showDeleteConfirmation(BuildContext context) async {
+    final confirmed = await showDialog<bool>(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (dialogContext) => AlertDialog(
         title: const Text('Hapus Data'),
         content: const Text(
-          'Semua data lokal FAIBIT akan dihapus. '
+          'Semua riwayat kuis, profil pengguna, dan pengaturan lokal '
+          'akan dihapus. Setelah itu, kamu perlu mengisi identitas kembali. '
           'Tindakan ini tidak dapat dibatalkan.',
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => Navigator.pop(dialogContext, false),
             child: const Text('Batal'),
           ),
           FilledButton(
-            onPressed: () {
-              Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text(
-                    'Penghapusan data belum terhubung ke penyimpanan lokal.',
-                  ),
-                ),
-              );
-            },
+            onPressed: () => Navigator.pop(dialogContext, true),
             child: const Text('Hapus Data'),
           ),
         ],
       ),
     );
+
+    if (confirmed != true || !context.mounted) return;
+    await _deleteAllLocalData(context);
+  }
+
+  Future<void> _deleteAllLocalData(BuildContext context) async {
+    final settings = AppSettingsScope.of(context);
+
+    try {
+      // Remove the legacy source first so startup migration cannot restore it.
+      final preferences = UserProfileRepository.instance.preferences;
+      for (final key in [
+        SqliteQuizHistoryMigrator.sourceKey,
+        SqliteQuizHistoryMigrator.markerKey,
+      ]) {
+        if (preferences.containsKey(key)) {
+          final removed = await preferences.remove(key);
+          if (!removed) {
+            throw StateError('Data riwayat lama tidak dapat dihapus: $key.');
+          }
+        }
+      }
+
+      // Clear both SQLite tables in one database transaction.
+      await SqliteQuizHistoryProvider.active.repository.deleteAll();
+
+      // Remove the profile and reset only FAIBIT's own display preferences.
+      await UserProfileRepository.instance.clear();
+      await settings.reset();
+
+      if (!context.mounted) return;
+      Navigator.of(context).pushNamedAndRemoveUntil(
+        '/identity',
+        (route) => false,
+      );
+    } catch (error) {
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Data belum berhasil dihapus: $error')),
+      );
+    }
   }
 
   @override

@@ -39,6 +39,9 @@ class FaibitApp extends StatelessWidget {
     return MaterialApp(
       title: 'FAIBIT',
       debugShowCheckedModeBanner: false,
+      routes: {
+        '/identity': (_) => const IdentityPage(),
+      },
       theme: AppTheme.light,
       darkTheme: AppTheme.dark,
       themeMode: settings.themeMode,

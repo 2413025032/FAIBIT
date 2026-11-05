@@ -47,6 +47,20 @@ class AppSettingsController extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> reset() async {
+    for (final key in [_themeKey, _readingSizeKey]) {
+      if (preferences.containsKey(key)) {
+        final removed = await preferences.remove(key);
+        if (!removed) {
+          throw StateError('Pengaturan lokal tidak dapat direset: $key.');
+        }
+      }
+    }
+    _themeMode = ThemeMode.light;
+    _readingSize = ReadingSize.normal;
+    notifyListeners();
+  }
+
   void load() {
     _themeMode = preferences.getString(_themeKey) == 'dark'
         ? ThemeMode.dark
