@@ -19,16 +19,33 @@ class UserProfile {
       );
 }
 
+enum MaterialVisualKind {
+  none,
+  decimalPlaceValue,
+  binaryPlaceValue,
+  octalPlaceValue,
+  hexadecimalSymbols,
+  groupingThreeBits,
+  groupingFourBits,
+  divisionByTwo,
+  divisionByEight,
+  divisionBySixteen,
+}
+
 class MaterialSection {
   const MaterialSection({
     required this.title,
     required this.content,
     this.example,
+    this.additionalExamples = const [],
+    this.visualKind = MaterialVisualKind.none,
   });
 
   final String title;
   final String content;
   final String? example;
+  final List<String> additionalExamples;
+  final MaterialVisualKind visualKind;
 }
 
 class LearningMaterial {

@@ -49,6 +49,11 @@ Nilai tempat menunjukkan nilai suatu angka berdasarkan posisinya. Pada sistem de
 10⁴ = 10.000
 10⁵ = 100.000
 ''',
+        visualKind: MaterialVisualKind.decimalPlaceValue,
+        additionalExamples: [
+          '582 = 5 × 100 + 8 × 10 + 2 × 1 = 500 + 80 + 2.',
+          '4.206 = 4 × 1.000 + 2 × 100 + 0 × 10 + 6 = 4.206.',
+        ],
       ),
       MaterialSection(
         title: 'Cara Menentukan Nilai Sebuah Bilangan Desimal',
@@ -61,6 +66,10 @@ Untuk menguraikan sebuah bilangan desimal, setiap digit dikalikan dengan nilai t
 = 300 + 40 + 7
 = 347
 ''',
+        additionalExamples: [
+          '582 = 5 × 10² + 8 × 10¹ + 2 × 10⁰ = 500 + 80 + 2.',
+          '731 = 7 × 10² + 3 × 10¹ + 1 × 10⁰ = 700 + 30 + 1.',
+        ],
       ),
       MaterialSection(
         title: 'Memahami Perubahan Nilai Berdasarkan Posisi',
@@ -88,6 +97,10 @@ Penguraian bilangan desimal dapat dilakukan dengan menjumlahkan nilai setiap dig
 
 45.608 = 40.000 + 5.000 + 600 + 0 + 8
 ''',
+        additionalExamples: [
+          '731 = 700 + 30 + 1.',
+          '8.406 = 8.000 + 400 + 0 + 6.',
+        ],
       ),
     ],
   ),
@@ -136,6 +149,11 @@ Nilai tempat pada bilangan biner menggunakan pangkat 2. Perhitungannya dimulai d
 2⁶ = 64
 2⁷ = 128
 ''',
+        visualKind: MaterialVisualKind.binaryPlaceValue,
+        additionalExamples: [
+          '1101₂ = 1 × 2³ + 1 × 2² + 0 × 2¹ + 1 × 2⁰ = 13₁₀.',
+          '10010₂ = 16 + 0 + 0 + 2 + 0 = 18₁₀.',
+        ],
       ),
       MaterialSection(
         title: 'Cara Menentukan Nilai Bilangan Biner',
@@ -148,6 +166,10 @@ Setiap digit biner dikalikan dengan nilai tempatnya. Digit 1 menunjukkan bahwa n
 = 8 + 0 + 2 + 1
 = 11₁₀
 ''',
+        additionalExamples: [
+          '1101₂ = 8 + 4 + 0 + 1 = 13₁₀.',
+          '10110₂ = 16 + 0 + 4 + 2 + 0 = 22₁₀.',
+        ],
       ),
       MaterialSection(
         title: 'Pola Bilangan Biner',
@@ -157,6 +179,10 @@ Perubahan nilai pada bilangan biner terjadi ketika digit 1 pada posisi tertentu 
         example: '''
 0₂ → 1₂ → 10₂ → 11₂ → 100₂ → 101₂ → 110₂ → 111₂ → 1000₂
 ''',
+        additionalExamples: [
+          '1010₂ + 1₂ = 1011₂.',
+          '1011₂ + 1₂ = 1100₂ karena terjadi perpindahan nilai pada beberapa bit.',
+        ],
       ),
       MaterialSection(
         title: 'Bit dan Kelompok Biner',
@@ -168,6 +194,10 @@ Bilangan biner dapat terdiri dari beberapa bit. Sebagai contoh, 1010 merupakan b
 11001100       = 8 bit
 101010101111   = 12 bit
 ''',
+        additionalExamples: [
+          '11110000₂ terdiri dari 8 bit atau 1 byte.',
+          '1010101010101010₂ terdiri dari 16 bit.',
+        ],
       ),
     ],
   ),
@@ -219,6 +249,11 @@ Nilai tempat pada bilangan oktal menggunakan pangkat 8 dan dimulai dari 8⁰ pad
 8³ = 512
 8⁴ = 4.096
 ''',
+        visualKind: MaterialVisualKind.octalPlaceValue,
+        additionalExamples: [
+          'Pada 426₈, posisi dari kanan bernilai 8⁰, 8¹, dan 8².',
+          '8³ = 512 dan 8⁴ = 4.096.',
+        ],
       ),
       MaterialSection(
         title: 'Cara Menentukan Nilai Bilangan Oktal',
@@ -236,6 +271,10 @@ Untuk menentukan nilai sebuah bilangan oktal, setiap digit dikalikan dengan nila
 = 128 + 32 + 5
 = 165₁₀
 ''',
+        additionalExamples: [
+          '326₈ = 3 × 8² + 2 × 8¹ + 6 × 8⁰ = 192 + 16 + 6 = 214₁₀.',
+          '417₈ = 4 × 64 + 1 × 8 + 7 = 271₁₀.',
+        ],
       ),
       MaterialSection(
         title: 'Hubungan Oktal dengan Biner',
@@ -253,6 +292,11 @@ Oktal    Biner
 6        110
 7        111
 ''',
+        visualKind: MaterialVisualKind.groupingThreeBits,
+        additionalExamples: [
+          '110 001₂ → 6 1 → 61₈.',
+          '100 111₂ → 4 7 → 47₈.',
+        ],
       ),
     ],
   ),
@@ -295,6 +339,11 @@ A₁₆ = 10₁₀
 C₁₆ = 12₁₀
 F₁₆ = 15₁₀
 ''',
+        visualKind: MaterialVisualKind.hexadecimalSymbols,
+        additionalExamples: [
+          'B₁₆ = 11₁₀, D₁₆ = 13₁₀, dan E₁₆ = 14₁₀.',
+          '19₁₆ menggunakan digit 1 dan 9, sedangkan 1A₁₆ menggunakan digit 1 dan nilai A (10).',
+        ],
       ),
       MaterialSection(
         title: 'Mengapa Menggunakan Huruf?',
@@ -313,6 +362,10 @@ Nilai tempat pada bilangan heksadesimal menggunakan pangkat 16. Perhitungan dimu
 16² = 256
 16³ = 4.096
 ''',
+        additionalExamples: [
+          '16² = 256, sehingga digit pada posisi ketiga dari kanan bernilai kelipatan 256.',
+          '2F₁₆ = 2 × 16¹ + 15 × 16⁰ = 32 + 15 = 47₁₀.',
+        ],
       ),
       MaterialSection(
         title: 'Cara Menentukan Nilai Bilangan Heksadesimal',
@@ -330,6 +383,10 @@ Untuk menentukan nilai desimal dari bilangan heksadesimal, ubah terlebih dahulu 
 = 48 + 15
 = 63₁₀
 ''',
+        additionalExamples: [
+          '4C₁₆ = 4 × 16 + 12 = 64 + 12 = 76₁₀.',
+          '5A₁₆ = 5 × 16 + 10 = 80 + 10 = 90₁₀.',
+        ],
       ),
       MaterialSection(
         title: 'Hubungan Heksadesimal dengan Biner',
@@ -354,6 +411,11 @@ D  = 1101
 E  = 1110
 F  = 1111
 ''',
+        visualKind: MaterialVisualKind.groupingFourBits,
+        additionalExamples: [
+          '1100₂ = C₁₆ dan 1111₂ = F₁₆.',
+          '1010 0111₂ = A7₁₆.',
+        ],
       ),
     ],
   ),
@@ -376,6 +438,10 @@ Bentuk penulisannya berbeda, tetapi nilainya tetap sama.
         example: '''
 25₁₀ = 11001₂ = 31₈ = 19₁₆
 ''',
+        additionalExamples: [
+          '31₁₀ = 11111₂ = 37₈ = 1F₁₆. Nilainya tetap sama, hanya bentuk penulisannya berbeda.',
+          '16₁₀ = 10000₂ = 20₈ = 10₁₆.',
+        ],
       ),
       MaterialSection(
         title: 'Desimal ke Biner',
@@ -398,6 +464,11 @@ Langkah-langkah:
 
 Baca dari bawah → 11001₂
 ''',
+        visualKind: MaterialVisualKind.divisionByTwo,
+        additionalExamples: [
+          '19 ÷ 2 = 9 sisa 1; 9 ÷ 2 = 4 sisa 1; 4 ÷ 2 = 2 sisa 0; 2 ÷ 2 = 1 sisa 0; 1 ÷ 2 = 0 sisa 1. Hasil: 10011₂.',
+          '34₁₀ = 100010₂. Baca sisa pembagian dari bawah ke atas.',
+        ],
       ),
       MaterialSection(
         title: 'Biner ke Desimal',
@@ -415,6 +486,10 @@ Gunakan nilai tempat berdasarkan pangkat 2. Mulai dari kanan dengan 2⁰, lalu k
 = 16 + 8 + 0 + 2 + 0
 = 26₁₀
 ''',
+        additionalExamples: [
+          '10010₂ = 1 × 16 + 0 × 8 + 0 × 4 + 1 × 2 + 0 × 1 = 18₁₀.',
+          '11101₂ = 16 + 8 + 4 + 0 + 1 = 29₁₀.',
+        ],
       ),
       MaterialSection(
         title: 'Desimal ke Oktal',
@@ -428,6 +503,11 @@ Gunakan pembagian berulang dengan 8. Catat semua sisa dan baca dari bawah ke ata
 
 Baca dari bawah → 123₈
 ''',
+        visualKind: MaterialVisualKind.divisionByEight,
+        additionalExamples: [
+          '58 ÷ 8 = 7 sisa 2; 7 ÷ 8 = 0 sisa 7. Baca dari bawah: 72₈.',
+          '73 ÷ 8 = 9 sisa 1; 9 ÷ 8 = 1 sisa 1; 1 ÷ 8 = 0 sisa 1. Hasil: 111₈.',
+        ],
       ),
       MaterialSection(
         title: 'Oktal ke Desimal',
@@ -445,6 +525,10 @@ Gunakan nilai tempat berdasarkan pangkat 8. Kalikan setiap digit dengan posisi m
 = 128 + 32 + 5
 = 165₁₀
 ''',
+        additionalExamples: [
+          '326₈ = 3 × 64 + 2 × 8 + 6 = 214₁₀.',
+          '417₈ = 4 × 64 + 1 × 8 + 7 = 271₁₀.',
+        ],
       ),
       MaterialSection(
         title: 'Desimal ke Heksadesimal',
@@ -462,6 +546,11 @@ Baca dari bawah → FE₁₆
 
 Baca dari bawah → 64₁₆
 ''',
+        visualKind: MaterialVisualKind.divisionBySixteen,
+        additionalExamples: [
+          '125 ÷ 16 = 7 sisa 13 (D); 7 ÷ 16 = 0 sisa 7. Hasil: 7D₁₆.',
+          '90 ÷ 16 = 5 sisa 10 (A). Hasil: 5A₁₆.',
+        ],
       ),
       MaterialSection(
         title: 'Heksadesimal ke Desimal',
@@ -479,6 +568,10 @@ Ubah A–F menjadi 10–15, kemudian gunakan nilai tempat berdasarkan pangkat 16
 = 48 + 15
 = 63₁₀
 ''',
+        additionalExamples: [
+          '4C₁₆ = 4 × 16 + 12 = 76₁₀.',
+          '5A₁₆ = 5 × 16 + 10 = 90₁₀.',
+        ],
       ),
       MaterialSection(
         title: 'Biner ke Oktal',
@@ -503,6 +596,11 @@ Lengkapi: 001 | 011 | 011
 
 Hasil → 133₈
 ''',
+        visualKind: MaterialVisualKind.groupingThreeBits,
+        additionalExamples: [
+          '11010101₂ → 011 | 010 | 101 → 3 | 2 | 5 → 325₈.',
+          '101011₂ → 101 | 011 → 5 | 3 → 53₈.',
+        ],
       ),
       MaterialSection(
         title: 'Oktal ke Biner',
@@ -523,6 +621,10 @@ Hasil → 101111₂
 
 Hasil → 001010011₂
 ''',
+        additionalExamples: [
+          '46₈ → 4 = 100 dan 6 = 110 → 100110₂.',
+          '25₈ → 2 = 010 dan 5 = 101 → 010101₂.',
+        ],
       ),
       MaterialSection(
         title: 'Biner ke Heksadesimal',
@@ -540,6 +642,11 @@ Lengkapi: 0101 | 1011
 
 Hasil → 5B₁₆
 ''',
+        visualKind: MaterialVisualKind.groupingFourBits,
+        additionalExamples: [
+          '10111100₂ → 1011 | 1100 → B | C → BC₁₆.',
+          '11101001₂ → 1110 | 1001 → E | 9 → E9₁₆.',
+        ],
       ),
       MaterialSection(
         title: 'Heksadesimal ke Biner',
@@ -561,6 +668,10 @@ F = 1111
 
 Hasil → 01011111₂
 ''',
+        additionalExamples: [
+          '4C₁₆ → 4 = 0100 dan C = 1100 → 01001100₂.',
+          'A7₁₆ → A = 1010 dan 7 = 0111 → 10100111₂.',
+        ],
       ),
       MaterialSection(
         title: 'Oktal ke Heksadesimal',
@@ -591,6 +702,9 @@ Kelompok:
 
 Hasil → 1D5₁₆
 ''',
+        additionalExamples: [
+          '346₈ → 011 100 110₂ → 0000 1110 0110₂ → E6₁₆.',
+        ],
       ),
       MaterialSection(
         title: 'Heksadesimal ke Oktal',
@@ -622,6 +736,9 @@ Kelompok:
 
 Hasil → 57₈
 ''',
+        additionalExamples: [
+          'A7₁₆ → 1010 0111₂ → 010 100 111₂ → 247₈.',
+        ],
       ),
       MaterialSection(
         title: 'Pola Cepat Konversi',
@@ -1084,6 +1201,451 @@ const questions = [
     ],
     0,
     'Konversi dari desimal ke basis lain dilakukan dengan pembagian berulang, lalu sisa dibaca dari belakang.',
+  ),
+];
+
+// Bank soal khusus Challenge.
+// Soal disusun berpasangan dengan indikator Latihan Santai pada materi yang sama,
+// tetapi menggunakan angka, konteks, dan redaksi yang berbeda.
+const challengeQuestionBank = [
+  // ============================================================
+  // CHALLENGE: DESIMAL
+  // ============================================================
+  Question(
+    'CD01',
+    'Desimal',
+    'Berapakah basis yang digunakan dalam sistem bilangan desimal?',
+    ['2', '8', '10', '16'],
+    2,
+    'Sistem desimal memiliki basis 10 karena menggunakan sepuluh simbol, yaitu 0 sampai 9.',
+  ),
+  Question(
+    'CD02',
+    'Desimal',
+    'Manakah kumpulan simbol yang seluruhnya digunakan dalam sistem desimal?',
+    ['0–7', '0–9', '1–10', '0–9 dan A–F'],
+    1,
+    'Sistem desimal menggunakan simbol 0, 1, 2, 3, 4, 5, 6, 7, 8, dan 9.',
+  ),
+  Question(
+    'CD03',
+    'Desimal',
+    'Pada bilangan 684₁₀, digit 6 menempati nilai tempat ...',
+    ['Satuan', 'Puluhan', 'Ratusan', 'Ribuan'],
+    2,
+    'Pada bilangan 684, digit 6 berada di posisi ratusan, sehingga nilainya 6 × 10² = 600.',
+  ),
+  Question(
+    'CD04',
+    'Desimal',
+    'Nilai digit 5 pada bilangan 258₁₀ adalah ...',
+    ['5', '50', '200', '500'],
+    1,
+    'Digit 5 berada pada posisi puluhan, sehingga nilainya 5 × 10 = 50.',
+  ),
+  Question(
+    'CD05',
+    'Desimal',
+    'Penguraian nilai tempat yang tepat untuk 472₁₀ adalah ...',
+    [
+      '4×10² + 7×10¹ + 2×10⁰',
+      '4×10¹ + 7×10² + 2×10⁰',
+      '4×10² + 7×10⁰ + 2×10¹',
+      '4×10³ + 7×10² + 2×10¹',
+    ],
+    0,
+    'Dari kanan, nilai tempatnya adalah 10⁰, 10¹, dan 10². Jadi 472 = 4×100 + 7×10 + 2×1.',
+  ),
+  Question(
+    'CD06',
+    'Desimal',
+    'Hasil dari 3×10² + 8×10¹ + 6×10⁰ adalah ...',
+    ['368', '386', '836', '308'],
+    1,
+    'Hitung setiap nilai tempat: 3×100 + 8×10 + 6×1 = 300 + 80 + 6 = 386.',
+  ),
+  Question(
+    'CD07',
+    'Desimal',
+    'Berapakah nilai digit 8 pada bilangan 806₁₀?',
+    ['8', '80', '800', '806'],
+    2,
+    'Digit 8 berada pada posisi ratusan, sehingga nilainya 8 × 100 = 800.',
+  ),
+  Question(
+    'CD08',
+    'Desimal',
+    'Pada bilangan 3.461₁₀, angka 4 berada pada posisi ...',
+    ['Satuan', 'Puluhan', 'Ratusan', 'Ribuan'],
+    2,
+    'Urutan posisi dari kanan adalah satuan (1), puluhan (6), ratusan (4), dan ribuan (3).',
+  ),
+  Question(
+    'CD09',
+    'Desimal',
+    'Bilangan yang tepat setelah 1.299₁₀ adalah ...',
+    ['1.290', '1.300', '1.299', '1.309'],
+    1,
+    'Menambahkan satu pada 1.299 menghasilkan 1.300.',
+  ),
+  Question(
+    'CD10',
+    'Desimal',
+    'Bentuk desimal dari 4×10³ + 2×10¹ + 9×10⁰ adalah ...',
+    ['4.029', '4.209', '4.290', '40.029'],
+    0,
+    'Perhitungannya adalah 4.000 + 20 + 9 = 4.029.',
+  ),
+
+  // ============================================================
+  // CHALLENGE: BINER
+  // ============================================================
+  Question(
+    'CB01',
+    'Biner',
+    'Sistem bilangan biner menggunakan berapa simbol dasar?',
+    ['1', '2', '8', '10'],
+    1,
+    'Biner menggunakan dua simbol dasar, yaitu 0 dan 1.',
+  ),
+  Question(
+    'CB02',
+    'Biner',
+    'Pasangan digit yang dapat digunakan untuk membentuk bilangan biner adalah ...',
+    ['0 dan 1', '0 dan 2', '1 dan 2', '0 dan 9'],
+    0,
+    'Digit yang valid pada sistem biner hanya 0 dan 1.',
+  ),
+  Question(
+    'CB03',
+    'Biner',
+    '(1101)₂ jika diubah ke desimal bernilai ...',
+    ['11', '12', '13', '14'],
+    2,
+    '1101₂ = 1×8 + 1×4 + 0×2 + 1×1 = 13₁₀.',
+  ),
+  Question(
+    'CB04',
+    'Biner',
+    'Nilai desimal dari (10110)₂ adalah ...',
+    ['20', '21', '22', '23'],
+    2,
+    '10110₂ = 16 + 0 + 4 + 2 + 0 = 22₁₀.',
+  ),
+  Question(
+    'CB05',
+    'Biner',
+    'Hasil konversi (100101)₂ ke desimal adalah ...',
+    ['35', '36', '37', '38'],
+    2,
+    '100101₂ = 32 + 0 + 0 + 4 + 0 + 1 = 37₁₀.',
+  ),
+  Question(
+    'CB06',
+    'Biner',
+    '(10111)₂ memiliki nilai desimal ...',
+    ['21', '22', '23', '24'],
+    2,
+    '10111₂ = 16 + 0 + 4 + 2 + 1 = 23₁₀.',
+  ),
+  Question(
+    'CB07',
+    'Biner',
+    'Bilangan 11101₂ tersusun atas ... bit.',
+    ['4', '5', '6', '7'],
+    1,
+    'Jumlah bit dihitung dari banyaknya digit biner. Bilangan 11101 memiliki lima digit.',
+  ),
+  Question(
+    'CB08',
+    'Biner',
+    'Berapa banyak bit yang terdapat pada bilangan 10110010₂?',
+    ['6 bit', '7 bit', '8 bit', '9 bit'],
+    2,
+    'Bilangan 10110010 terdiri dari delapan digit biner, sehingga panjangnya 8 bit.',
+  ),
+  Question(
+    'CB09',
+    'Biner',
+    'Sekumpulan delapan bit disebut ...',
+    ['Word', 'Byte', 'Nibble', 'Digit'],
+    1,
+    'Delapan bit membentuk satu byte.',
+  ),
+  Question(
+    'CB10',
+    'Biner',
+    'Jika 1 ditambahkan pada 1011₂, hasilnya adalah ...',
+    ['1010₂', '1100₂', '1110₂', '10000₂'],
+    1,
+    '1011₂ bernilai 11 desimal. Setelah ditambah 1 menjadi 12 desimal, yaitu 1100₂.',
+  ),
+
+  // ============================================================
+  // CHALLENGE: OKTAL
+  // ============================================================
+  Question(
+    'CO01',
+    'Oktal',
+    'Sistem bilangan oktal memiliki basis ...',
+    ['2', '8', '10', '16'],
+    1,
+    'Sistem bilangan oktal menggunakan basis 8.',
+  ),
+  Question(
+    'CO02',
+    'Oktal',
+    'Rentang digit yang diperbolehkan pada bilangan oktal adalah ...',
+    ['0–7', '1–8', '0–8', '0–9'],
+    0,
+    'Bilangan oktal hanya menggunakan delapan simbol, yaitu 0 sampai 7.',
+  ),
+  Question(
+    'CO03',
+    'Oktal',
+    'Manakah bilangan berikut yang valid dalam sistem oktal?',
+    ['128₈', '709₈', '624₈', '890₈'],
+    2,
+    '624₈ valid karena seluruh digitnya berada pada rentang 0 sampai 7. Angka 8 dan 9 tidak boleh digunakan.',
+  ),
+  Question(
+    'CO04',
+    'Oktal',
+    'Pada bilangan 735₈, nilai digit 3 adalah ...',
+    ['3', '24', '30', '192'],
+    1,
+    'Digit 3 berada pada posisi 8¹, sehingga nilainya 3 × 8 = 24.',
+  ),
+  Question(
+    'CO05',
+    'Oktal',
+    'Nilai desimal dari (25)₈ adalah ...',
+    ['17', '19', '21', '23'],
+    2,
+    '25₈ = 2×8¹ + 5×8⁰ = 16 + 5 = 21₁₀.',
+  ),
+  Question(
+    'CO06',
+    'Oktal',
+    '(315)₈ sama dengan bilangan desimal ...',
+    ['197', '205', '213', '225'],
+    1,
+    '315₈ = 3×64 + 1×8 + 5 = 192 + 8 + 5 = 205₁₀.',
+  ),
+  Question(
+    'CO07',
+    'Oktal',
+    'Penguraian yang benar untuk (426)₈ adalah ...',
+    [
+      '4×8² + 2×8¹ + 6×8⁰',
+      '4×8¹ + 2×8² + 6×8⁰',
+      '4×8⁰ + 2×8¹ + 6×8²',
+      '4×10² + 2×10¹ + 6×10⁰',
+    ],
+    0,
+    'Posisi paling kanan menggunakan 8⁰, posisi tengah 8¹, dan posisi kiri 8².',
+  ),
+  Question(
+    'CO08',
+    'Oktal',
+    'Satu digit pada sistem oktal dapat diwakili oleh ... bit biner.',
+    ['2 bit', '3 bit', '4 bit', '8 bit'],
+    1,
+    'Karena 2³ = 8, satu digit oktal setara dengan tiga bit biner.',
+  ),
+  Question(
+    'CO09',
+    'Oktal',
+    'Digit terbesar yang dapat digunakan dalam sistem bilangan oktal adalah ...',
+    ['6', '7', '8', '9'],
+    1,
+    'Digit oktal dimulai dari 0 sampai 7, sehingga digit terbesarnya adalah 7.',
+  ),
+  Question(
+    'CO10',
+    'Oktal',
+    'Hasil konversi (46)₈ ke desimal adalah ...',
+    ['34', '36', '38', '40'],
+    2,
+    '46₈ = 4×8 + 6 = 32 + 6 = 38₁₀.',
+  ),
+
+  // ============================================================
+  // CHALLENGE: HEKSADESIMAL
+  // ============================================================
+  Question(
+    'CH01',
+    'Heksadesimal',
+    'Sistem heksadesimal dapat merepresentasikan berapa simbol berbeda dalam satu digit?',
+    ['2', '8', '10', '16'],
+    3,
+    'Sistem heksadesimal menggunakan basis 16.',
+  ),
+  Question(
+    'CH02',
+    'Heksadesimal',
+    'Kombinasi simbol yang digunakan dalam sistem heksadesimal adalah ...',
+    ['0–7', '0–9 saja', '0–9 dan A–F', 'A–Z'],
+    2,
+    'Heksadesimal menggunakan angka 0 sampai 9 serta huruf A sampai F.',
+  ),
+  Question(
+    'CH03',
+    'Heksadesimal',
+    'Simbol B pada bilangan heksadesimal mewakili nilai desimal ...',
+    ['10', '11', '12', '13'],
+    1,
+    'Urutan A sampai F mewakili nilai 10 sampai 15. Dengan demikian, B bernilai 11.',
+  ),
+  Question(
+    'CH04',
+    'Heksadesimal',
+    'Nilai desimal dari simbol E dalam sistem heksadesimal adalah ...',
+    ['12', '13', '14', '15'],
+    2,
+    'A bernilai 10, B bernilai 11, C bernilai 12, D bernilai 13, dan E bernilai 14.',
+  ),
+  Question(
+    'CH05',
+    'Heksadesimal',
+    'Pada bilangan 3C₁₆, nilai digit 3 adalah ...',
+    ['3', '16', '48', '60'],
+    2,
+    'Digit 3 berada pada posisi 16¹, sehingga nilainya 3 × 16 = 48.',
+  ),
+  Question(
+    'CH06',
+    'Heksadesimal',
+    'Nilai desimal dari (2B)₁₆ adalah ...',
+    ['41', '42', '43', '44'],
+    2,
+    '2B₁₆ = 2×16 + 11 = 32 + 11 = 43₁₀.',
+  ),
+  Question(
+    'CH07',
+    'Heksadesimal',
+    '(4D)₁₆ jika diubah ke desimal menjadi ...',
+    ['61', '72', '77', '81'],
+    2,
+    'D bernilai 13, sehingga 4D₁₆ = 4×16 + 13 = 64 + 13 = 77₁₀.',
+  ),
+  Question(
+    'CH08',
+    'Heksadesimal',
+    'Penguraian yang benar untuk (5A)₁₆ adalah ...',
+    [
+      '5×16¹ + 10×16⁰',
+      '5×16⁰ + 10×16¹',
+      '5×10¹ + 10×10⁰',
+      '5×16² + 10×16¹',
+    ],
+    0,
+    'Digit A bernilai 10 dan berada pada posisi 16⁰, sedangkan digit 5 berada pada posisi 16¹.',
+  ),
+  Question(
+    'CH09',
+    'Heksadesimal',
+    'Berapa posisi bit yang diperlukan untuk menuliskan satu digit heksadesimal dalam bentuk biner?',
+    ['2 bit', '3 bit', '4 bit', '8 bit'],
+    2,
+    'Karena 2⁴ = 16, satu digit heksadesimal dapat diwakili oleh empat bit biner.',
+  ),
+  Question(
+    'CH10',
+    'Heksadesimal',
+    'Manakah penulisan bilangan heksadesimal yang valid?',
+    ['B7₁₆', 'G1₁₆', '2H₁₆', 'Z0₁₆'],
+    0,
+    'Simbol yang valid hanya 0–9 dan A–F. Karena itu, B7₁₆ merupakan bilangan heksadesimal yang valid.',
+  ),
+
+  // ============================================================
+  // CHALLENGE: KONVERSI
+  // ============================================================
+  Question(
+    'CK01',
+    'Konversi',
+    'Bentuk biner dari 14₁₀ adalah ...',
+    ['1010₂', '1100₂', '1110₂', '1001₂'],
+    2,
+    '14 = 8 + 4 + 2, sehingga digit binernya adalah 1110₂.',
+  ),
+  Question(
+    'CK02',
+    'Konversi',
+    'Bilangan 19₁₀ jika dikonversi ke biner menjadi ...',
+    ['10001₂', '10010₂', '10011₂', '10101₂'],
+    2,
+    '19 = 16 + 2 + 1, sehingga representasi binernya adalah 10011₂.',
+  ),
+  Question(
+    'CK03',
+    'Konversi',
+    'Hasil konversi 34₁₀ ke sistem oktal adalah ...',
+    ['40₈', '41₈', '42₈', '43₈'],
+    2,
+    '34 ÷ 8 = 4 sisa 2. Baca sisa dari bawah ke atas, hasilnya 42₈.',
+  ),
+  Question(
+    'CK04',
+    'Konversi',
+    'Bentuk heksadesimal dari 58₁₀ adalah ...',
+    ['3A₁₆', '3B₁₆', '4A₁₆', 'A3₁₆'],
+    0,
+    '58 ÷ 16 = 3 sisa 10. Sisa 10 ditulis A, sehingga hasilnya 3A₁₆.',
+  ),
+  Question(
+    'CK05',
+    'Konversi',
+    'Hasil konversi 101₂ ke oktal adalah ...',
+    ['3₈', '4₈', '5₈', '6₈'],
+    2,
+    'Kelompok 101₂ bernilai 5, sehingga 101₂ = 5₈.',
+  ),
+  Question(
+    'CK06',
+    'Konversi',
+    'Bilangan 111010₂ jika diubah ke oktal menjadi ...',
+    ['62₈', '71₈', '72₈', '73₈'],
+    2,
+    'Kelompokkan dari kanan: 111 | 010. Nilainya 7 dan 2, sehingga hasilnya 72₈.',
+  ),
+  Question(
+    'CK07',
+    'Konversi',
+    'Hasil konversi 1100₂ ke heksadesimal adalah ...',
+    ['A₁₆', 'B₁₆', 'C₁₆', 'D₁₆'],
+    2,
+    '1100₂ bernilai 12 desimal. Nilai 12 ditulis C dalam heksadesimal.',
+  ),
+  Question(
+    'CK08',
+    'Konversi',
+    'Bentuk heksadesimal dari 10111100₂ adalah ...',
+    ['AB₁₆', 'BC₁₆', 'CB₁₆', 'CD₁₆'],
+    1,
+    'Kelompokkan menjadi 1011 | 1100. Nilai kelompok tersebut adalah B dan C, sehingga hasilnya BC₁₆.',
+  ),
+  Question(
+    'CK09',
+    'Konversi',
+    'Bilangan (25)₈ jika diubah ke heksadesimal menjadi ...',
+    ['15₁₆', '19₁₆', '20₁₆', '21₁₆'],
+    0,
+    '25₈ = 2×8 + 5 = 21₁₀. Nilai 21 desimal sama dengan 15₁₆.',
+  ),
+  Question(
+    'CK10',
+    'Konversi',
+    'Dalam metode pembagian berulang untuk mengubah desimal ke basis lain, sisa pembagian dibaca ...',
+    [
+      'Dari atas ke bawah',
+      'Dari bawah ke atas',
+      'Dari hasil bagi terbesar saja',
+      'Secara acak',
+    ],
+    1,
+    'Setelah pembagian berulang selesai, susun sisa pembagian mulai dari sisa terakhir hingga sisa pertama (dari bawah ke atas).',
   ),
 ];
 

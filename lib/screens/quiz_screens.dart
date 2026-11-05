@@ -752,10 +752,10 @@ class _ChallengePageState extends State<ChallengePage> {
 
   final List<int> answers = [];
 
-  List<Question> get challengeQuestions => questions
+  List<Question> get challengeQuestions => challengeQuestionBank
       .where((question) => question.material == widget.materialTitle)
       .take(10)
-      .toList();
+      .toList(growable: false);
 
   @override
   void initState() {

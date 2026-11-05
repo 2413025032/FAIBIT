@@ -369,39 +369,530 @@ class _MaterialSectionPage extends StatelessWidget {
   final MaterialSection section;
 
   @override
-  Widget build(BuildContext context) => SingleChildScrollView(
-    padding: const EdgeInsets.fromLTRB(20, 18, 20, 24),
-    child: Column(
+  Widget build(BuildContext context) {
+    final examples = section.additionalExamples;
+
+    return SingleChildScrollView(
+      padding: const EdgeInsets.fromLTRB(20, 18, 20, 24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(
+            section.title,
+            style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w800),
+          ),
+          const SizedBox(height: 14),
+          Text(
+            section.content,
+            style: const TextStyle(fontSize: 16, height: 1.55),
+          ),
+          if (section.visualKind != MaterialVisualKind.none) ...[
+            const SizedBox(height: 18),
+            _MaterialConceptVisual(kind: section.visualKind),
+          ],
+          if (section.example != null) ...[
+            const SizedBox(height: 18),
+            _MaterialExampleCard(
+              title: 'Contoh utama',
+              content: section.example!,
+            ),
+          ],
+          for (var index = 0; index < examples.length; index++) ...[
+            const SizedBox(height: 12),
+            _MaterialExampleCard(
+              title: 'Contoh tambahan ${index + 1}',
+              content: examples[index],
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class _MaterialExampleCard extends StatelessWidget {
+  const _MaterialExampleCard({
+    required this.title,
+    required this.content,
+  });
+
+  final String title;
+  final String content;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: colors.surfaceContainerHighest.withValues(alpha: 0.55),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: colors.outlineVariant),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.lightbulb_outline, size: 19, color: colors.primary),
+              const SizedBox(width: 8),
+              Text(
+                title,
+                style: theme.textTheme.titleSmall?.copyWith(
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          SelectableText(
+            content.trim(),
+            style: theme.textTheme.bodyMedium?.copyWith(height: 1.6),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _MaterialConceptVisual extends StatelessWidget {
+  const _MaterialConceptVisual({required this.kind});
+
+  final MaterialVisualKind kind;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+
+    final visual = switch (kind) {
+      MaterialVisualKind.decimalPlaceValue => _decimalPlaceValue(context),
+      MaterialVisualKind.binaryPlaceValue => _binaryPlaceValue(context),
+      MaterialVisualKind.octalPlaceValue => _octalPlaceValue(context),
+      MaterialVisualKind.hexadecimalSymbols => _hexadecimalSymbols(context),
+      MaterialVisualKind.groupingThreeBits => _groupingThreeBits(context),
+      MaterialVisualKind.groupingFourBits => _groupingFourBits(context),
+      MaterialVisualKind.divisionByTwo => _divisionSteps(
+        context,
+        title: 'Konversi 25₁₀ ke biner',
+        rows: const [
+          ['25', '2', '12', '1'],
+          ['12', '2', '6', '0'],
+          ['6', '2', '3', '0'],
+          ['3', '2', '1', '1'],
+          ['1', '2', '0', '1'],
+        ],
+        result: '11001₂',
+      ),
+      MaterialVisualKind.divisionByEight => _divisionSteps(
+        context,
+        title: 'Konversi 58₁₀ ke oktal',
+        rows: const [
+          ['58', '8', '7', '2'],
+          ['7', '8', '0', '7'],
+        ],
+        result: '72₈',
+      ),
+      MaterialVisualKind.divisionBySixteen => _divisionSteps(
+        context,
+        title: 'Konversi 125₁₀ ke heksadesimal',
+        rows: const [
+          ['125', '16', '7', '13 (D)'],
+          ['7', '16', '0', '7'],
+        ],
+        result: '7D₁₆',
+      ),
+      MaterialVisualKind.none => const SizedBox.shrink(),
+    };
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: colors.surface,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: colors.outlineVariant),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.account_tree_outlined, color: colors.primary),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  'Visualisasi Konsep',
+                  style: theme.textTheme.titleSmall?.copyWith(
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 14),
+          visual,
+        ],
+      ),
+    );
+  }
+
+  Widget _decimalPlaceValue(BuildContext context) {
+    return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text(
-          section.title,
-          style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w800),
+        const Text(
+          'Contoh bilangan 347₁₀',
+          style: TextStyle(fontWeight: FontWeight.w700),
         ),
-        const SizedBox(height: 14),
-        Text(
-          section.content,
-          style: const TextStyle(fontSize: 16, height: 1.55),
+        const SizedBox(height: 10),
+        Row(
+          children: const [
+            _PlaceValueCell(label: 'Ratusan', digit: '3', weight: '10²', value: '300'),
+            _PlaceValueCell(label: 'Puluhan', digit: '4', weight: '10¹', value: '40'),
+            _PlaceValueCell(label: 'Satuan', digit: '7', weight: '10⁰', value: '7'),
+          ],
         ),
-        if (section.example != null) ...[
-          const SizedBox(height: 18),
-          OutlineCard(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'Contoh',
-                  style: TextStyle(fontWeight: FontWeight.w800),
+        const SizedBox(height: 10),
+        const Text(
+          '300 + 40 + 7 = 347',
+          textAlign: TextAlign.center,
+          style: TextStyle(fontWeight: FontWeight.w800),
+        ),
+      ],
+    );
+  }
+
+  Widget _binaryPlaceValue(BuildContext context) {
+    const bits = ['1', '0', '1', '1', '0', '1', '1', '0'];
+    const weights = ['128', '64', '32', '16', '8', '4', '2', '1'];
+    const values = ['128', '0', '32', '16', '0', '4', '2', '0'];
+    final colors = Theme.of(context).colorScheme;
+
+    Widget cells(List<String> values, {bool highlighted = false}) => Row(
+      children: [
+        for (final value in values)
+          Expanded(
+            child: Container(
+              margin: const EdgeInsets.symmetric(horizontal: 1.5),
+              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 1),
+              decoration: BoxDecoration(
+                color: highlighted ? colors.primaryContainer : null,
+                borderRadius: BorderRadius.circular(7),
+              ),
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(
+                  value,
+                  style: TextStyle(
+                    fontSize: highlighted ? 14 : 10,
+                    fontWeight: highlighted ? FontWeight.w800 : FontWeight.w500,
+                    color: highlighted ? colors.onPrimaryContainer : null,
+                  ),
                 ),
-                const SizedBox(height: 8),
-                Text(section.example!),
+              ),
+            ),
+          ),
+      ],
+    );
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        const Text(
+          'Contoh bilangan 10110110₂',
+          style: TextStyle(fontWeight: FontWeight.w700),
+        ),
+        const SizedBox(height: 8),
+        const Text('Nilai tempat', style: TextStyle(fontSize: 11)),
+        cells(weights),
+        const SizedBox(height: 4),
+        const Text('Bit', style: TextStyle(fontSize: 11)),
+        cells(bits, highlighted: true),
+        const SizedBox(height: 4),
+        const Text('Nilai yang dijumlahkan', style: TextStyle(fontSize: 11)),
+        cells(values),
+        const SizedBox(height: 10),
+        const Text(
+          '128 + 32 + 16 + 4 + 2 = 182₁₀',
+          textAlign: TextAlign.center,
+          style: TextStyle(fontWeight: FontWeight.w800),
+        ),
+      ],
+    );
+  }
+
+  Widget _octalPlaceValue(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        const Text(
+          'Contoh bilangan 426₈',
+          style: TextStyle(fontWeight: FontWeight.w700),
+        ),
+        const SizedBox(height: 10),
+        Row(
+          children: const [
+            _PlaceValueCell(label: 'Posisi kiri', digit: '4', weight: '8²', value: '256'),
+            _PlaceValueCell(label: 'Posisi tengah', digit: '2', weight: '8¹', value: '16'),
+            _PlaceValueCell(label: 'Posisi kanan', digit: '6', weight: '8⁰', value: '6'),
+          ],
+        ),
+        const SizedBox(height: 10),
+        const Text(
+          '256 + 16 + 6 = 278₁₀',
+          textAlign: TextAlign.center,
+          style: TextStyle(fontWeight: FontWeight.w800),
+        ),
+      ],
+    );
+  }
+
+  Widget _hexadecimalSymbols(BuildContext context) {
+    const symbols = [
+      ['A', '10'], ['B', '11'], ['C', '12'],
+      ['D', '13'], ['E', '14'], ['F', '15'],
+    ];
+    final colors = Theme.of(context).colorScheme;
+
+    return Wrap(
+      spacing: 8,
+      runSpacing: 8,
+      children: [
+        for (final pair in symbols)
+          Container(
+            width: 76,
+            padding: const EdgeInsets.symmetric(vertical: 10),
+            decoration: BoxDecoration(
+              color: colors.secondaryContainer,
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Column(
+              children: [
+                Text(
+                  pair[0],
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w800,
+                    color: colors.onSecondaryContainer,
+                  ),
+                ),
+                Text(
+                  pair[1],
+                  style: TextStyle(color: colors.onSecondaryContainer),
+                ),
               ],
             ),
           ),
-        ],
       ],
-    ),
+    );
+  }
+
+  Widget _groupingThreeBits(BuildContext context) => _BitGroupingDiagram(
+    title: 'Kelompokkan dari kanan menjadi 3 bit',
+    groups: const [
+      ['101', '5'],
+      ['110', '6'],
+    ],
+    result: '101 110₂ = 56₈',
   );
+
+  Widget _groupingFourBits(BuildContext context) => _BitGroupingDiagram(
+    title: 'Kelompokkan dari kanan menjadi 4 bit',
+    groups: const [
+      ['1010', 'A'],
+      ['1111', 'F'],
+    ],
+    result: '1010 1111₂ = AF₁₆',
+  );
+
+  Widget _divisionSteps(
+    BuildContext context, {
+    required String title,
+    required List<List<String>> rows,
+    required String result,
+  }) {
+    final colors = Theme.of(context).colorScheme;
+    final border = TableBorder.all(color: colors.outlineVariant);
+
+    Widget cell(String text, {bool header = false}) => Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+      child: Text(
+        text,
+        textAlign: TextAlign.center,
+        style: TextStyle(
+          fontSize: 12,
+          fontWeight: header ? FontWeight.w800 : FontWeight.w500,
+        ),
+      ),
+    );
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Text(title, style: const TextStyle(fontWeight: FontWeight.w700)),
+        const SizedBox(height: 10),
+        Table(
+          border: border,
+          columnWidths: const {
+            0: FlexColumnWidth(1.5),
+            1: FlexColumnWidth(0.8),
+            2: FlexColumnWidth(1.1),
+            3: FlexColumnWidth(1.1),
+          },
+          children: [
+            TableRow(
+              decoration: BoxDecoration(color: colors.surfaceContainerHighest),
+              children: [
+                cell('Bilangan', header: true),
+                cell('Bagi', header: true),
+                cell('Hasil', header: true),
+                cell('Sisa', header: true),
+              ],
+            ),
+            for (final row in rows)
+              TableRow(children: [for (final value in row) cell(value)]),
+          ],
+        ),
+        const SizedBox(height: 8),
+        const Text(
+          'Baca sisa pembagian dari bawah ke atas.',
+          textAlign: TextAlign.center,
+          style: TextStyle(fontSize: 12),
+        ),
+        const SizedBox(height: 6),
+        Text(
+          'Hasil: $result',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontWeight: FontWeight.w800,
+            color: colors.primary,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _PlaceValueCell extends StatelessWidget {
+  const _PlaceValueCell({
+    required this.label,
+    required this.digit,
+    required this.weight,
+    required this.value,
+  });
+
+  final String label;
+  final String digit;
+  final String weight;
+  final String value;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+
+    return Expanded(
+      child: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 2),
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 3),
+        decoration: BoxDecoration(
+          color: colors.primaryContainer,
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Column(
+          children: [
+            Text(
+              label,
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontSize: 10),
+            ),
+            const SizedBox(height: 5),
+            Text(
+              digit,
+              style: TextStyle(
+                fontSize: 21,
+                fontWeight: FontWeight.w800,
+                color: colors.onPrimaryContainer,
+              ),
+            ),
+            Text(weight, style: const TextStyle(fontSize: 11)),
+            Text(
+              value,
+              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _BitGroupingDiagram extends StatelessWidget {
+  const _BitGroupingDiagram({
+    required this.title,
+    required this.groups,
+    required this.result,
+  });
+
+  final String title;
+  final List<List<String>> groups;
+  final String result;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Text(title, style: const TextStyle(fontWeight: FontWeight.w700)),
+        const SizedBox(height: 12),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            for (var index = 0; index < groups.length; index++) ...[
+              if (index > 0)
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 5),
+                  child: Text('|', style: TextStyle(fontWeight: FontWeight.w800)),
+                ),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 15,
+                  vertical: 10,
+                ),
+                decoration: BoxDecoration(
+                  color: colors.primaryContainer,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Column(
+                  children: [
+                    Text(
+                      groups[index][0],
+                      style: TextStyle(
+                        fontSize: 17,
+                        fontWeight: FontWeight.w800,
+                        color: colors.onPrimaryContainer,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text('= ${groups[index][1]}'),
+                  ],
+                ),
+              ),
+            ],
+          ],
+        ),
+        const SizedBox(height: 12),
+        Text(
+          result,
+          textAlign: TextAlign.center,
+          style: TextStyle(fontWeight: FontWeight.w800, color: colors.primary),
+        ),
+      ],
+    );
+  }
 }
 
 class _ReaderNavigationButton extends StatelessWidget {
