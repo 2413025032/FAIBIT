@@ -784,30 +784,399 @@ class _MaterialReferenceCard extends StatelessWidget {
   }
 }
 
+
 class AboutPage extends StatelessWidget {
   const AboutPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+
     return Scaffold(
-      appBar: const PageTitle(title: 'Tentang Aplikasi', showBack: true),
-      body: Padding(
+      appBar: const PageTitle(
+        title: 'Tentang Aplikasi',
+        showBack: true,
+      ),
+      body: ListView(
         padding: const EdgeInsets.all(20),
-        child: Column(
+        children: [
+          // Identitas aplikasi
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(22),
+            decoration: BoxDecoration(
+              color: colors.primaryContainer,
+              borderRadius: BorderRadius.circular(22),
+            ),
+            child: Column(
+              children: [
+                CircleAvatar(
+                  radius: 35,
+                  backgroundColor: colors.primary,
+                  child: Icon(
+                    Icons.calculate_rounded,
+                    size: 38,
+                    color: colors.onPrimary,
+                  ),
+                ),
+                const SizedBox(height: 14),
+                Text(
+                  'FAIBIT',
+                  style: theme.textTheme.headlineMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: colors.onPrimaryContainer,
+                    letterSpacing: 2,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  'Fast Arithmetic Interface + Bit',
+                  textAlign: TextAlign.center,
+                  style: theme.textTheme.titleSmall?.copyWith(
+                    color: colors.onPrimaryContainer,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  'Learn Number Systems, The Fun Way!',
+                  textAlign: TextAlign.center,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: colors.onPrimaryContainer,
+                    fontStyle: FontStyle.italic,
+                  ),
+                ),
+                const SizedBox(height: 14),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 7,
+                  ),
+                  decoration: BoxDecoration(
+                    color: colors.surface.withValues(alpha: 0.65),
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  child: Text(
+                    'Media Pembelajaran Interaktif',
+                    style: theme.textTheme.labelMedium?.copyWith(
+                      color: colors.onSurface,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 26),
+
+          // Deskripsi aplikasi
+          Text(
+            'Apa itu FAIBIT?',
+            style: theme.textTheme.titleLarge?.copyWith(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 10),
+          Text(
+            'FAIBIT merupakan aplikasi pembelajaran interaktif '
+            'yang dirancang untuk membantu siswa kelas X SMK, '
+            'khususnya pada bidang TJKT, dalam memahami konsep '
+            'sistem bilangan.',
+            style: theme.textTheme.bodyMedium?.copyWith(
+              height: 1.6,
+              color: colors.onSurfaceVariant,
+            ),
+          ),
+          const SizedBox(height: 10),
+          Text(
+            'Melalui penyajian materi, latihan soal, dan tantangan '
+            'interaktif, FAIBIT menjadi teman belajar digital yang '
+            'membantu siswa mempelajari sistem bilangan secara '
+            'bertahap dan lebih menyenangkan.',
+            style: theme.textTheme.bodyMedium?.copyWith(
+              height: 1.6,
+              color: colors.onSurfaceVariant,
+            ),
+          ),
+
+          const SizedBox(height: 26),
+
+          // Materi pembelajaran
+          Text(
+            'Materi Pembelajaran',
+            style: theme.textTheme.titleLarge?.copyWith(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 10),
+          Text(
+            'FAIBIT menyediakan materi dasar sistem bilangan '
+            'yang terdiri dari:',
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: colors.onSurfaceVariant,
+              height: 1.5,
+            ),
+          ),
+          const SizedBox(height: 12),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: const [
+              _AboutTopicChip(label: 'Desimal'),
+              _AboutTopicChip(label: 'Biner'),
+              _AboutTopicChip(label: 'Oktal'),
+              _AboutTopicChip(label: 'Heksadesimal'),
+              _AboutTopicChip(label: 'Konversi Bilangan'),
+            ],
+          ),
+
+          const SizedBox(height: 26),
+
+          // Fitur aplikasi
+          Text(
+            'Fitur FAIBIT',
+            style: theme.textTheme.titleLarge?.copyWith(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 12),
+          const _AboutFeatureTile(
+            icon: Icons.menu_book_rounded,
+            title: 'Materi Pembelajaran',
+            description:
+                'Pelajari konsep sistem bilangan melalui materi '
+                'yang disusun secara bertahap.',
+          ),
+          const _AboutFeatureTile(
+            icon: Icons.edit_note_rounded,
+            title: 'Latihan Santai',
+            description:
+                'Uji pemahaman melalui latihan soal tanpa batas '
+                'waktu.',
+          ),
+          const _AboutFeatureTile(
+            icon: Icons.timer_rounded,
+            title: 'Challenge',
+            description:
+                'Asah kemampuan menyelesaikan soal melalui '
+                'tantangan dengan batas waktu.',
+          ),
+          const _AboutFeatureTile(
+            icon: Icons.history_rounded,
+            title: 'Riwayat Belajar',
+            description:
+                'Lihat kembali hasil latihan dan challenge '
+                'yang telah dikerjakan.',
+          ),
+          const _AboutFeatureTile(
+            icon: Icons.tune_rounded,
+            title: 'Pengaturan',
+            description:
+                'Sesuaikan tema aplikasi dan ukuran teks '
+                'dengan kenyamanan belajar.',
+          ),
+
+          const SizedBox(height: 26),
+
+          // Profil pengembang
+          Text(
+            'Tentang Pengembang',
+            style: theme.textTheme.titleLarge?.copyWith(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 12),
+          Card(
+            elevation: 0,
+            color: colors.surface,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(18),
+              side: BorderSide(
+                color: colors.outlineVariant,
+              ),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(18),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  CircleAvatar(
+                    radius: 27,
+                    backgroundColor: colors.secondaryContainer,
+                    child: Icon(
+                      Icons.person_rounded,
+                      size: 30,
+                      color: colors.onSecondaryContainer,
+                    ),
+                  ),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Mutiara Salsabilla',
+                          style: theme.textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 5),
+                        Text(
+                          'Mahasiswa Pendidikan Teknologi Informasi',
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: colors.onSurfaceVariant,
+                            height: 1.5,
+                          ),
+                        ),
+                        Text(
+                          'FKIP, Universitas Lampung',
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: colors.onSurfaceVariant,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+          const SizedBox(height: 24),
+
+          // Penutup
+          Center(
+            child: Column(
+              children: [
+                Icon(
+                  Icons.favorite_rounded,
+                  color: colors.primary,
+                  size: 22,
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'Belajar Sistem Bilangan dengan Cara '
+                  'yang Lebih Menyenangkan.',
+                  textAlign: TextAlign.center,
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: colors.onSurfaceVariant,
+                    fontStyle: FontStyle.italic,
+                    height: 1.5,
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  'FAIBIT',
+                  style: theme.textTheme.labelLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 2,
+                    color: colors.primary,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 20),
+        ],
+      ),
+    );
+  }
+}
+
+class _AboutTopicChip extends StatelessWidget {
+  const _AboutTopicChip({required this.label});
+
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: 13,
+        vertical: 9,
+      ),
+      decoration: BoxDecoration(
+        color: colors.secondaryContainer,
+        borderRadius: BorderRadius.circular(30),
+      ),
+      child: Text(
+        label,
+        style: Theme.of(context).textTheme.labelMedium?.copyWith(
+          color: colors.onSecondaryContainer,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+    );
+  }
+}
+
+class _AboutFeatureTile extends StatelessWidget {
+  const _AboutFeatureTile({
+    required this.icon,
+    required this.title,
+    required this.description,
+  });
+
+  final IconData icon;
+  final String title;
+  final String description;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+
+    return Card(
+      elevation: 0,
+      color: colors.surface,
+      margin: const EdgeInsets.only(bottom: 10),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: BorderSide(
+          color: colors.outlineVariant,
+        ),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(14),
+        child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('FAIBIT', style: Theme.of(context).textTheme.headlineSmall),
-            const SizedBox(height: 8),
-            Text(
-              'Aplikasi pembelajaran interaktif Sistem Bilangan '
-              'untuk siswa kelas X SMK/TJKT.',
-              style: Theme.of(context).textTheme.bodyLarge,
+            Container(
+              width: 42,
+              height: 42,
+              decoration: BoxDecoration(
+                color: colors.primaryContainer,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Icon(
+                icon,
+                color: colors.onPrimaryContainer,
+              ),
             ),
-            const SizedBox(height: 20),
-            const Text(
-              'FAIBIT dirancang sebagai teman belajar digital '
-              'untuk membantu siswa mempelajari materi sistem '
-              'bilangan melalui materi, latihan, dan challenge.',
+            const SizedBox(width: 13),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: theme.textTheme.titleSmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    description,
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      height: 1.5,
+                      color: colors.onSurfaceVariant,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ],
         ),
