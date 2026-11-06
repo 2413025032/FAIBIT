@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:faibit/data/mock_data.dart';
+import 'package:faibit/models/models.dart';
 
 void main() {
   const materialTitles = [
