@@ -211,26 +211,17 @@ class _QuizPageState extends State<QuizPage> {
   final List<int> answers = [];
   final DateTime startedAt = DateTime.now();
   bool completionStarted = false;
+  late final List<Question> _sessionQuestions;
 
-  List<Question> get practiceQuestions {
-    if (widget.materialTitle != 'Semua Materi') {
-      return questions
-          .where((question) => question.material == widget.materialTitle)
-          .take(totalQuestions)
-          .toList();
-    }
+  List<Question> get practiceQuestions => _sessionQuestions;
 
-    final byMaterial = <String, List<Question>>{};
-    for (final question in questions) {
-      byMaterial.putIfAbsent(question.material, () => []).add(question);
-    }
-
-    return [
-      for (var index = 0; index < 2; index++)
-        for (final material in practiceMaterials)
-          if (index < (byMaterial[material]?.length ?? 0))
-            byMaterial[material]![index],
-    ];
+  @override
+  void initState() {
+    super.initState();
+    _sessionQuestions = selectQuestionsForSession(
+      bank: questions,
+      materialTitle: widget.materialTitle,
+    );
   }
 
   void nextQuestion() {
@@ -751,15 +742,17 @@ class _ChallengePageState extends State<ChallengePage> {
   DateTime? startedAt;
 
   final List<int> answers = [];
+  late final List<Question> _sessionQuestions;
 
-  List<Question> get challengeQuestions => challengeQuestionBank
-      .where((question) => question.material == widget.materialTitle)
-      .take(10)
-      .toList(growable: false);
+  List<Question> get challengeQuestions => _sessionQuestions;
 
   @override
   void initState() {
     super.initState();
+    _sessionQuestions = selectQuestionsForSession(
+      bank: challengeQuestionBank,
+      materialTitle: widget.materialTitle,
+    );
 
     countdownTimer = Timer.periodic(const Duration(seconds: 1), (t) {
       if (!mounted) return;

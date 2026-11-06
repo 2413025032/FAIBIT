@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:faibit/data/mock_data.dart';
@@ -13,13 +15,13 @@ void main() {
   ];
 
   group('FAIBIT question banks', () {
-    test('practice and challenge each contain 50 questions', () {
-      expect(questions, hasLength(50));
-      expect(challengeQuestionBank, hasLength(50));
+    test('practice and challenge each contain 100 questions', () {
+      expect(questions, hasLength(100));
+      expect(challengeQuestionBank, hasLength(100));
     });
 
     for (final material in materialTitles) {
-      test('$material has 10 questions per mode with different prompts', () {
+      test('$material has 20 questions per mode with different prompts', () {
         final practice = questions
             .where((question) => question.material == material)
             .toList();
@@ -27,8 +29,8 @@ void main() {
             .where((question) => question.material == material)
             .toList();
 
-        expect(practice, hasLength(10));
-        expect(challenge, hasLength(10));
+        expect(practice, hasLength(20));
+        expect(challenge, hasLength(20));
         expect(
           practice.map((question) => question.question).toSet().intersection(
             challenge.map((question) => question.question).toSet(),
@@ -62,6 +64,69 @@ void main() {
       for (final question in [...questions, ...challengeQuestionBank]) {
         expect(materialTitles, contains(question.material), reason: question.id);
       }
+    });
+
+    test('a single-material session contains 3 basic, 4 intermediate, 3 application questions', () {
+      for (final bank in [questions, challengeQuestionBank]) {
+        for (final material in materialTitles) {
+          final selected = selectQuestionsForSession(
+            bank: bank,
+            materialTitle: material,
+            random: Random(42),
+          );
+
+          expect(selected, hasLength(quizSessionQuestionCount));
+          expect(selected.map((q) => q.id).toSet(), hasLength(10));
+          expect(
+            selected.where((q) => questionDifficultyLevel(q) == 1),
+            hasLength(3),
+          );
+          expect(
+            selected.where((q) => questionDifficultyLevel(q) == 2),
+            hasLength(4),
+          );
+          expect(
+            selected.where((q) => questionDifficultyLevel(q) == 3),
+            hasLength(3),
+          );
+        }
+      }
+    });
+
+    test('all-material practice selects two questions from every material', () {
+      final selected = selectQuestionsForSession(
+        bank: questions,
+        materialTitle: 'Semua Materi',
+        random: Random(7),
+      );
+
+      expect(selected, hasLength(10));
+      for (final material in materialTitles) {
+        expect(
+          selected.where((question) => question.material == material),
+          hasLength(2),
+        );
+      }
+    });
+
+    test('new sessions can produce different question combinations', () {
+      final first = selectQuestionsForSession(
+        bank: questions,
+        materialTitle: 'Biner',
+        random: Random(1),
+      );
+      final second = selectQuestionsForSession(
+        bank: questions,
+        materialTitle: 'Biner',
+        random: Random(2),
+      );
+
+      expect(
+        first.map((q) => q.id).toSet().intersection(
+          second.map((q) => q.id).toSet(),
+        ).length,
+        lessThan(10),
+      );
     });
 
     test('learning materials include additional examples and visual diagrams', () {

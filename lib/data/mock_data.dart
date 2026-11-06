@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import '../models/models.dart';
 
 const materials = [
@@ -865,6 +867,89 @@ const questions = [
     'Perhitungannya 6.000 + 80 + 3 = 6.083.',
   ),
 
+
+  // Tambahan soal Desimal (tingkat menengah dan penerapan).
+  Question(
+    'D11',
+    'Desimal',
+    'Pada bilangan 6.482₁₀, nilai digit 4 adalah ...',
+    ['4', '40', '400', '4.000'],
+    2,
+    'Digit 4 berada pada posisi ratusan, sehingga nilainya 4 × 100 = 400.',
+  ),
+  Question(
+    'D12',
+    'Desimal',
+    'Penguraian nilai tempat yang benar untuk 2.407₁₀ adalah ...',
+    ['2×10³ + 4×10² + 0×10¹ + 7×10⁰', '2×10² + 4×10³ + 0×10¹ + 7×10⁰', '2×10³ + 4×10¹ + 7×10⁰', '2×10⁴ + 4×10² + 7×10¹'],
+    0,
+    'Dari kanan, posisi digit adalah 10⁰, 10¹, 10², dan 10³. Jadi 2.407 = 2×1.000 + 4×100 + 0×10 + 7.',
+  ),
+  Question(
+    'D13',
+    'Desimal',
+    'Bilangan desimal yang muncul setelah 9.999₁₀ adalah ...',
+    ['9.100', '10.000', '9.990', '10.009'],
+    1,
+    'Menambahkan satu pada 9.999 menghasilkan 10.000 karena terbentuk posisi puluh ribuan.',
+  ),
+  Question(
+    'D14',
+    'Desimal',
+    'Bentuk bilangan dari 3.000 + 500 + 20 + 6 adalah ...',
+    ['3.256', '3.520', '3.526', '3.562'],
+    2,
+    'Gabungkan nilai tempatnya: 3.000 + 500 + 20 + 6 = 3.526.',
+  ),
+  Question(
+    'D15',
+    'Desimal',
+    'Pada bilangan 28.451₁₀, nilai digit 8 adalah ...',
+    ['8', '80', '800', '8.000'],
+    3,
+    'Digit 8 menempati posisi ribuan, sehingga nilainya 8 × 1.000 = 8.000.',
+  ),
+  Question(
+    'D16',
+    'Desimal',
+    'Penguraian yang tepat untuk 5.073₁₀ adalah ...',
+    ['5×1.000 + 7×10 + 3', '5×100 + 7×10 + 3', '5×1.000 + 7×100 + 3', '5×10.000 + 7×10 + 3'],
+    0,
+    'Angka 5 berada di ribuan, 0 di ratusan, 7 di puluhan, dan 3 di satuan. Hasilnya 5.000 + 70 + 3.',
+  ),
+  Question(
+    'D17',
+    'Desimal',
+    'Di antara bilangan berikut, manakah yang nilainya paling besar?',
+    ['4.090', '4.009', '4.900', '4.099'],
+    2,
+    'Bandingkan dari nilai tempat terbesar. Bilangan 4.900 memiliki nilai ratusan terbesar, yaitu 9 ratusan.',
+  ),
+  Question(
+    'D18',
+    'Desimal',
+    'Bentuk penguraian yang benar dari 4.708₁₀ adalah ...',
+    ['4.000 + 700 + 80', '4.000 + 70 + 8', '4.000 + 700 + 8', '400 + 70 + 8'],
+    2,
+    '4.708 terdiri dari 4 ribuan, 7 ratusan, 0 puluhan, dan 8 satuan: 4.000 + 700 + 8.',
+  ),
+  Question(
+    'D19',
+    'Desimal',
+    'Bilangan yang terdiri dari 8 ribuan, 3 ratusan, 0 puluhan, dan 5 satuan adalah ...',
+    ['8.350', '8.305', '8.035', '8.503'],
+    1,
+    'Susun digit sesuai urutan ribuan, ratusan, puluhan, dan satuan: 8-3-0-5, sehingga menjadi 8.305.',
+  ),
+  Question(
+    'D20',
+    'Desimal',
+    'Jika 5.678₁₀ ditambah 100, hasilnya adalah ...',
+    ['5.688', '5.768', '5.778', '6.678'],
+    2,
+    'Menambahkan 100 berarti menambah satu pada posisi ratusan: 5.678 + 100 = 5.778.',
+  ),
+
   // Biner
   Question(
     'B01',
@@ -945,6 +1030,89 @@ const questions = [
     ['1111₂', '1000₂', '1010₂', '1100₂'],
     1,
     'Setelah 111₂, penambahan satu membentuk posisi baru: 1000₂.',
+  ),
+
+
+  // Tambahan soal Biner (tingkat menengah dan penerapan).
+  Question(
+    'B11',
+    'Biner',
+    'Nilai desimal dari (100101)₂ adalah ...',
+    ['35', '36', '37', '38'],
+    2,
+    '100101₂ = 1×32 + 0×16 + 0×8 + 1×4 + 0×2 + 1 = 32 + 4 + 1 = 37₁₀.',
+  ),
+  Question(
+    'B12',
+    'Biner',
+    'Berapa banyak bit yang terdapat pada bilangan 101101₂?',
+    ['4 bit', '5 bit', '6 bit', '7 bit'],
+    2,
+    'Jumlah bit dihitung dari banyaknya digit biner. Bilangan 101101 memiliki enam digit.',
+  ),
+  Question(
+    'B13',
+    'Biner',
+    'Hasil konversi (11001)₂ ke desimal adalah ...',
+    ['23', '24', '25', '26'],
+    2,
+    '11001₂ = 1×16 + 1×8 + 0×4 + 0×2 + 1 = 16 + 8 + 1 = 25₁₀.',
+  ),
+  Question(
+    'B14',
+    'Biner',
+    'Hitung hasil operasi 1011₂ + 1₂.',
+    ['1010₂', '1100₂', '1110₂', '1000₂'],
+    1,
+    '1011₂ bernilai 11. Setelah ditambah 1 menjadi 12, yaitu 1100₂.',
+  ),
+  Question(
+    'B15',
+    'Biner',
+    'Hasil penjumlahan biner 1011₂ + 10₂ adalah ...',
+    ['1100₂', '1101₂', '1110₂', '10001₂'],
+    1,
+    '1011₂ = 11 dan 10₂ = 2. Jumlahnya 13₁₀, yaitu 1101₂.',
+  ),
+  Question(
+    'B16',
+    'Biner',
+    'Bentuk biner dari 45₁₀ adalah ...',
+    ['101011₂', '101101₂', '110101₂', '111001₂'],
+    1,
+    '45 = 32 + 8 + 4 + 1, sehingga bit dari 32 sampai 1 adalah 1-0-1-1-0-1 atau 101101₂.',
+  ),
+  Question(
+    'B17',
+    'Biner',
+    'Bentuk biner dari 42₁₀ adalah ...',
+    ['101010₂', '101001₂', '100110₂', '110010₂'],
+    0,
+    '42 = 32 + 8 + 2, sehingga representasi binernya 101010₂.',
+  ),
+  Question(
+    'B18',
+    'Biner',
+    'Manakah bilangan biner yang memiliki nilai lebih besar?',
+    ['10110₂', '10011₂', 'Keduanya sama', 'Tidak dapat ditentukan'],
+    0,
+    '10110₂ = 22₁₀, sedangkan 10011₂ = 19₁₀. Jadi 10110₂ lebih besar.',
+  ),
+  Question(
+    'B19',
+    'Biner',
+    'Nilai desimal dari 00010110₂ adalah ...',
+    ['18', '20', '22', '24'],
+    2,
+    'Nol di depan tidak mengubah nilai. 00010110₂ = 16 + 4 + 2 = 22₁₀.',
+  ),
+  Question(
+    'B20',
+    'Biner',
+    'Hasil penjumlahan 101011₂ + 1₂ adalah ...',
+    ['101010₂', '101100₂', '110000₂', '111011₂'],
+    1,
+    '101011₂ bernilai 43. Setelah ditambah 1 menjadi 44, yaitu 101100₂.',
   ),
 
   // Oktal
@@ -1034,6 +1202,89 @@ const questions = [
     '77₈ = 7×8 + 7 = 56 + 7 = 63₁₀.',
   ),
 
+
+  // Tambahan soal Oktal (tingkat menengah dan penerapan).
+  Question(
+    'O11',
+    'Oktal',
+    'Pilih satu bilangan yang hanya memakai digit 0 sampai 7.',
+    ['408₈', '407₈', '789₈', '819₈'],
+    1,
+    'Bilangan oktal hanya menggunakan digit 0 sampai 7. Karena itu, 407₈ valid.',
+  ),
+  Question(
+    'O12',
+    'Oktal',
+    'Pada bilangan 652₈, nilai digit 5 adalah ...',
+    ['5', '8', '40', '320'],
+    2,
+    'Digit 5 berada pada posisi 8¹, sehingga nilainya 5 × 8 = 40.',
+  ),
+  Question(
+    'O13',
+    'Oktal',
+    'Nilai desimal dari (34)₈ adalah ...',
+    ['24', '26', '28', '30'],
+    2,
+    '34₈ = 3 × 8 + 4 = 24 + 4 = 28₁₀.',
+  ),
+  Question(
+    'O14',
+    'Oktal',
+    'Bilangan (123)₈ jika diubah ke desimal menjadi ...',
+    ['81', '82', '83', '84'],
+    2,
+    '123₈ = 1×64 + 2×8 + 3 = 64 + 16 + 3 = 83₁₀.',
+  ),
+  Question(
+    'O15',
+    'Oktal',
+    'Nilai desimal dari (572)₈ adalah ...',
+    ['370', '376', '378', '382'],
+    2,
+    '572₈ = 5×64 + 7×8 + 2 = 320 + 56 + 2 = 378₁₀.',
+  ),
+  Question(
+    'O16',
+    'Oktal',
+    'Nilai desimal dari (706)₈ adalah ...',
+    ['446', '452', '454', '456'],
+    2,
+    '706₈ = 7×64 + 0×8 + 6 = 448 + 6 = 454₁₀.',
+  ),
+  Question(
+    'O17',
+    'Oktal',
+    'Hasil konversi 111001₂ ke oktal adalah ...',
+    ['61₈', '70₈', '71₈', '73₈'],
+    2,
+    'Kelompokkan dari kanan: 111 | 001. Nilainya 7 dan 1, sehingga menjadi 71₈.',
+  ),
+  Question(
+    'O18',
+    'Oktal',
+    'Bentuk biner dari 64₈ adalah ...',
+    ['110010₂', '110100₂', '110110₂', '111000₂'],
+    1,
+    'Setiap digit oktal menjadi 3 bit: 6 = 110 dan 4 = 100. Hasilnya 110100₂.',
+  ),
+  Question(
+    'O19',
+    'Oktal',
+    'Di antara bilangan berikut, manakah nilai oktalnya paling besar?',
+    ['157₈', '146₈', '171₈', '162₈'],
+    2,
+    '171₈ = 1×64 + 7×8 + 1 = 121₁₀, lebih besar daripada pilihan lainnya.',
+  ),
+  Question(
+    'O20',
+    'Oktal',
+    'Hasil penjumlahan (17)₈ + (25)₈ dalam bentuk oktal adalah ...',
+    ['42₈', '43₈', '44₈', '45₈'],
+    2,
+    '17₈ = 15₁₀ dan 25₈ = 21₁₀. Jumlahnya 36₁₀, yaitu 44₈.',
+  ),
+
   // Heksadesimal
   Question(
     'H01',
@@ -1114,6 +1365,89 @@ const questions = [
     ['1G₁₆', '2F₁₆', '8K₁₆', 'Z0₁₆'],
     1,
     'Simbol yang valid hanya 0–9 dan A–F, sehingga 2F₁₆ valid.',
+  ),
+
+
+  // Tambahan soal Heksadesimal (tingkat menengah dan penerapan).
+  Question(
+    'H11',
+    'Heksadesimal',
+    'Nilai desimal dari simbol C pada sistem heksadesimal adalah ...',
+    ['11', '12', '13', '14'],
+    1,
+    'Urutan A sampai F mewakili 10 sampai 15, sehingga C bernilai 12.',
+  ),
+  Question(
+    'H12',
+    'Heksadesimal',
+    'Dari pilihan berikut, kombinasi digit mana yang memenuhi aturan basis 16?',
+    ['A9G₁₆', 'B7C₁₆', 'H21₁₆', 'Z10₁₆'],
+    1,
+    'Digit heksadesimal yang valid adalah 0–9 dan A–F. B7C₁₆ hanya menggunakan simbol yang valid.',
+  ),
+  Question(
+    'H13',
+    'Heksadesimal',
+    'Nilai desimal dari (3E)₁₆ adalah ...',
+    ['58', '60', '62', '64'],
+    2,
+    'E bernilai 14. Jadi 3E₁₆ = 3×16 + 14 = 48 + 14 = 62₁₀.',
+  ),
+  Question(
+    'H14',
+    'Heksadesimal',
+    'Pada bilangan 5A₁₆, nilai digit 5 adalah ...',
+    ['5', '16', '80', '90'],
+    2,
+    'Digit 5 berada pada posisi 16¹, sehingga nilainya 5 × 16 = 80.',
+  ),
+  Question(
+    'H15',
+    'Heksadesimal',
+    'Nilai desimal dari (2F3)₁₆ adalah ...',
+    ['739', '749', '755', '765'],
+    2,
+    '2F3₁₆ = 2×256 + 15×16 + 3 = 512 + 240 + 3 = 755₁₀.',
+  ),
+  Question(
+    'H16',
+    'Heksadesimal',
+    'Nilai desimal dari (1C5)₁₆ adalah ...',
+    ['437', '443', '453', '463'],
+    2,
+    'C bernilai 12. Jadi 1C5₁₆ = 1×256 + 12×16 + 5 = 256 + 192 + 5 = 453₁₀.',
+  ),
+  Question(
+    'H17',
+    'Heksadesimal',
+    'Manakah bilangan heksadesimal yang nilainya lebih besar?',
+    ['2A₁₆', '2F₁₆', 'Keduanya sama', 'Tidak dapat ditentukan'],
+    1,
+    'Keduanya memiliki digit pertama yang sama. Pada digit kedua, F (15) lebih besar daripada A (10), sehingga 2F₁₆ lebih besar.',
+  ),
+  Question(
+    'H18',
+    'Heksadesimal',
+    'Kelompok biner 1101₂ setara dengan satu digit heksadesimal ...',
+    ['B', 'C', 'D', 'E'],
+    2,
+    '1101₂ = 8 + 4 + 0 + 1 = 13₁₀. Nilai 13 ditulis D dalam heksadesimal.',
+  ),
+  Question(
+    'H19',
+    'Heksadesimal',
+    'Nilai desimal dari FF₁₆ adalah ...',
+    ['225', '240', '254', '255'],
+    3,
+    'F bernilai 15. FF₁₆ = 15×16 + 15 = 240 + 15 = 255₁₀.',
+  ),
+  Question(
+    'H20',
+    'Heksadesimal',
+    'Bentuk biner 8 bit dari A6₁₆ adalah ...',
+    ['10100110₂', '10100101₂', '10010110₂', '11000110₂'],
+    0,
+    'A = 1010 dan 6 = 0110. Gabungkan menjadi 10100110₂.',
   ),
 
   // Konversi
@@ -1202,6 +1536,88 @@ const questions = [
     0,
     'Konversi dari desimal ke basis lain dilakukan dengan pembagian berulang, lalu sisa dibaca dari belakang.',
   ),
+  // Tambahan soal Konversi (tingkat menengah dan penerapan).
+  Question(
+    'K11',
+    'Konversi',
+    'Bentuk biner dari 18₁₀ adalah ...',
+    ['10001₂', '10010₂', '10100₂', '11000₂'],
+    1,
+    '18 = 16 + 2, sehingga bentuk binernya 10010₂.',
+  ),
+  Question(
+    'K12',
+    'Konversi',
+    'Bentuk oktal dari 44₁₀ adalah ...',
+    ['52₈', '53₈', '54₈', '55₈'],
+    2,
+    '44 ÷ 8 = 5 sisa 4. Baca sisa dari bawah ke atas: 54₈.',
+  ),
+  Question(
+    'K13',
+    'Konversi',
+    'Bentuk heksadesimal dari 75₁₀ adalah ...',
+    ['4A₁₆', '4B₁₆', '4C₁₆', '5B₁₆'],
+    1,
+    '75 ÷ 16 = 4 sisa 11. Sisa 11 ditulis B, sehingga hasilnya 4B₁₆.',
+  ),
+  Question(
+    'K14',
+    'Konversi',
+    'Hasil konversi 100110₂ ke oktal adalah ...',
+    ['44₈', '45₈', '46₈', '47₈'],
+    2,
+    'Kelompokkan dari kanan: 100 | 110. Nilainya 4 dan 6, sehingga hasilnya 46₈.',
+  ),
+  Question(
+    'K15',
+    'Konversi',
+    'Bentuk heksadesimal dari 10010110₂ adalah ...',
+    ['86₁₆', '96₁₆', 'A6₁₆', 'B6₁₆'],
+    1,
+    'Kelompokkan menjadi 1001 | 0110. Nilai kelompoknya 9 dan 6, sehingga menjadi 96₁₆.',
+  ),
+  Question(
+    'K16',
+    'Konversi',
+    'Nilai desimal dari (57)₈ adalah ...',
+    ['45', '46', '47', '48'],
+    2,
+    '57₈ = 5×8 + 7 = 40 + 7 = 47₁₀.',
+  ),
+  Question(
+    'K17',
+    'Konversi',
+    'Nilai desimal dari (3A)₁₆ adalah ...',
+    ['56', '57', '58', '59'],
+    2,
+    'A bernilai 10. Jadi 3A₁₆ = 3×16 + 10 = 48 + 10 = 58₁₀.',
+  ),
+  Question(
+    'K18',
+    'Konversi',
+    'Bentuk biner dari (32)₈ adalah ...',
+    ['011010₂', '011100₂', '101010₂', '110010₂'],
+    0,
+    '3 = 011 dan 2 = 010. Gabungkan menjadi 011010₂; nol di depan boleh dihilangkan menjadi 11010₂.',
+  ),
+  Question(
+    'K19',
+    'Konversi',
+    'Hasil konversi 11010110₂ ke oktal adalah ...',
+    ['316₈', '326₈', '336₈', '346₈'],
+    1,
+    'Kelompokkan dari kanan: 011 | 010 | 110. Nilainya 3, 2, dan 6, sehingga 326₈.',
+  ),
+  Question(
+    'K20',
+    'Konversi',
+    'Manakah kelompok bilangan yang memiliki nilai setara?',
+    ['45₁₀ = 101101₂ = 54₈ = 2D₁₆', '45₁₀ = 101011₂ = 55₈ = 2D₁₆', '45₁₀ = 101101₂ = 55₈ = 2D₁₆', '45₁₀ = 101101₂ = 55₈ = 2B₁₆'],
+    2,
+    '45₁₀ = 32 + 8 + 4 + 1 = 101101₂; 45₁₀ = 5×8 + 5 = 55₈; dan 45₁₀ = 2×16 + 13 = 2D₁₆.',
+  ),
+
 ];
 
 // Bank soal khusus Challenge.
@@ -1297,6 +1713,88 @@ const challengeQuestionBank = [
     'Perhitungannya adalah 4.000 + 20 + 9 = 4.029.',
   ),
 
+  // Tambahan Challenge Desimal (tingkat menengah dan penerapan).
+  Question(
+    'CD11',
+    'Desimal',
+    'Pada bilangan 7.359₁₀, nilai digit 3 adalah ...',
+    ['3', '30', '300', '3.000'],
+    2,
+    'Digit 3 berada pada posisi ratusan, sehingga nilainya 3 × 100 = 300.',
+  ),
+  Question(
+    'CD12',
+    'Desimal',
+    'Penguraian nilai tempat yang benar untuk 5.306₁₀ adalah ...',
+    ['5×10³ + 3×10² + 0×10¹ + 6×10⁰', '5×10² + 3×10³ + 0×10¹ + 6×10⁰', '5×10³ + 3×10¹ + 6×10⁰', '5×10⁴ + 3×10² + 6×10¹'],
+    0,
+    'Dari kanan, posisi digit adalah 10⁰, 10¹, 10², dan 10³. Jadi 5.306 = 5×1.000 + 3×100 + 0×10 + 6.',
+  ),
+  Question(
+    'CD13',
+    'Desimal',
+    'Bilangan desimal yang muncul setelah 4.999₁₀ adalah ...',
+    ['4.990', '5.000', '5.009', '4.100'],
+    1,
+    'Menambahkan satu pada 4.999 menghasilkan 5.000 karena terjadi perpindahan ke posisi ribuan berikutnya.',
+  ),
+  Question(
+    'CD14',
+    'Desimal',
+    'Bentuk bilangan dari 6.000 + 200 + 40 + 8 adalah ...',
+    ['6.248', '6.284', '6.428', '6.204'],
+    0,
+    'Gabungkan nilai tempatnya: 6.000 + 200 + 40 + 8 = 6.248.',
+  ),
+  Question(
+    'CD15',
+    'Desimal',
+    'Pada bilangan 36.824₁₀, nilai digit 6 adalah ...',
+    ['6', '60', '600', '6.000'],
+    3,
+    'Digit 6 menempati posisi ribuan, sehingga nilainya 6 × 1.000 = 6.000.',
+  ),
+  Question(
+    'CD16',
+    'Desimal',
+    'Penguraian yang tepat untuk 8.042₁₀ adalah ...',
+    ['8×1.000 + 4×10 + 2', '8×100 + 4×10 + 2', '8×1.000 + 4×100 + 2', '8×10.000 + 4×10 + 2'],
+    0,
+    'Angka 8 berada di ribuan, 0 di ratusan, 4 di puluhan, dan 2 di satuan. Hasilnya 8.000 + 40 + 2.',
+  ),
+  Question(
+    'CD17',
+    'Desimal',
+    'Pilih bilangan desimal terbesar dari daftar berikut.',
+    ['7.080', '7.008', '7.800', '7.088'],
+    2,
+    'Bilangan 7.800 memiliki nilai ratusan terbesar, yaitu 8 ratusan.',
+  ),
+  Question(
+    'CD18',
+    'Desimal',
+    'Bentuk penguraian yang benar dari 6.509₁₀ adalah ...',
+    ['6.000 + 50 + 9', '6.000 + 500 + 9', '600 + 500 + 9', '6.000 + 500 + 90'],
+    1,
+    '6.509 terdiri dari 6 ribuan, 5 ratusan, 0 puluhan, dan 9 satuan: 6.000 + 500 + 9.',
+  ),
+  Question(
+    'CD19',
+    'Desimal',
+    'Bilangan yang terdiri dari 4 ribuan, 7 ratusan, 0 puluhan, dan 2 satuan adalah ...',
+    ['4.720', '4.702', '4.072', '4.207'],
+    1,
+    'Susun digit sesuai urutan ribuan, ratusan, puluhan, dan satuan: 4-7-0-2, sehingga menjadi 4.702.',
+  ),
+  Question(
+    'CD20',
+    'Desimal',
+    'Jika 8.245₁₀ ditambah 100, hasilnya adalah ...',
+    ['8.255', '8.345', '8.445', '9.245'],
+    1,
+    'Menambahkan 100 berarti menambah satu pada posisi ratusan: 8.245 + 100 = 8.345.',
+  ),
+
   // ============================================================
   // CHALLENGE: BINER
   // ============================================================
@@ -1379,6 +1877,88 @@ const challengeQuestionBank = [
     ['1010₂', '1100₂', '1110₂', '10000₂'],
     1,
     '1011₂ bernilai 11 desimal. Setelah ditambah 1 menjadi 12 desimal, yaitu 1100₂.',
+  ),
+
+  // Tambahan Challenge Biner (tingkat menengah dan penerapan).
+  Question(
+    'CB11',
+    'Biner',
+    'Nilai desimal dari (101101)₂ adalah ...',
+    ['43', '44', '45', '46'],
+    2,
+    '101101₂ = 1×32 + 0×16 + 1×8 + 1×4 + 0×2 + 1 = 32 + 8 + 4 + 1 = 45₁₀.',
+  ),
+  Question(
+    'CB12',
+    'Biner',
+    'Berapa banyak bit yang terdapat pada bilangan 1101011₂?',
+    ['5 bit', '6 bit', '7 bit', '8 bit'],
+    2,
+    'Jumlah bit dihitung dari banyaknya digit biner. Bilangan 1101011 memiliki tujuh digit.',
+  ),
+  Question(
+    'CB13',
+    'Biner',
+    'Hasil konversi (10111)₂ ke desimal adalah ...',
+    ['21', '22', '23', '24'],
+    2,
+    '10111₂ = 1×16 + 0×8 + 1×4 + 1×2 + 1 = 16 + 4 + 2 + 1 = 23₁₀.',
+  ),
+  Question(
+    'CB14',
+    'Biner',
+    'Hitung hasil setelah bilangan 1101₂ ditambah 1₂.',
+    ['1100₂', '1110₂', '1111₂', '10000₂'],
+    1,
+    '1101₂ bernilai 13. Setelah ditambah 1 menjadi 14, yaitu 1110₂.',
+  ),
+  Question(
+    'CB15',
+    'Biner',
+    'Hasil penjumlahan biner 1101₂ + 11₂ adalah ...',
+    ['1110₂', '1111₂', '10000₂', '10001₂'],
+    2,
+    '1101₂ = 13 dan 11₂ = 3. Jumlahnya 16₁₀, yaitu 10000₂.',
+  ),
+  Question(
+    'CB16',
+    'Biner',
+    'Bentuk biner dari 53₁₀ adalah ...',
+    ['110011₂', '110101₂', '111001₂', '101101₂'],
+    1,
+    '53 = 32 + 16 + 4 + 1, sehingga bentuk binernya 110101₂.',
+  ),
+  Question(
+    'CB17',
+    'Biner',
+    'Bentuk biner dari 38₁₀ adalah ...',
+    ['100110₂', '101010₂', '100101₂', '110010₂'],
+    0,
+    '38 = 32 + 4 + 2, sehingga representasi binernya 100110₂.',
+  ),
+  Question(
+    'CB18',
+    'Biner',
+    'Perhatikan 11001₂ dan 10111₂. Bilangan dengan nilai lebih tinggi adalah ...',
+    ['11001₂', '10111₂', 'Keduanya sama', 'Tidak dapat ditentukan'],
+    0,
+    '11001₂ = 25₁₀, sedangkan 10111₂ = 23₁₀. Jadi 11001₂ lebih besar.',
+  ),
+  Question(
+    'CB19',
+    'Biner',
+    'Nilai desimal dari 00011001₂ adalah ...',
+    ['21', '23', '24', '25'],
+    3,
+    'Nol di depan tidak mengubah nilai. 00011001₂ = 16 + 8 + 1 = 25₁₀.',
+  ),
+  Question(
+    'CB20',
+    'Biner',
+    'Hasil penjumlahan 110011₂ + 1₂ adalah ...',
+    ['110010₂', '110100₂', '111000₂', '111011₂'],
+    1,
+    '110011₂ bernilai 51. Setelah ditambah 1 menjadi 52, yaitu 110100₂.',
   ),
 
   // ============================================================
@@ -1470,6 +2050,88 @@ const challengeQuestionBank = [
     '46₈ = 4×8 + 6 = 32 + 6 = 38₁₀.',
   ),
 
+  // Tambahan Challenge Oktal (tingkat menengah dan penerapan).
+  Question(
+    'CO11',
+    'Oktal',
+    'Angka manakah yang hanya memuat digit valid untuk basis 8?',
+    ['628₈', '625₈', '819₈', '908₈'],
+    1,
+    'Bilangan oktal hanya menggunakan digit 0 sampai 7. Karena itu, 625₈ valid.',
+  ),
+  Question(
+    'CO12',
+    'Oktal',
+    'Pada bilangan 437₈, nilai digit 3 adalah ...',
+    ['3', '8', '24', '192'],
+    2,
+    'Digit 3 berada pada posisi 8¹, sehingga nilainya 3 × 8 = 24.',
+  ),
+  Question(
+    'CO13',
+    'Oktal',
+    'Nilai desimal dari (46)₈ adalah ...',
+    ['34', '36', '38', '40'],
+    2,
+    '46₈ = 4 × 8 + 6 = 32 + 6 = 38₁₀.',
+  ),
+  Question(
+    'CO14',
+    'Oktal',
+    'Bilangan (215)₈ jika diubah ke desimal menjadi ...',
+    ['139', '140', '141', '142'],
+    2,
+    '215₈ = 2×64 + 1×8 + 5 = 128 + 8 + 5 = 141₁₀.',
+  ),
+  Question(
+    'CO15',
+    'Oktal',
+    'Nilai desimal dari (631)₈ adalah ...',
+    ['401', '407', '409', '413'],
+    2,
+    '631₈ = 6×64 + 3×8 + 1 = 384 + 24 + 1 = 409₁₀.',
+  ),
+  Question(
+    'CO16',
+    'Oktal',
+    'Nilai desimal dari (345)₈ adalah ...',
+    ['221', '227', '229', '233'],
+    2,
+    '345₈ = 3×64 + 4×8 + 5 = 192 + 32 + 5 = 229₁₀.',
+  ),
+  Question(
+    'CO17',
+    'Oktal',
+    'Hasil konversi 101110₂ ke oktal adalah ...',
+    ['54₈', '55₈', '56₈', '57₈'],
+    2,
+    'Kelompokkan dari kanan: 101 | 110. Nilainya 5 dan 6, sehingga menjadi 56₈.',
+  ),
+  Question(
+    'CO18',
+    'Oktal',
+    'Bentuk biner dari 53₈ adalah ...',
+    ['100011₂', '101011₂', '101101₂', '110011₂'],
+    1,
+    'Setiap digit oktal menjadi 3 bit: 5 = 101 dan 3 = 011. Gabungkan menjadi 101011₂.',
+  ),
+  Question(
+    'CO19',
+    'Oktal',
+    'Bilangan oktal yang mewakili nilai desimal paling besar adalah ...',
+    ['234₈', '226₈', '217₈', '231₈'],
+    0,
+    '234₈ = 2×64 + 3×8 + 4 = 156₁₀, lebih besar daripada pilihan lainnya.',
+  ),
+  Question(
+    'CO20',
+    'Oktal',
+    'Hasil penjumlahan (26)₈ + (17)₈ dalam bentuk oktal adalah ...',
+    ['43₈', '44₈', '45₈', '46₈'],
+    2,
+    '26₈ = 22₁₀ dan 17₈ = 15₁₀. Jumlahnya 37₁₀, yaitu 45₈.',
+  ),
+
   // ============================================================
   // CHALLENGE: HEKSADESIMAL
   // ============================================================
@@ -1557,6 +2219,88 @@ const challengeQuestionBank = [
     ['B7₁₆', 'G1₁₆', '2H₁₆', 'Z0₁₆'],
     0,
     'Simbol yang valid hanya 0–9 dan A–F. Karena itu, B7₁₆ merupakan bilangan heksadesimal yang valid.',
+  ),
+
+  // Tambahan Challenge Heksadesimal (tingkat menengah dan penerapan).
+  Question(
+    'CH11',
+    'Heksadesimal',
+    'Nilai desimal dari simbol D pada sistem heksadesimal adalah ...',
+    ['11', '12', '13', '14'],
+    2,
+    'Urutan A sampai F mewakili 10 sampai 15, sehingga D bernilai 13.',
+  ),
+  Question(
+    'CH12',
+    'Heksadesimal',
+    'Pilih satu penulisan yang sah pada sistem bilangan basis 16.',
+    ['C4G₁₆', 'J10₁₆', '4F2₁₆', 'C4H₁₆'],
+    2,
+    'Digit heksadesimal yang valid adalah 0–9 dan A–F. 4F2₁₆ hanya menggunakan simbol yang valid.',
+  ),
+  Question(
+    'CH13',
+    'Heksadesimal',
+    'Nilai desimal dari (4B)₁₆ adalah ...',
+    ['69', '73', '75', '79'],
+    2,
+    'B bernilai 11. Jadi 4B₁₆ = 4×16 + 11 = 64 + 11 = 75₁₀.',
+  ),
+  Question(
+    'CH14',
+    'Heksadesimal',
+    'Pada bilangan 6D₁₆, nilai digit 6 adalah ...',
+    ['6', '16', '96', '104'],
+    2,
+    'Digit 6 berada pada posisi 16¹, sehingga nilainya 6 × 16 = 96.',
+  ),
+  Question(
+    'CH15',
+    'Heksadesimal',
+    'Nilai desimal dari (3A4)₁₆ adalah ...',
+    ['912', '922', '932', '942'],
+    2,
+    '3A4₁₆ = 3×256 + 10×16 + 4 = 768 + 160 + 4 = 932₁₀.',
+  ),
+  Question(
+    'CH16',
+    'Heksadesimal',
+    'Nilai desimal dari (2B7)₁₆ adalah ...',
+    ['685', '695', '705', '715'],
+    1,
+    'B bernilai 11. Jadi 2B7₁₆ = 2×256 + 11×16 + 7 = 512 + 176 + 7 = 695₁₀.',
+  ),
+  Question(
+    'CH17',
+    'Heksadesimal',
+    'Bandingkan 3A₁₆ dengan 3B₁₆. Bilangan yang lebih besar adalah ...',
+    ['3A₁₆', '3B₁₆', 'Keduanya sama', 'Tidak dapat ditentukan'],
+    1,
+    'Digit pertama sama-sama 3. Pada digit kedua, B (11) lebih besar daripada A (10), sehingga 3B₁₆ lebih besar.',
+  ),
+  Question(
+    'CH18',
+    'Heksadesimal',
+    'Kelompok biner 1010₂ setara dengan satu digit heksadesimal ...',
+    ['9', 'A', 'B', 'C'],
+    1,
+    '1010₂ = 8 + 2 = 10₁₀. Nilai 10 ditulis A dalam heksadesimal.',
+  ),
+  Question(
+    'CH19',
+    'Heksadesimal',
+    'Nilai desimal dari B6₁₆ adalah ...',
+    ['176', '180', '182', '186'],
+    2,
+    'B bernilai 11. B6₁₆ = 11×16 + 6 = 176 + 6 = 182₁₀.',
+  ),
+  Question(
+    'CH20',
+    'Heksadesimal',
+    'Konversikan B3₁₆ ke bentuk biner 8 bit.',
+    ['10110011₂', '10110101₂', '10100011₂', '11110011₂'],
+    0,
+    'B = 1011 dan 3 = 0011. Gabungkan menjadi 10110011₂.',
   ),
 
   // ============================================================
@@ -1647,7 +2391,165 @@ const challengeQuestionBank = [
     1,
     'Setelah pembagian berulang selesai, susun sisa pembagian mulai dari sisa terakhir hingga sisa pertama (dari bawah ke atas).',
   ),
+  // Tambahan Challenge Konversi (tingkat menengah dan penerapan).
+  Question(
+    'CK11',
+    'Konversi',
+    'Bentuk biner dari 22₁₀ adalah ...',
+    ['10100₂', '10110₂', '11000₂', '11100₂'],
+    1,
+    '22 = 16 + 4 + 2, sehingga bentuk binernya 10110₂.',
+  ),
+  Question(
+    'CK12',
+    'Konversi',
+    'Bentuk oktal dari 53₁₀ adalah ...',
+    ['63₈', '64₈', '65₈', '66₈'],
+    2,
+    '53 ÷ 8 = 6 sisa 5. Baca sisa dari bawah ke atas: 65₈.',
+  ),
+  Question(
+    'CK13',
+    'Konversi',
+    'Bentuk heksadesimal dari 91₁₀ adalah ...',
+    ['59₁₆', '5A₁₆', '5B₁₆', '5C₁₆'],
+    2,
+    '91 ÷ 16 = 5 sisa 11. Sisa 11 ditulis B, sehingga hasilnya 5B₁₆.',
+  ),
+  Question(
+    'CK14',
+    'Konversi',
+    'Hasil konversi 111101₂ ke oktal adalah ...',
+    ['73₈', '74₈', '75₈', '76₈'],
+    2,
+    'Kelompokkan dari kanan: 111 | 101. Nilainya 7 dan 5, sehingga hasilnya 75₈.',
+  ),
+  Question(
+    'CK15',
+    'Konversi',
+    'Bentuk heksadesimal dari 11011011₂ adalah ...',
+    ['DA₁₆', 'DB₁₆', 'DC₁₆', 'EB₁₆'],
+    1,
+    'Kelompokkan menjadi 1101 | 1011. Nilai kelompoknya D dan B, sehingga menjadi DB₁₆.',
+  ),
+  Question(
+    'CK16',
+    'Konversi',
+    'Nilai desimal dari (64)₈ adalah ...',
+    ['48', '50', '52', '54'],
+    2,
+    '64₈ = 6×8 + 4 = 48 + 4 = 52₁₀.',
+  ),
+  Question(
+    'CK17',
+    'Konversi',
+    'Nilai desimal dari (4C)₁₆ adalah ...',
+    ['72', '74', '76', '78'],
+    2,
+    'C bernilai 12. Jadi 4C₁₆ = 4×16 + 12 = 64 + 12 = 76₁₀.',
+  ),
+  Question(
+    'CK18',
+    'Konversi',
+    'Bentuk biner dari (45)₈ adalah ...',
+    ['100101₂', '100110₂', '101001₂', '101101₂'],
+    0,
+    '4 = 100 dan 5 = 101. Gabungkan menjadi 100101₂.',
+  ),
+  Question(
+    'CK19',
+    'Konversi',
+    'Hasil konversi 10111011₂ ke oktal adalah ...',
+    ['263₈', '273₈', '275₈', '303₈'],
+    1,
+    'Kelompokkan dari kanan: 010 | 111 | 011. Nilainya 2, 7, dan 3, sehingga 273₈.',
+  ),
+  Question(
+    'CK20',
+    'Konversi',
+    'Pilih baris yang seluruh bilangan di dalamnya memiliki nilai setara.',
+    ['58₁₀ = 111010₂ = 71₈ = 3A₁₆', '58₁₀ = 111001₂ = 72₈ = 3A₁₆', '58₁₀ = 111010₂ = 72₈ = 3A₁₆', '58₁₀ = 111010₂ = 72₈ = 3B₁₆'],
+    2,
+    '58₁₀ = 32 + 16 + 8 + 2 = 111010₂; 58₁₀ = 7×8 + 2 = 72₈; dan 58₁₀ = 3×16 + 10 = 3A₁₆.',
+  ),
+
 ];
+
+
+/// Jumlah soal yang ditampilkan dalam satu sesi Latihan Santai atau Challenge.
+const int quizSessionQuestionCount = 10;
+
+/// Mengelompokkan tingkat soal berdasarkan nomor pada ID.
+/// ID 01-06 = dasar, 07-14 = menengah, 15-20 = penerapan.
+/// Pola ini dipakai sama pada bank Latihan dan Challenge.
+int questionDifficultyLevel(Question question) {
+  final match = RegExp(r'(\d+)$').firstMatch(question.id);
+  final sequence = int.tryParse(match?.group(1) ?? '');
+  if (sequence == null || sequence < 1 || sequence > 20) {
+    throw ArgumentError('ID soal tidak mengikuti pola tingkat: ${question.id}');
+  }
+  if (sequence <= 6) return 1;
+  if (sequence <= 14) return 2;
+  return 3;
+}
+
+List<Question> _takeRandomQuestions(
+  List<Question> pool,
+  int count,
+  Random random,
+) {
+  if (pool.length < count) {
+    throw StateError(
+      'Bank soal tidak cukup: membutuhkan $count soal, tersedia ${pool.length}.',
+    );
+  }
+  final shuffled = List<Question>.of(pool)..shuffle(random);
+  return shuffled.take(count).toList(growable: false);
+}
+
+/// Memilih satu set soal untuk satu sesi.
+/// Untuk satu materi, komposisinya 3 dasar, 4 menengah, dan 3 penerapan.
+/// Untuk Semua Materi, dipilih 2 soal per materi agar cakupan merata.
+/// Panggil fungsi ini sekali ketika sesi dimulai, lalu simpan hasilnya.
+List<Question> selectQuestionsForSession({
+  required List<Question> bank,
+  required String materialTitle,
+  Random? random,
+}) {
+  final rng = random ?? Random();
+  final selected = <Question>[];
+
+  if (materialTitle == 'Semua Materi') {
+    for (final material in materials) {
+      final pool = bank
+          .where((question) => question.material == material.title)
+          .toList(growable: false);
+      final basic = pool.where((q) => questionDifficultyLevel(q) == 1).toList();
+      final otherLevels = pool.where((q) => questionDifficultyLevel(q) != 1).toList();
+      selected.addAll(_takeRandomQuestions(basic, 1, rng));
+      selected.addAll(_takeRandomQuestions(otherLevels, 1, rng));
+    }
+  } else {
+    final pool = bank
+        .where((question) => question.material == materialTitle)
+        .toList(growable: false);
+    final basic = pool.where((q) => questionDifficultyLevel(q) == 1).toList();
+    final intermediate = pool.where((q) => questionDifficultyLevel(q) == 2).toList();
+    final application = pool.where((q) => questionDifficultyLevel(q) == 3).toList();
+
+    selected
+      ..addAll(_takeRandomQuestions(basic, 3, rng))
+      ..addAll(_takeRandomQuestions(intermediate, 4, rng))
+      ..addAll(_takeRandomQuestions(application, 3, rng));
+  }
+
+  selected.shuffle(rng);
+  if (selected.length != quizSessionQuestionCount ||
+      selected.map((question) => question.id).toSet().length != selected.length) {
+    throw StateError('Pemilihan soal sesi tidak menghasilkan 10 soal unik.');
+  }
+  return List<Question>.unmodifiable(selected);
+}
 
 const activities = [
   ActivityItem(
