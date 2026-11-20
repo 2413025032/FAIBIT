@@ -93,6 +93,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
     );
 
     await widget.onSaved(updatedProfile);
+
+    if (!mounted) return;
+
     Navigator.of(context).pop();
   }
 
@@ -176,10 +179,13 @@ class _EditProfilePageState extends State<EditProfilePage> {
       onPopInvokedWithResult: (didPop, result) async {
         if (didPop) return;
 
+        final navigator = Navigator.of(context);
         final shouldPop = await _handleBack();
 
-        if (shouldPop && mounted) {
-          Navigator.of(context).pop();
+        if (!mounted) return;
+
+        if (shouldPop) {
+          navigator.pop();
         }
       },
       child: Scaffold(
@@ -187,10 +193,13 @@ class _EditProfilePageState extends State<EditProfilePage> {
           title: 'Edit Profil',
           showBack: true,
           onBack: () async {
+            final navigator = Navigator.of(context);
             final shouldPop = await _handleBack();
 
-            if (shouldPop && mounted) {
-              Navigator.of(context).pop();
+            if (!mounted) return;
+
+            if (shouldPop) {
+              navigator.pop();
             }
           },
         ),

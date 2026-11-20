@@ -102,6 +102,7 @@ class EmptySlot extends StatelessWidget {
   Widget build(BuildContext context) => SizedBox(width: width, height: height);
 }
 
+
 class OutlineCard extends StatelessWidget {
   const OutlineCard({
     super.key,
@@ -109,9 +110,11 @@ class OutlineCard extends StatelessWidget {
     this.padding = const EdgeInsets.all(14),
     this.onTap,
   });
+
   final Widget child;
   final EdgeInsets padding;
   final VoidCallback? onTap;
+
   @override
   Widget build(BuildContext context) => Material(
     color: Theme.of(context).colorScheme.surface,
@@ -119,8 +122,7 @@ class OutlineCard extends StatelessWidget {
     child: InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(AppTheme.radius),
-      child: Container(
-        padding: padding,
+      child: Ink(
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(AppTheme.radius),
@@ -132,11 +134,15 @@ class OutlineCard extends StatelessWidget {
             ),
           ],
         ),
-        child: child,
+        child: Padding(
+          padding: padding,
+          child: child,
+        ),
       ),
     ),
   );
 }
+
 
 class PageTitle extends StatelessWidget implements PreferredSizeWidget {
   const PageTitle({

@@ -625,7 +625,7 @@ class _ChallengePreparationPageState extends State<ChallengePreparationPage> {
               const SizedBox(height: 8),
 
               DropdownButtonFormField<String>(
-                value: selectedMaterial,
+                initialValue: selectedMaterial,
                 decoration: const InputDecoration(
                   prefixIcon: Icon(Icons.menu_book_outlined),
                   border: OutlineInputBorder(),

@@ -136,6 +136,9 @@ class _IdentityPageState extends State<IdentityPage> {
         school: school.text.trim(),
       );
       await UserProfileRepository.instance.save(profile);
+
+      if (!mounted) return;
+      
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (_) => HomeShell(profile: profile)),
