@@ -70,11 +70,11 @@ class _SplashScreenState extends State<SplashScreen>
               mainAxisSize: MainAxisSize.min,
               children: [
                 Image.asset(
-                  'assets/images/branding/logo_faibit.png',
-                  width: 148,
-                  height: 148,
+                  'assets/images/fai/fai_waving_transparent.webp',
+                  width: 190,
+                  height: 260,
                   fit: BoxFit.contain,
-                  semanticLabel: 'Logo FAIBIT',
+                  semanticLabel: 'Fai sedang melambaikan tangan',
                 ),
                 const SizedBox(height: 14),
                 Text(
