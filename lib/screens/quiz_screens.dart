@@ -625,7 +625,7 @@ class _ChallengePreparationPageState extends State<ChallengePreparationPage> {
               const SizedBox(height: 8),
 
               DropdownButtonFormField<String>(
-                initialValue: selectedMaterial,
+                value: selectedMaterial,
                 decoration: const InputDecoration(
                   prefixIcon: Icon(Icons.menu_book_outlined),
                   border: OutlineInputBorder(),
@@ -1001,7 +1001,7 @@ class _ChallengePageState extends State<ChallengePage> {
   }
 }
 
-class ChallengeResultPage extends StatelessWidget {
+class ChallengeResultPage extends StatefulWidget {
   const ChallengeResultPage({
     super.key,
     required this.profile,
@@ -1022,8 +1022,39 @@ class ChallengeResultPage extends StatelessWidget {
   final Duration duration;
 
   @override
+  State<ChallengeResultPage> createState() => _ChallengeResultPageState();
+}
+
+class _ChallengeResultPageState extends State<ChallengeResultPage> {
+  bool _showScore = false;
+  Timer? _scoreRevealTimer;
+
+  bool get _isSuccessful => widget.score >= 50;
+
+  @override
+  void initState() {
+    super.initState();
+    // Give Fai a brief moment to react before revealing the score.
+    _scoreRevealTimer = Timer(const Duration(milliseconds: 1800), () {
+      if (mounted) setState(() => _showScore = true);
+    });
+  }
+
+  @override
+  void dispose() {
+    _scoreRevealTimer?.cancel();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final durationLabel = _formatDuration(duration);
+    final durationLabel = _formatDuration(widget.duration);
+    final resultColor = _isSuccessful
+        ? AppTheme.greenTeal
+        : AppTheme.challenge.primaryDark;
+    final resultSurface = _isSuccessful
+        ? AppTheme.tealSurface
+        : AppTheme.challenge.surface;
 
     return Scaffold(
       appBar: const PageTitle(title: 'Hasil Challenge'),
@@ -1036,25 +1067,47 @@ class ChallengeResultPage extends StatelessWidget {
               OutlineCard(
                 child: Column(
                   children: [
-                    const FaiMascot(
-                      assetName: 'faibit_celebrate2.png',
-                      fallbackAssetName: 'faibit_celebrate.png',
-                      width: 150,
-                      height: 174,
-                      semanticLabel: 'Fai merayakan hasil challenge',
+                    AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 450),
+                      switchInCurve: Curves.easeOutBack,
+                      child: _isSuccessful
+                          ? Image.asset(
+                              'assets/images/fai/fai_celebration_3_transparent.webp',
+                              key: const ValueKey('fai-celebration'),
+                              width: 190,
+                              height: 220,
+                              fit: BoxFit.contain,
+                              gaplessPlayback: true,
+                              semanticLabel: 'Fai merayakan hasil challenge',
+                              errorBuilder: (_, _, _) => const FaiMascot(
+                                assetName: 'faibit_celebrate2.png',
+                                fallbackAssetName: 'faibit_celebrate.png',
+                                width: 190,
+                                height: 220,
+                                semanticLabel: 'Fai merayakan hasil challenge',
+                              ),
+                            )
+                          : const FaiMascot(
+                              assetName: 'faibit_encourage.png',
+                              width: 190,
+                              height: 220,
+                              semanticLabel: 'Fai menyemangati pengguna',
+                            ),
                     ),
                     const SizedBox(height: 10),
-                    const Text(
-                      'Challenge Selesai!',
+                    Text(
+                      _isSuccessful ? 'Hebat! Challenge Selesai!' : 'Tetap Semangat!',
                       textAlign: TextAlign.center,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 23,
                         fontWeight: FontWeight.w800,
                       ),
                     ),
                     const SizedBox(height: 6),
                     Text(
-                      'Kerja bagus! Kamu berhasil menyelesaikan challenge ini.',
+                      _isSuccessful
+                          ? 'Kamu berhasil menyelesaikan challenge ini. Pertahankan semangat belajarmu!'
+                          : 'Tidak apa-apa, masih ada kesempatan untuk belajar lagi. Fai tetap menyemangatimu!',
                       textAlign: TextAlign.center,
                       style: TextStyle(color: AppTheme.challenge.accentDark),
                     ),
@@ -1062,40 +1115,66 @@ class ChallengeResultPage extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 16),
-              Container(
+              AnimatedContainer(
+                duration: const Duration(milliseconds: 350),
+                curve: Curves.easeInOut,
                 padding: const EdgeInsets.symmetric(
                   horizontal: 20,
                   vertical: 18,
                 ),
                 decoration: BoxDecoration(
-                  color: score >= 70
-                      ? AppTheme.tealSurface
-                      : AppTheme.challenge.surface,
+                  color: resultSurface,
                   borderRadius: BorderRadius.circular(AppTheme.radius),
                 ),
-                child: Column(
-                  children: [
-                    const Text(
-                      'SKOR AKHIR',
-                      style: TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w700,
-                        letterSpacing: 1.1,
-                      ),
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      '$score%',
-                      style: TextStyle(
-                        color: score >= 70
-                            ? AppTheme.greenTeal
-                            : AppTheme.challenge.primaryDark,
-                        fontSize: 48,
-                        fontWeight: FontWeight.w800,
-                        height: 1.1,
-                      ),
-                    ),
-                  ],
+                child: AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 350),
+                  child: _showScore
+                      ? Column(
+                          key: const ValueKey('revealed-score'),
+                          children: [
+                            const Text(
+                              'SKOR AKHIR',
+                              style: TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w700,
+                                letterSpacing: 1.1,
+                              ),
+                            ),
+                            const SizedBox(height: 2),
+                            TweenAnimationBuilder<double>(
+                              tween: Tween<double>(
+                                begin: 0,
+                                end: widget.score.toDouble(),
+                              ),
+                              duration: const Duration(milliseconds: 1100),
+                              curve: Curves.easeOutCubic,
+                              builder: (context, value, _) => Text(
+                                '${value.round()}%',
+                                style: TextStyle(
+                                  color: resultColor,
+                                  fontSize: 48,
+                                  fontWeight: FontWeight.w800,
+                                  height: 1.1,
+                                ),
+                              ),
+                            ),
+                          ],
+                        )
+                      : const Column(
+                          key: ValueKey('score-hidden'),
+                          children: [
+                            SizedBox(
+                              height: 58,
+                              child: Center(
+                                child: Text(
+                                  'Fai sedang melihat hasilmu...',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(fontWeight: FontWeight.w600),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                 ),
               ),
               const SizedBox(height: 16),
@@ -1105,7 +1184,7 @@ class ChallengeResultPage extends StatelessWidget {
                     child: _ChallengeResultStat(
                       icon: Icons.check_circle_outline,
                       label: 'Benar',
-                      value: '$correctAnswers',
+                      value: '${widget.correctAnswers}',
                       color: AppTheme.challenge.primary,
                     ),
                   ),
@@ -1114,7 +1193,7 @@ class ChallengeResultPage extends StatelessWidget {
                     child: _ChallengeResultStat(
                       icon: Icons.cancel_outlined,
                       label: 'Salah',
-                      value: '$incorrectAnswers',
+                      value: '${widget.incorrectAnswers}',
                       color: AppTheme.challenge.accentDark,
                     ),
                   ),
@@ -1127,13 +1206,13 @@ class ChallengeResultPage extends StatelessWidget {
                     _ChallengeResultInfo(
                       icon: Icons.menu_book_outlined,
                       label: 'Materi',
-                      value: materialTitle,
+                      value: widget.materialTitle,
                     ),
                     const SizedBox(height: 14),
                     _ChallengeResultInfo(
                       icon: Icons.quiz_outlined,
                       label: 'Jumlah Soal',
-                      value: '$totalQuestions soal',
+                      value: '${widget.totalQuestions} soal',
                     ),
                     const SizedBox(height: 14),
                     _ChallengeResultInfo(
@@ -1155,7 +1234,7 @@ class ChallengeResultPage extends StatelessWidget {
                 onPressed: () => Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
-                    builder: (_) => ChallengePreparationPage(profile: profile),
+                    builder: (_) => ChallengePreparationPage(profile: widget.profile),
                   ),
                 ),
                 style: FilledButton.styleFrom(
