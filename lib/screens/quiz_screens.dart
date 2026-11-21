@@ -6,6 +6,7 @@ import '../data/quiz_history_repository.dart';
 import '../data/mock_data.dart';
 import '../models/models.dart';
 import '../theme/app_theme.dart';
+import '../services/sound_manager.dart';
 import '../widgets/ui.dart';
 
 const practiceMaterials = [
@@ -151,12 +152,16 @@ class PracticePreparationPage extends StatelessWidget {
             ),
             const SizedBox(height: 28),
             FilledButton(
-              onPressed: () => Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => QuizPage(materialTitle: materialTitle),
-                ),
-              ),
+              onPressed: () {
+                unawaited(SoundManager.instance.playButtonClick());
+
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => QuizPage(materialTitle: materialTitle),
+                  ),
+                );
+              },
               child: const Text('Mulai Latihan'),
             ),
           ],
@@ -224,13 +229,24 @@ class _QuizPageState extends State<QuizPage> {
     );
   }
 
+
   void nextQuestion() {
+    final question = practiceQuestions[currentQuestion];
+    final isCorrect = selected == question.correct;
+
+    if (isCorrect) {
+      unawaited(SoundManager.instance.playCorrectAnswer());
+    } else {
+      unawaited(SoundManager.instance.playWrongAnswer());
+    }
+
     answers.add(selected);
+
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (_) => FeedbackPage(
-          question: practiceQuestions[currentQuestion],
+          question: question,
           selected: selected,
           onContinue: _continueAfterFeedback,
         ),
@@ -420,7 +436,16 @@ class _QuestionScreen extends StatelessWidget {
               ),
               const SizedBox(height: 16),
               FilledButton(
-                onPressed: onNext,
+                onPressed: onNext == null
+                    ? null
+                    : () {
+                        // Tombol selanjutnya Challenge memakai bunyi klik.
+                        // Latihan Santai tetap hanya memakai bunyi benar/salah.
+                        if (buttonColor != null) {
+                          unawaited(SoundManager.instance.playButtonClick());
+                        }
+                        onNext!();
+                      },
                 style: buttonColor == null
                     ? null
                     : FilledButton.styleFrom(backgroundColor: buttonColor),
@@ -523,7 +548,10 @@ class FeedbackPage extends StatelessWidget {
                 ),
                 const SizedBox(height: 14),
                 FilledButton(
-                  onPressed: onContinue,
+                  onPressed: () {
+                    unawaited(SoundManager.instance.playButtonClick());
+                    onContinue();
+                  },                  
                   child: const Text('Lanjut ke Soal Berikutnya'),
                 ),
               ],
@@ -535,7 +563,7 @@ class FeedbackPage extends StatelessWidget {
   }
 }
 
-class QuizResultPage extends StatelessWidget {
+class QuizResultPage extends StatefulWidget {
   const QuizResultPage({
     super.key,
     required this.materialTitle,
@@ -550,11 +578,22 @@ class QuizResultPage extends StatelessWidget {
   final Duration duration;
 
   @override
+  State<QuizResultPage> createState() => _QuizResultPageState();
+}
+
+class _QuizResultPageState extends State<QuizResultPage> {
+  @override
+  void initState() {
+    super.initState();
+    unawaited(SoundManager.instance.playQuizComplete());
+  }
+
+  @override
   Widget build(BuildContext context) => ResultPage(
-    materialTitle: materialTitle,
-    questions: questions,
-    answers: answers,
-    duration: duration,
+    materialTitle: widget.materialTitle,
+    questions: widget.questions,
+    answers: widget.answers,
+    duration: widget.duration,
   );
 }
 
@@ -667,6 +706,8 @@ class _ChallengePreparationPageState extends State<ChallengePreparationPage> {
 
               FilledButton(
                 onPressed: () {
+                  unawaited(SoundManager.instance.playButtonClick());
+
                   Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
@@ -676,7 +717,7 @@ class _ChallengePreparationPageState extends State<ChallengePreparationPage> {
                       ),
                     ),
                   );
-                },
+                },                
                 style: FilledButton.styleFrom(
                   backgroundColor: AppTheme.challenge.primary,
                 ),
@@ -754,6 +795,9 @@ class _ChallengePageState extends State<ChallengePage> {
       materialTitle: widget.materialTitle,
     );
 
+    // Bunyi saat angka 3 pertama kali ditampilkan.
+    unawaited(SoundManager.instance.playButtonClick());
+
     countdownTimer = Timer.periodic(const Duration(seconds: 1), (t) {
       if (!mounted) return;
       if (countdown <= 1) {
@@ -765,6 +809,8 @@ class _ChallengePageState extends State<ChallengePage> {
         _startTimer();
       } else {
         setState(() => countdown--);
+        // Bunyi saat hitung mundur berubah menjadi 2 dan 1.
+        unawaited(SoundManager.instance.playButtonClick());
       }
     });
   }
@@ -1031,17 +1077,33 @@ class _ChallengeReactionPageState extends State<ChallengeReactionPage> {
 
   bool get _isSuccessful => widget.score >= 50;
 
+  // Durasi mengikuti seluruh frame pada masing-masing Animated WebP:
+  // celebration sekitar 3,6 detik dan encouragement sekitar 6 detik.
+  Duration get _animationDuration => _isSuccessful
+      ? const Duration(milliseconds: 3700)
+      : const Duration(milliseconds: 6100);
+
+  String get _animationAsset => _isSuccessful
+      ? 'assets/images/fai/fai_celebration_3_transparent.webp'
+      : 'assets/images/fai/fai_encouragement_transparent.webp';
+
+
   @override
   void initState() {
     super.initState();
-    // Tampilkan reaksi Fai lebih dulu sebelum membuka ringkasan skor.
-    _transitionTimer = Timer(
-      _isSuccessful
-          ? const Duration(seconds: 4)
-          : const Duration(milliseconds: 5800),
-      _openResult,
-    );
+
+    // SFX mengikuti hasil akhir Challenge.
+    if (_isSuccessful) {
+      unawaited(SoundManager.instance.playFaiCelebration());
+    } else {
+      unawaited(SoundManager.instance.playFaiEncouragement());
+    }
+
+    _transitionTimer = Timer(_animationDuration, () {
+      unawaited(_openResult());
+    });
   }
+
 
   @override
   void dispose() {
@@ -1049,10 +1111,22 @@ class _ChallengeReactionPageState extends State<ChallengeReactionPage> {
     super.dispose();
   }
 
-  void _openResult() {
+
+  Future<void> _openResult({bool playClick = false}) async {
     if (!mounted || _isOpeningResult) return;
+
     _isOpeningResult = true;
     _transitionTimer?.cancel();
+
+    // Hentikan suara Fai sebelum berpindah ke halaman hasil.
+    await SoundManager.instance.stop();
+
+    // Jika pengguna menekan Skip, bunyikan klik setelah suara Fai berhenti.
+    if (playClick) {
+      await SoundManager.instance.playButtonClick();
+    }
+
+    if (!mounted) return;
 
     Navigator.pushReplacement(
       context,
@@ -1070,88 +1144,70 @@ class _ChallengeReactionPageState extends State<ChallengeReactionPage> {
     );
   }
 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppTheme.challenge.surface,
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(24, 28, 24, 24),
-          child: Column(
-            children: [
-              const Spacer(),
-              if (_isSuccessful)
-                Image.asset(
-                  'assets/images/fai/fai_celebration_3_transparent.webp',
-                  width: 230,
-                  height: 270,
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            // Layar ini sengaja hanya berisi animasi Fai, tanpa teks lain.
+            Center(
+              child: SizedBox(
+                width: 280,
+                height: 368,
+                child: Image.asset(
+                  _animationAsset,
                   fit: BoxFit.contain,
                   gaplessPlayback: true,
-                  semanticLabel: 'Fai merayakan hasil challenge',
-                  errorBuilder: (_, _, _) => const FaiMascot(
-                    assetName: 'faibit_celebrate2.png',
-                    fallbackAssetName: 'faibit_celebrate.png',
-                    width: 230,
-                    height: 270,
-                    semanticLabel: 'Fai merayakan hasil challenge',
-                  ),
-                )
-              else
-                Image.asset(
-                  'assets/images/fai/fai_encouragement_transparent.webp',
-                  width: 230,
-                  height: 270,
-                  fit: BoxFit.contain,
-                  gaplessPlayback: true,
-                  semanticLabel: 'Animasi Fai menyemangati pengguna',
-                  errorBuilder: (_, _, _) => const FaiMascot(
-                    assetName: 'faibit_encourage.png',
-                    width: 230,
-                    height: 270,
-                    semanticLabel: 'Fai menyemangati pengguna',
+                  semanticLabel: _isSuccessful
+                      ? 'Animasi Fai merayakan keberhasilan challenge'
+                      : 'Animasi Fai menyemangati pengguna',
+                  errorBuilder: (_, _, _) => FaiMascot(
+                    assetName: _isSuccessful
+                        ? 'faibit_celebrate2.png'
+                        : 'faibit_encourage.png',
+                    fallbackAssetName: _isSuccessful
+                        ? 'faibit_celebrate.png'
+                        : null,
+                    width: 280,
+                    height: 368,
+                    semanticLabel: 'Fai',
                   ),
                 ),
-              const SizedBox(height: 24),
-              Text(
-                _isSuccessful ? 'YEAY! KAMU HEBAT!' : 'TETAP SEMANGAT!',
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  fontSize: 25,
-                  fontWeight: FontWeight.w800,
-                ),
               ),
-              const SizedBox(height: 10),
-              Text(
-                _isSuccessful
-                    ? 'Kamu berhasil menyelesaikan challenge ini. Pertahankan semangat belajarmu!'
-                    : 'Tidak apa-apa. Setiap latihan adalah kesempatan untuk belajar dan menjadi lebih baik. Fai tetap menyemangatimu!',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: AppTheme.challenge.accentDark,
-                  fontSize: 14,
-                  height: 1.5,
-                ),
-              ),
-              const Spacer(),
-              SizedBox(
-                width: double.infinity,
-                child: FilledButton(
-                  onPressed: _openResult,
-                  style: FilledButton.styleFrom(
-                    backgroundColor: AppTheme.challenge.primary,
-                    padding: const EdgeInsets.symmetric(vertical: 15),
+            ),
+            Positioned(
+              top: 8,
+              right: 8,
+              child: Opacity(
+                opacity: 0.48,
+                child: TextButton(
+                  onPressed: () {
+                    unawaited(_openResult(playClick: true));
+                  },
+                  style: TextButton.styleFrom(
+                    foregroundColor: AppTheme.challenge.accentDark,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 6,
+                    ),
+                    minimumSize: Size.zero,
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                   ),
-                  child: const Text('Lihat Ringkasan Skor'),
+                  child: const Text(
+                    'Skip',
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
                 ),
               ),
-              const SizedBox(height: 10),
-              const Text(
-                'Ringkasan akan terbuka otomatis dalam beberapa saat',
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 12),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
@@ -1198,6 +1254,44 @@ class ChallengeResultPage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              OutlineCard(
+                child: Column(
+                  children: [
+                    _isSuccessful
+                        ? const FaiMascot(
+                            assetName: 'faibit_celebrate2.png',
+                            fallbackAssetName: 'faibit_celebrate.png',
+                            width: 190,
+                            height: 220,
+                            semanticLabel: 'Fai merayakan hasil challenge',
+                          )
+                        : const FaiMascot(
+                            assetName: 'faibit_encourage.png',
+                            width: 190,
+                            height: 220,
+                            semanticLabel: 'Fai menyemangati pengguna',
+                          ),
+                    const SizedBox(height: 10),
+                    Text(
+                      _isSuccessful ? 'Hebat! Challenge Selesai!' : 'Tetap Semangat!',
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        fontSize: 23,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      _isSuccessful
+                          ? 'Kamu berhasil menyelesaikan challenge ini. Pertahankan semangat belajarmu!'
+                          : 'Tidak apa-apa, masih ada kesempatan untuk belajar lagi. Fai tetap menyemangatimu!',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(color: AppTheme.challenge.accentDark),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 16),
               AnimatedContainer(
                 duration: const Duration(milliseconds: 350),
                 curve: Curves.easeInOut,
@@ -1285,18 +1379,23 @@ class ChallengeResultPage extends StatelessWidget {
               ),
               const SizedBox(height: 24),
               OutlinedButton(
-                onPressed: () =>
-                    Navigator.popUntil(context, (route) => route.isFirst),
+                onPressed: () {
+                  unawaited(SoundManager.instance.playButtonClick());
+                  Navigator.popUntil(context, (route) => route.isFirst);
+                },
                 child: const Text('Kembali ke Menu'),
               ),
               const SizedBox(height: 10),
               FilledButton(
-                onPressed: () => Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => ChallengePreparationPage(profile: profile),
-                  ),
-                ),
+                onPressed: () {
+                  unawaited(SoundManager.instance.playButtonClick());
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => ChallengePreparationPage(profile: profile),
+                    ),
+                  );
+                },
                 style: FilledButton.styleFrom(
                   backgroundColor: AppTheme.challenge.primary,
                 ),
@@ -1504,31 +1603,40 @@ class ResultPage extends StatelessWidget {
               ),
               const SizedBox(height: 24),
               OutlinedButton(
-                onPressed: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => QuizReviewPage(
-                      materialTitle: materialTitle,
-                      questions: questions,
-                      answers: answers,
+                onPressed: () {
+                  unawaited(SoundManager.instance.playButtonClick());
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => QuizReviewPage(
+                        materialTitle: materialTitle,
+                        questions: questions,
+                        answers: answers,
+                      ),
                     ),
-                  ),
-                ),
+                  );
+                },
                 child: const Text('Lihat Pembahasan'),
               ),
               const SizedBox(height: 10),
               FilledButton(
-                onPressed: () => Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => QuizPage(materialTitle: materialTitle),
-                  ),
-                ),
+                onPressed: () {
+                  unawaited(SoundManager.instance.playButtonClick());
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => QuizPage(materialTitle: materialTitle),
+                    ),
+                  );
+                },
                 child: const Text('Coba Latihan Lagi'),
               ),
               const SizedBox(height: 10),
               OutlinedButton(
-                onPressed: () => Navigator.popUntil(context, (r) => r.isFirst),
+                onPressed: () {
+                  unawaited(SoundManager.instance.playButtonClick());
+                  Navigator.popUntil(context, (r) => r.isFirst);
+                },
                 child: const Text('Kembali ke Menu'),
               ),
             ],
