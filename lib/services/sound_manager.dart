@@ -12,6 +12,9 @@ class SoundManager {
   // Pemutar khusus suara Fai agar tidak terpotong suara tombol.
   final AudioPlayer _faiPlayer = AudioPlayer();
 
+  // Pemutar khusus efek membalik halaman materi.
+  final AudioPlayer _pagePlayer = AudioPlayer();
+
   double _volume = 0.7;
   bool _isMuted = false;
 
@@ -36,6 +39,20 @@ class SoundManager {
   // SUARA HITUNG MUNDUR CHALLENGE
   Future<void> playCountdownTick() {
     return playButtonClick();
+  }
+
+  // SUARA SAAT HALAMAN MATERI BENAR-BENAR BERPINDAH
+  Future<void> playPageTurn() async {
+    if (_isMuted) return;
+
+    try {
+      await _pagePlayer.stop();
+      await _pagePlayer.setVolume((_volume * 0.45).clamp(0.0, 1.0));
+      await _pagePlayer.play(AssetSource('audio/buttons/page_turn.mp3'));
+    } catch (e, stackTrace) {
+      debugPrint('Gagal memutar audio page turn: $e');
+      debugPrintStack(stackTrace: stackTrace);
+    }
   }
 
   // SUARA JAWABAN LATIHAN SANTAI
@@ -67,6 +84,7 @@ class SoundManager {
   Future<void> stop() async {
     await _uiPlayer.stop();
     await _faiPlayer.stop();
+    await _pagePlayer.stop();
   }
 
   Future<void> setVolume(double volume) async {
@@ -75,6 +93,7 @@ class SoundManager {
     if (!_isMuted) {
       await _uiPlayer.setVolume(_volume);
       await _faiPlayer.setVolume(_volume);
+      await _pagePlayer.setVolume((_volume * 0.45).clamp(0.0, 1.0));
     }
   }
 
@@ -86,6 +105,7 @@ class SoundManager {
     } else {
       await _uiPlayer.setVolume(_volume);
       await _faiPlayer.setVolume(_volume);
+      await _pagePlayer.setVolume((_volume * 0.45).clamp(0.0, 1.0));
     }
   }
 

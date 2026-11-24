@@ -1,8 +1,10 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:real_page_flip/real_page_flip.dart';
 
 import '../data/mock_data.dart';
 import '../models/models.dart';
+import '../services/sound_manager.dart';
 import 'quiz_screens.dart';
 import '../widgets/ui.dart';
 
@@ -294,6 +296,9 @@ class _MaterialReaderPageState extends State<MaterialReaderPage> {
                           itemCount: sectionCount,
                           isDoubleSpread: false,
                           onPageChanged: (page) {
+                            if (page != currentPage) {
+                              unawaited(SoundManager.instance.playPageTurn());
+                            }
                             setState(() => currentPage = page);
                           },
                           itemBuilder: (context, index) => _MaterialSectionPage(
