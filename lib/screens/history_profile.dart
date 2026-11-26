@@ -373,8 +373,6 @@ class _ProfilePageState extends State<ProfilePage> {
   late Future<List<QuizAttempt>> _recentAttempts;
 
   UserProfile get profile => widget.profile;
-  Future<void> Function(UserProfile) get onProfileChanged =>
-      widget.onProfileChanged;
 
   @override
   void initState() {
@@ -385,124 +383,324 @@ class _ProfilePageState extends State<ProfilePage> {
   void _openEdit(BuildContext context) {
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (_) =>
-            EditProfilePage(profile: profile, onSaved: onProfileChanged),
+        builder: (_) => EditProfilePage(
+          profile: profile,
+          onSaved: widget.onProfileChanged,
+        ),
       ),
     );
   }
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-    appBar: PageTitle(
-      title: 'Profil',
-      showBack: false,
-      actions: [
-        IconButton(
-          tooltip: 'Edit Profil',
-          onPressed: () => _openEdit(context),
-          icon: const Icon(Icons.edit_outlined),
-        ),
-      ],
-    ),
-    body: SafeArea(
-      child: ListView(
-        padding: const EdgeInsets.all(20),
-        children: [
-          OutlineCard(
-            padding: const EdgeInsets.all(18),
-            child: Column(
-              children: [
-                Row(
-                  children: [
-                    CircleAvatar(
-                      radius: 42,
-                      backgroundColor: Theme.of(context)
-                          .colorScheme
-                          .primaryContainer,
-                      foregroundColor: Theme.of(context).colorScheme.primary,
-                      backgroundImage: profile.photoPath != null
-                          ? FileImage(File(profile.photoPath!))
-                          : null,
-                      child: profile.photoPath == null
-                          ? const Icon(Icons.person_outline, size: 46)
-                          : null,
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            profile.name,
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                            style: Theme.of(context).textTheme.headlineSmall
-                                ?.copyWith(fontWeight: FontWeight.w800),
-                          ),
-                          const SizedBox(height: 5),
-                          Text(
-                            'Kelas ${profile.schoolClass} • ${profile.school}',
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                            style: Theme.of(context).textTheme.bodySmall,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 18),
-                SizedBox(
-                  width: double.infinity,
-                  child: OutlinedButton.icon(
-                    onPressed: () => _openEdit(context),
-                    icon: const Icon(Icons.edit_outlined),
-                    label: const Text('Edit Profil'),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 20),
-          Text(
-            'Informasi Akun',
-            style: Theme.of(context).textTheme.titleMedium,
-          ),
-          const SizedBox(height: 8),
-          OutlineCard(
-            child: Column(
-              children: [
-                _ProfileDetail(
-                  icon: Icons.school_outlined,
-                  label: 'Kelas',
-                  value: profile.schoolClass,
-                ),
-                _ProfileDetail(
-                  icon: Icons.business_outlined,
-                  label: 'Sekolah',
-                  value: profile.school,
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 20),
-          Text(
-            'Aktivitas Terbaru',
-            style: Theme.of(context).textTheme.titleMedium,
-          ),
-          const SizedBox(height: 8),
-          FutureBuilder<List<QuizAttempt>>(
-            future: _recentAttempts,
-            builder: (context, snapshot) {
-              final attempt = snapshot.data != null && snapshot.data!.isNotEmpty
-                  ? snapshot.data!.first
-                  : null;
-              if (attempt == null) return const SizedBox.shrink();
-              return OutlineCard(child: _AttemptSummary(attempt: attempt));
-            },
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+
+    return Scaffold(
+      appBar: PageTitle(
+        title: 'Profil',
+        showBack: false,
+        actions: [
+          IconButton(
+            tooltip: 'Edit Profil',
+            onPressed: () => _openEdit(context),
+            icon: const Icon(Icons.edit_outlined),
           ),
         ],
       ),
+      body: SafeArea(
+        child: FutureBuilder<List<QuizAttempt>>(
+          future: _recentAttempts,
+          builder: (context, snapshot) {
+            final attempts = snapshot.data ?? const <QuizAttempt>[];
+            final practiceCount = attempts
+                .where((item) => item.type == QuizHistoryRepository.practiceType)
+                .length;
+            final challengeCount = attempts
+                .where((item) => item.type == QuizHistoryRepository.challengeType)
+                .length;
+            final recent = attempts.take(3).toList();
+
+            return ListView(
+              padding: const EdgeInsets.fromLTRB(18, 8, 18, 28),
+              children: [
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.fromLTRB(20, 22, 20, 18),
+                  decoration: BoxDecoration(
+                    gradient: const LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [Color(0xFF13A982), Color(0xFF08765D)],
+                    ),
+                    borderRadius: BorderRadius.circular(24),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppTheme.greenTeal.withValues(alpha: 0.22),
+                        blurRadius: 18,
+                        offset: const Offset(0, 8),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    children: [
+                      Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(3),
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: Colors.white.withValues(alpha: 0.8),
+                                width: 2,
+                              ),
+                            ),
+                            child: CircleAvatar(
+                              radius: 39,
+                              backgroundColor: Colors.white.withValues(alpha: 0.2),
+                              foregroundColor: Colors.white,
+                              backgroundImage: profile.photoPath != null
+                                  ? FileImage(File(profile.photoPath!))
+                                  : null,
+                              child: profile.photoPath == null
+                                  ? const Icon(Icons.person_outline, size: 42)
+                                  : null,
+                            ),
+                          ),
+                          const SizedBox(width: 15),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  profile.name,
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: theme.textTheme.titleLarge?.copyWith(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w800,
+                                  ),
+                                ),
+                                const SizedBox(height: 5),
+                                Text(
+                                  'Kelas ${profile.schoolClass}',
+                                  style: theme.textTheme.bodyMedium?.copyWith(
+                                    color: Colors.white.withValues(alpha: 0.92),
+                                  ),
+                                ),
+                                Text(
+                                  profile.school,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: theme.textTheme.bodySmall?.copyWith(
+                                    color: Colors.white.withValues(alpha: 0.82),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 20),
+                      SizedBox(
+                        width: double.infinity,
+                        child: FilledButton.icon(
+                          onPressed: () => _openEdit(context),
+                          icon: const Icon(Icons.edit_outlined, size: 18),
+                          label: const Text('Edit Profil'),
+                          style: FilledButton.styleFrom(
+                            backgroundColor: Colors.white,
+                            foregroundColor: const Color(0xFF08765D),
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(14),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 24),
+                Text(
+                  'Aktivitas Belajar',
+                  style: theme.textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+                const SizedBox(height: 10),
+                if (snapshot.connectionState == ConnectionState.waiting)
+                  const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 22),
+                    child: Center(child: CircularProgressIndicator()),
+                  )
+                else if (snapshot.hasError)
+                  OutlineCard(
+                    child: Text(
+                      'Aktivitas belajar belum dapat dimuat.',
+                      style: theme.textTheme.bodyMedium,
+                    ),
+                  )
+                else
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _ProfileStat(
+                          icon: Icons.assignment_outlined,
+                          label: 'Total Sesi',
+                          value: '${attempts.length}',
+                          color: colors.primary,
+                        ),
+                      ),
+                      const SizedBox(width: 9),
+                      Expanded(
+                        child: _ProfileStat(
+                          icon: Icons.edit_note_rounded,
+                          label: 'Latihan',
+                          value: '$practiceCount',
+                          color: colors.primary,
+                        ),
+                      ),
+                      const SizedBox(width: 9),
+                      Expanded(
+                        child: _ProfileStat(
+                          icon: Icons.timer_outlined,
+                          label: 'Challenge',
+                          value: '$challengeCount',
+                          color: AppTheme.challengeOrange,
+                        ),
+                      ),
+                    ],
+                  ),
+                const SizedBox(height: 24),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        'Aktivitas Terbaru',
+                        style: theme.textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+                    ),
+                    if (attempts.isNotEmpty)
+                      Text(
+                        '${attempts.length} aktivitas',
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: colors.onSurfaceVariant,
+                        ),
+                      ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                if (snapshot.connectionState == ConnectionState.waiting)
+                  const SizedBox.shrink()
+                else if (recent.isEmpty)
+                  OutlineCard(
+                    padding: const EdgeInsets.all(20),
+                    child: Column(
+                      children: [
+                        Icon(
+                          Icons.auto_stories_outlined,
+                          size: 38,
+                          color: colors.primary,
+                        ),
+                        const SizedBox(height: 9),
+                        Text(
+                          'Belum ada aktivitas belajar',
+                          style: theme.textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        const SizedBox(height: 5),
+                        Text(
+                          'Mulai Latihan Santai atau Challenge. Hasil pengerjaanmu akan muncul di sini.',
+                          textAlign: TextAlign.center,
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: colors.onSurfaceVariant,
+                            height: 1.45,
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                else
+                  ...recent.map(
+                    (attempt) => Padding(
+                      padding: const EdgeInsets.only(bottom: 9),
+                      child: OutlineCard(
+                        padding: const EdgeInsets.all(14),
+                        child: _AttemptSummary(attempt: attempt),
+                      ),
+                    ),
+                  ),
+                const SizedBox(height: 14),
+                Text(
+                  'Informasi Akun',
+                  style: theme.textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+                const SizedBox(height: 10),
+                OutlineCard(
+                  child: Column(
+                    children: [
+                      _ProfileDetail(
+                        icon: Icons.school_outlined,
+                        label: 'Kelas',
+                        value: profile.schoolClass,
+                      ),
+                      _ProfileDetail(
+                        icon: Icons.business_outlined,
+                        label: 'Sekolah',
+                        value: profile.school,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            );
+          },
+        ),
+      ),
+    );
+  }
+}
+
+class _ProfileStat extends StatelessWidget {
+  const _ProfileStat({
+    required this.icon,
+    required this.label,
+    required this.value,
+    required this.color,
+  });
+
+  final IconData icon;
+  final String label;
+  final String value;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) => OutlineCard(
+    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 13),
+    child: Column(
+      children: [
+        Icon(icon, color: color, size: 21),
+        const SizedBox(height: 7),
+        Text(
+          value,
+          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+            fontWeight: FontWeight.w800,
+          ),
+        ),
+        const SizedBox(height: 2),
+        Text(
+          label,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: Theme.of(context).textTheme.labelSmall,
+        ),
+      ],
     ),
   );
 }

@@ -3,6 +3,9 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:image_cropper/image_cropper.dart';
+import 'package:path/path.dart' as path;
+import 'package:path_provider/path_provider.dart';
 
 import '../data/sqlite_quiz_history_migrator.dart';
 import '../data/sqlite_quiz_history_provider.dart';
@@ -36,13 +39,56 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   Future<void> _pickProfileImage() async {
     final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(
+      source: ImageSource.gallery,
+      imageQuality: 100,
+    );
 
-    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+    if (pickedFile == null || !mounted) return;
 
-    if (pickedFile == null) return;
+    final croppedFile = await ImageCropper().cropImage(
+      sourcePath: pickedFile.path,
+      aspectRatio: const CropAspectRatio(ratioX: 1, ratioY: 1),
+      compressFormat: ImageCompressFormat.jpg,
+      compressQuality: 92,
+      uiSettings: [
+        AndroidUiSettings(
+          toolbarTitle: 'Atur Foto Profil',
+          toolbarColor: AppTheme.greenTeal,
+          toolbarWidgetColor: Colors.white,
+          activeControlsWidgetColor: AppTheme.greenTeal,
+          initAspectRatio: CropAspectRatioPreset.square,
+          lockAspectRatio: true,
+          cropStyle: CropStyle.circle,
+        ),
+        IOSUiSettings(
+          title: 'Atur Foto Profil',
+          aspectRatioLockEnabled: true,
+          resetAspectRatioEnabled: false,
+          aspectRatioPickerButtonHidden: true,
+          cropStyle: CropStyle.circle,
+        ),
+      ],
+    );
 
+    if (croppedFile == null || !mounted) return;
+
+    // Simpan hasil crop di folder permanen aplikasi, bukan cache sementara.
+    final appDirectory = await getApplicationDocumentsDirectory();
+    final profileDirectory = Directory(
+      path.join(appDirectory.path, 'profile_photos'),
+    );
+    await profileDirectory.create(recursive: true);
+    final savedImage = await File(croppedFile.path).copy(
+      path.join(
+        profileDirectory.path,
+        'profile_${DateTime.now().millisecondsSinceEpoch}.jpg',
+      ),
+    );
+
+    if (!mounted) return;
     setState(() {
-      _profileImage = File(pickedFile.path);
+      _profileImage = savedImage;
     });
   }
 
@@ -820,13 +866,17 @@ class AboutPage extends StatelessWidget {
             ),
             child: Column(
               children: [
-                CircleAvatar(
-                  radius: 35,
-                  backgroundColor: colors.primary,
-                  child: Icon(
-                    Icons.calculate_rounded,
-                    size: 38,
-                    color: colors.onPrimary,
+                Container(
+                  width: 82,
+                  height: 82,
+                  padding: const EdgeInsets.all(7),
+                  decoration: BoxDecoration(
+                    color: colors.surface,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Image.asset(
+                    'assets/images/branding/logo_faibit.png',
+                    fit: BoxFit.contain,
                   ),
                 ),
                 const SizedBox(height: 14),
@@ -840,7 +890,7 @@ class AboutPage extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  'Fast Arithmetic Interface + Bit',
+                  'Fast Arithmatic Bit Interface',
                   textAlign: TextAlign.center,
                   style: theme.textTheme.titleSmall?.copyWith(
                     color: colors.onPrimaryContainer,
@@ -970,6 +1020,20 @@ class AboutPage extends StatelessWidget {
             description:
                 'Asah kemampuan menyelesaikan soal melalui '
                 'tantangan dengan batas waktu.',
+          ),
+          const _AboutFeatureTile(
+            icon: Icons.swap_horiz_rounded,
+            title: 'Konversi Bilangan',
+            description:
+                'Konversikan bilangan desimal ke biner, oktal, dan '
+                'heksadesimal, serta lihat representasi tiap basis.',
+          ),
+          const _AboutFeatureTile(
+            icon: Icons.memory_rounded,
+            title: 'Bit Playground',
+            description:
+                'Eksplorasi nilai 8-bit dengan mengaktifkan atau '
+                'menonaktifkan bit dan melihat hasil desimalnya.',
           ),
           const _AboutFeatureTile(
             icon: Icons.history_rounded,
