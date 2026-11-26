@@ -7,6 +7,7 @@ import '../widgets/ui.dart';
 import 'history_profile.dart';
 import 'material_screens.dart';
 import 'quiz_screens.dart';
+import 'number_system_screen.dart';
 
 enum RootDestination { home, materials, history, profile }
 
@@ -263,6 +264,15 @@ class HomePage extends StatelessWidget {
                       'Riwayat Aktivitas',
                       Icons.history_outlined,
                       () => onDestinationSelected(RootDestination.history),
+                    ),
+                    _menu(
+                      context,
+                      'Konversi Bilangan',
+                      Icons.swap_horiz_rounded,
+                      () => _openChildPage(
+                        context,
+                        const InteractiveNumberSystemPage(),
+                      ),
                     ),
                   ],
                 ),
