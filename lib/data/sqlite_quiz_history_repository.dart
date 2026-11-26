@@ -52,6 +52,7 @@ class SqliteQuizHistoryRepository implements QuizHistoryStore {
         }, conflictAlgorithm: ConflictAlgorithm.ignore);
       }
     });
+    QuizHistoryRepository.notifyAttemptsChanged();
   }
 
   @override

@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
+
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/models.dart';
@@ -18,6 +20,13 @@ class QuizHistoryRepository implements QuizHistoryStore {
   static const challengeType = 'Challenge';
   static late QuizHistoryStore instance;
   static QuizHistoryStore? _configured;
+
+  /// Notifies screens that cached activity summaries should be reloaded.
+  static final ValueNotifier<int> attemptsRevision = ValueNotifier<int>(0);
+
+  static void notifyAttemptsChanged() {
+    attemptsRevision.value++;
+  }
   final SharedPreferences preferences;
 
   static void configure(SharedPreferences preferences) {
@@ -67,5 +76,6 @@ class QuizHistoryRepository implements QuizHistoryStore {
     if (!saved) {
       throw StateError('Riwayat kuis tidak dapat disimpan.');
     }
+    notifyAttemptsChanged();
   }
 }

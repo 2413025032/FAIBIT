@@ -1,21 +1,54 @@
+String normalizeFullName(String value) =>
+    value.trim().replaceAll(RegExp(r'\s+'), ' ').toUpperCase();
+
+String normalizeNickname(String value) => value
+    .trim()
+    .replaceAll(RegExp(r'\s+'), ' ')
+    .split(' ')
+    .where((word) => word.isNotEmpty)
+    .map((word) =>
+        '${word.substring(0, 1).toUpperCase()}${word.substring(1).toLowerCase()}')
+    .join(' ');
+
 class UserProfile {
   const UserProfile({
     required this.name,
     required this.schoolClass,
     required this.school,
+    this.nickname = '',
     this.photoPath,
   });
 
   final String name;
+  final String nickname;
   final String schoolClass;
   final String school;
   final String? photoPath;
 
-  UserProfile copyWith({String? name, String? schoolClass, String? school}) =>
+  String get greetingName {
+    final savedNickname = nickname.trim();
+    if (savedNickname.isNotEmpty) return normalizeNickname(savedNickname);
+
+    final fullName = normalizeFullName(name);
+    final firstName = fullName.split(' ').firstWhere(
+      (part) => part.isNotEmpty,
+      orElse: () => 'Pengguna',
+    );
+    return normalizeNickname(firstName);
+  }
+
+  UserProfile copyWith({
+    String? name,
+    String? nickname,
+    String? schoolClass,
+    String? school,
+  }) =>
       UserProfile(
         name: name ?? this.name,
+        nickname: nickname ?? this.nickname,
         schoolClass: schoolClass ?? this.schoolClass,
         school: school ?? this.school,
+        photoPath: photoPath,
       );
 }
 

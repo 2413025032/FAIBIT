@@ -118,11 +118,13 @@ class IdentityPage extends StatefulWidget {
 class _IdentityPageState extends State<IdentityPage> {
   final key = GlobalKey<FormState>();
   final name = TextEditingController();
+  final nickname = TextEditingController();
   final schoolClass = TextEditingController();
   final school = TextEditingController();
   @override
   void dispose() {
     name.dispose();
+    nickname.dispose();
     schoolClass.dispose();
     school.dispose();
     super.dispose();
@@ -131,7 +133,8 @@ class _IdentityPageState extends State<IdentityPage> {
   Future<void> submit() async {
     if (key.currentState!.validate()) {
       final profile = UserProfile(
-        name: name.text.trim(),
+        name: normalizeFullName(name.text),
+        nickname: normalizeNickname(nickname.text),
         schoolClass: schoolClass.text.trim(),
         school: school.text.trim(),
       );
@@ -222,13 +225,27 @@ class _IdentityPageState extends State<IdentityPage> {
                     const SizedBox(height: 28),
                     TextFormField(
                       controller: name,
+                      textCapitalization: TextCapitalization.words,
                       textInputAction: TextInputAction.next,
                       decoration: const InputDecoration(
                         prefixIcon: Icon(Icons.person_outline),
-                        hintText: 'Nama',
+                        hintText: 'Nama lengkap',
                       ),
                       validator: (v) => v == null || v.trim().isEmpty
-                          ? 'Nama wajib diisi'
+                          ? 'Nama lengkap wajib diisi'
+                          : null,
+                    ),
+                    const SizedBox(height: 14),
+                    TextFormField(
+                      controller: nickname,
+                      textCapitalization: TextCapitalization.words,
+                      textInputAction: TextInputAction.next,
+                      decoration: const InputDecoration(
+                        prefixIcon: Icon(Icons.waving_hand_outlined),
+                        hintText: 'Nama panggilan',
+                      ),
+                      validator: (v) => v == null || v.trim().isEmpty
+                          ? 'Nama panggilan wajib diisi'
                           : null,
                     ),
                     const SizedBox(height: 14),

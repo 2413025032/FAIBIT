@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'screens/identity_splash.dart';
@@ -7,10 +8,17 @@ import 'models/models.dart';
 import 'data/sqlite_quiz_history_provider.dart';
 import 'data/quiz_history_repository.dart';
 import 'settings/app_settings.dart';
+import 'services/sound_manager.dart';
 import 'theme/app_theme.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  try {
+    await SoundManager.instance.initialize();
+  } catch (error) {
+    // Audio is non-critical: the app must still open if SFX initialization fails.
+    debugPrint('FAIBIT audio initialization failed: $error');
+  }
   final preferences = await SharedPreferences.getInstance();
   final historyProvider = await SqliteQuizHistoryProvider.initialize(
     preferences: preferences,

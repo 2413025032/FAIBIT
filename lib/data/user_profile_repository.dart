@@ -35,10 +35,21 @@ class UserProfileRepository {
         return null;
       }
       final photoPath = json['photoPath'];
+      final normalizedName = normalizeFullName(name);
+      final storedNickname = json['nickname'];
+      final firstName = normalizedName.split(' ').firstWhere(
+        (part) => part.isNotEmpty,
+        orElse: () => 'Pengguna',
+      );
+      final nicknameSource =
+          storedNickname is String && storedNickname.trim().isNotEmpty
+          ? storedNickname
+          : firstName;
       return UserProfile(
-        name: name,
-        schoolClass: schoolClass,
-        school: school,
+        name: normalizedName,
+        nickname: normalizeNickname(nicknameSource),
+        schoolClass: schoolClass.trim(),
+        school: school.trim(),
         photoPath: photoPath is String ? photoPath : null,
       );
     } on FormatException {
@@ -58,9 +69,14 @@ class UserProfileRepository {
     final saved = await preferences.setString(
       _storageKey,
       jsonEncode({
-        'name': profile.name,
-        'schoolClass': profile.schoolClass,
-        'school': profile.school,
+        'name': normalizeFullName(profile.name),
+        'nickname': normalizeNickname(
+          profile.nickname.trim().isEmpty
+              ? normalizeFullName(profile.name).split(' ').first
+              : profile.nickname,
+        ),
+        'schoolClass': profile.schoolClass.trim(),
+        'school': profile.school.trim(),
         'photoPath': profile.photoPath,
       }),
     );

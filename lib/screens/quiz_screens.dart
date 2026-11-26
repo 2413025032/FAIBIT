@@ -1032,9 +1032,15 @@ class _ChallengePageState extends State<ChallengePage> {
                         question: question,
                         selected: selected,
                         onSelected: (i) {
+                          unawaited(SoundManager.instance.playButtonClick());
                           setState(() => selected = i);
                         },
-                        onNext: selected < 0 ? null : nextQuestion,
+                        onNext: selected < 0
+                            ? null
+                            : () {
+                                unawaited(SoundManager.instance.playButtonClick());
+                                nextQuestion();
+                              },
                         buttonColor: AppTheme.challenge.primary,
                         radioActiveColor: AppTheme.challenge.primary,
                       ),

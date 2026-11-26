@@ -114,7 +114,7 @@ class _BitPlaygroundPageState extends State<BitPlaygroundPage> {
                   crossAxisCount: 4,
                   crossAxisSpacing: 9,
                   mainAxisSpacing: 9,
-                  childAspectRatio: 1.05,
+                  childAspectRatio: 0.9,
                 ),
                 itemBuilder: (context, index) {
                   final bitNumber = 7 - index;
@@ -146,37 +146,41 @@ class _BitPlaygroundPageState extends State<BitPlaygroundPage> {
                             ),
                           ),
                           padding: const EdgeInsets.symmetric(
-                            horizontal: 5,
-                            vertical: 9,
+                            horizontal: 3,
+                            vertical: 5,
                           ),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                isOn ? '1' : '0',
-                                style: TextStyle(
-                                  color: foreground,
-                                  fontSize: 27,
-                                  fontWeight: FontWeight.w800,
+                          child: FittedBox(
+                            fit: BoxFit.scaleDown,
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  isOn ? '1' : '0',
+                                  style: TextStyle(
+                                    color: foreground,
+                                    fontSize: 25,
+                                    fontWeight: FontWeight.w800,
+                                  ),
                                 ),
-                              ),
-                              const SizedBox(height: 2),
-                              Text(
-                                'BIT $bitNumber',
-                                style: TextStyle(
-                                  color: foreground,
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.w700,
+                                const SizedBox(height: 1),
+                                Text(
+                                  'BIT $bitNumber',
+                                  style: TextStyle(
+                                    color: foreground,
+                                    fontSize: 9,
+                                    fontWeight: FontWeight.w700,
+                                  ),
                                 ),
-                              ),
-                              Text(
-                                'Nilai $bitValue',
-                                style: TextStyle(
-                                  color: foreground.withValues(alpha: 0.82),
-                                  fontSize: 10,
+                                Text(
+                                  'Nilai $bitValue',
+                                  style: TextStyle(
+                                    color: foreground.withValues(alpha: 0.82),
+                                    fontSize: 9,
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
                       ),

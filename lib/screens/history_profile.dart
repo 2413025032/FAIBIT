@@ -378,6 +378,20 @@ class _ProfilePageState extends State<ProfilePage> {
   void initState() {
     super.initState();
     _recentAttempts = QuizHistoryRepository.loadStoredAttempts();
+    QuizHistoryRepository.attemptsRevision.addListener(_refreshAttempts);
+  }
+
+  @override
+  void dispose() {
+    QuizHistoryRepository.attemptsRevision.removeListener(_refreshAttempts);
+    super.dispose();
+  }
+
+  void _refreshAttempts() {
+    if (!mounted) return;
+    setState(() {
+      _recentAttempts = QuizHistoryRepository.loadStoredAttempts();
+    });
   }
 
   void _openEdit(BuildContext context) {
@@ -413,12 +427,17 @@ class _ProfilePageState extends State<ProfilePage> {
           future: _recentAttempts,
           builder: (context, snapshot) {
             final attempts = snapshot.data ?? const <QuizAttempt>[];
-            final practiceCount = attempts
-                .where((item) => item.type == QuizHistoryRepository.practiceType)
-                .length;
-            final challengeCount = attempts
-                .where((item) => item.type == QuizHistoryRepository.challengeType)
-                .length;
+            final practiceCount = attempts.where((item) {
+              final type = item.type.trim().toLowerCase();
+              return type == QuizHistoryRepository.practiceType.toLowerCase() ||
+                  type == 'latihan' ||
+                  type == 'practice';
+            }).length;
+            final challengeCount = attempts.where((item) {
+              return item.type.trim().toLowerCase() ==
+                      QuizHistoryRepository.challengeType.toLowerCase() ||
+                  item.type.trim().toLowerCase() == 'tantangan';
+            }).length;
             final recent = attempts.take(3).toList();
 
             return ListView(

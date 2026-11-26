@@ -32,6 +32,7 @@ class EditProfilePage extends StatefulWidget {
 
 class _EditProfilePageState extends State<EditProfilePage> {
   late final TextEditingController _nameController;
+  late final TextEditingController _nicknameController;
   late final TextEditingController _classController;
   late final TextEditingController _schoolController;
 
@@ -96,6 +97,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
   void initState() {
     super.initState();
     _nameController = TextEditingController(text: widget.profile.name);
+    _nicknameController = TextEditingController(
+      text: widget.profile.greetingName,
+    );
     _classController = TextEditingController(text: widget.profile.schoolClass);
     _schoolController = TextEditingController(text: widget.profile.school);
 
@@ -107,6 +111,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
   @override
   void dispose() {
     _nameController.dispose();
+    _nicknameController.dispose();
     _classController.dispose();
     _schoolController.dispose();
     super.dispose();
@@ -114,25 +119,34 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   bool get _hasChanges {
     return _nameController.text.trim() != widget.profile.name ||
+        normalizeNickname(_nicknameController.text) !=
+            widget.profile.greetingName ||
         _classController.text.trim() != widget.profile.schoolClass ||
         _schoolController.text.trim() != widget.profile.school ||
         _profileImage?.path != widget.profile.photoPath;
   }
 
   Future<void> _save() async {
-    final name = _nameController.text.trim();
+    final name = normalizeFullName(_nameController.text);
+    final nickname = normalizeNickname(_nicknameController.text);
     final schoolClass = _classController.text.trim();
     final school = _schoolController.text.trim();
 
-    if (name.isEmpty || schoolClass.isEmpty || school.isEmpty) {
+    if (name.isEmpty ||
+        nickname.isEmpty ||
+        schoolClass.isEmpty ||
+        school.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Nama, kelas, dan sekolah wajib diisi.')),
+        const SnackBar(
+          content: Text('Nama lengkap, nama panggilan, kelas, dan sekolah wajib diisi.'),
+        ),
       );
       return;
     }
 
     final updatedProfile = UserProfile(
       name: name,
+      nickname: nickname,
       schoolClass: schoolClass,
       school: school,
       photoPath: _profileImage?.path,
@@ -288,15 +302,34 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 ),
               ),
               const SizedBox(height: 28),
-              Text('Nama', style: Theme.of(context).textTheme.labelLarge),
+              Text(
+                'Nama Lengkap',
+                style: Theme.of(context).textTheme.labelLarge,
+              ),
               const SizedBox(height: 8),
               TextField(
                 controller: _nameController,
                 onChanged: (_) => setState(() {}),
                 textInputAction: TextInputAction.next,
                 decoration: const InputDecoration(
-                  hintText: 'Masukkan nama',
+                  hintText: 'Masukkan nama lengkap',
                   prefixIcon: Icon(Icons.person_outline),
+                ),
+              ),
+              const SizedBox(height: 18),
+              Text(
+                'Nama Panggilan',
+                style: Theme.of(context).textTheme.labelLarge,
+              ),
+              const SizedBox(height: 8),
+              TextField(
+                controller: _nicknameController,
+                onChanged: (_) => setState(() {}),
+                textCapitalization: TextCapitalization.words,
+                textInputAction: TextInputAction.next,
+                decoration: const InputDecoration(
+                  hintText: 'Nama yang ingin digunakan saat disapa',
+                  prefixIcon: Icon(Icons.waving_hand_outlined),
                 ),
               ),
               const SizedBox(height: 18),

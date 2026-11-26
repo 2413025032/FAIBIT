@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:real_page_flip/real_page_flip.dart';
 
 import '../data/mock_data.dart';
+import '../data/material_progress_repository.dart';
 import '../models/models.dart';
 import '../services/sound_manager.dart';
 import 'quiz_screens.dart';
@@ -258,13 +259,22 @@ class _MaterialReaderPageState extends State<MaterialReaderPage> {
     }
   }
 
-  void completeMaterial() {
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (_) => MaterialCompletedPage(material: widget.material),
-      ),
-    );
+  Future<void> completeMaterial() async {
+    try {
+      await MaterialProgressRepository.markCompleted(widget.material.title);
+      if (!mounted) return;
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (_) => MaterialCompletedPage(material: widget.material),
+        ),
+      );
+    } catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Progres materi gagal disimpan: $error')),
+      );
+    }
   }
 
   @override
