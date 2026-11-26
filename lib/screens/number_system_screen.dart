@@ -595,7 +595,7 @@ class _InteractiveNumberSystemPageState
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '${number}${_radixSubscript(radix)} = $expression',
+                  '$number${_radixSubscript(radix)} = $expression',
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.w800,
                       ),

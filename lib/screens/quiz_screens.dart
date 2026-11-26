@@ -609,6 +609,127 @@ class ChallengePreparationPage extends StatefulWidget {
 
 class _ChallengePreparationPageState extends State<ChallengePreparationPage> {
   String selectedMaterial = materials.first.title;
+  int selectedDurationMinutes = 10;
+
+  static const _timeChoices = <_ChallengeTimeChoice>[
+    _ChallengeTimeChoice(
+      minutes: 15,
+      level: 'EASY',
+      description: 'Waktu lebih leluasa',
+    ),
+    _ChallengeTimeChoice(
+      minutes: 10,
+      level: 'MEDIUM',
+      description: 'Tantangan seimbang',
+    ),
+    _ChallengeTimeChoice(
+      minutes: 5,
+      level: 'HARD',
+      description: 'Butuh fokus tinggi',
+    ),
+    _ChallengeTimeChoice(
+      minutes: 3,
+      level: 'EXTREME',
+      description: 'Uji kecepatanmu',
+    ),
+  ];
+
+  Color _levelColor(String level) {
+    switch (level) {
+      case 'EASY':
+        return const Color(0xFF299B78);
+      case 'MEDIUM':
+        return const Color(0xFF4E8FA5);
+      case 'HARD':
+        return const Color(0xFFE28A3B);
+      default:
+        return const Color(0xFFCA5E68);
+    }
+  }
+
+  Widget _buildTimeChoice(_ChallengeTimeChoice choice) {
+    final theme = Theme.of(context);
+    final accent = _levelColor(choice.level);
+    final isSelected = selectedDurationMinutes == choice.minutes;
+
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 180),
+      decoration: BoxDecoration(
+        color: isSelected
+            ? accent.withValues(alpha: 0.10)
+            : theme.colorScheme.surface,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: isSelected ? accent : theme.colorScheme.outlineVariant,
+          width: isSelected ? 2 : 1,
+        ),
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(16),
+          onTap: () {
+            unawaited(SoundManager.instance.playButtonClick());
+            setState(() => selectedDurationMinutes = choice.minutes);
+          },
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Icon(Icons.timer_outlined, color: accent, size: 19),
+                    const SizedBox(width: 6),
+                    Expanded(
+                      child: Text(
+                        '${choice.minutes} menit',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+                    ),
+                    if (isSelected)
+                      Icon(Icons.check_circle, color: accent, size: 18),
+                  ],
+                ),
+                const SizedBox(height: 7),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 9,
+                    vertical: 4,
+                  ),
+                  decoration: BoxDecoration(
+                    color: accent.withValues(alpha: 0.14),
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  child: Text(
+                    choice.level,
+                    style: TextStyle(
+                      color: accent,
+                      fontSize: 10,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: 0.8,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 5),
+                Text(
+                  choice.description,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: theme.textTheme.bodySmall,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -654,17 +775,14 @@ class _ChallengePreparationPageState extends State<ChallengePreparationPage> {
                   ],
                 ),
               ),
-
               const SizedBox(height: 20),
-
               const Text(
                 'Pilih Materi',
                 style: TextStyle(fontWeight: FontWeight.w700),
               ),
               const SizedBox(height: 8),
-
               DropdownButtonFormField<String>(
-                value: selectedMaterial,
+                initialValue: selectedMaterial,
                 decoration: const InputDecoration(
                   prefixIcon: Icon(Icons.menu_book_outlined),
                   border: OutlineInputBorder(),
@@ -683,41 +801,54 @@ class _ChallengePreparationPageState extends State<ChallengePreparationPage> {
                   }
                 },
               ),
-
               const SizedBox(height: 20),
-
+              const Text(
+                'Pilih Batas Waktu',
+                style: TextStyle(fontWeight: FontWeight.w700),
+              ),
+              const SizedBox(height: 5),
+              Text(
+                'Semakin singkat waktunya, semakin tinggi tingkat tantangannya.',
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
+              const SizedBox(height: 12),
+              GridView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: _timeChoices.length,
+                gridDelegate:
+                    const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      crossAxisSpacing: 10,
+                      mainAxisSpacing: 10,
+                      childAspectRatio: 1.72,
+                    ),
+                itemBuilder: (context, index) =>
+                    _buildTimeChoice(_timeChoices[index]),
+              ),
+              const SizedBox(height: 16),
               OutlineCard(
-                child: Column(
-                  children: const [
-                    _ChallengeInfo(
-                      icon: Icons.quiz_outlined,
-                      title: 'Jumlah Soal',
-                      value: '10 soal',
-                    ),
-                    SizedBox(height: 14),
-                    _ChallengeInfo(
-                      icon: Icons.timer_outlined,
-                      title: 'Batas Waktu',
-                      value: '10 menit',
-                    ),
-                  ],
+                child: const _ChallengeInfo(
+                  icon: Icons.quiz_outlined,
+                  title: 'Jumlah Soal',
+                  value: '10 soal',
                 ),
               ),
-
+              const SizedBox(height: 18),
               FilledButton(
                 onPressed: () {
                   unawaited(SoundManager.instance.playButtonClick());
-
                   Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
                       builder: (_) => ChallengePage(
                         profile: widget.profile,
                         materialTitle: selectedMaterial,
+                        durationMinutes: selectedDurationMinutes,
                       ),
                     ),
                   );
-                },                
+                },
                 style: FilledButton.styleFrom(
                   backgroundColor: AppTheme.challenge.primary,
                 ),
@@ -729,6 +860,18 @@ class _ChallengePreparationPageState extends State<ChallengePreparationPage> {
       ),
     );
   }
+}
+
+class _ChallengeTimeChoice {
+  const _ChallengeTimeChoice({
+    required this.minutes,
+    required this.level,
+    required this.description,
+  });
+
+  final int minutes;
+  final String level;
+  final String description;
 }
 
 class _ChallengeInfo extends StatelessWidget {
@@ -743,16 +886,14 @@ class _ChallengeInfo extends StatelessWidget {
   final String value;
 
   @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Icon(icon),
-        const SizedBox(width: 12),
-        Expanded(child: Text(title)),
-        Text(value, style: const TextStyle(fontWeight: FontWeight.w700)),
-      ],
-    );
-  }
+  Widget build(BuildContext context) => Row(
+    children: [
+      Icon(icon),
+      const SizedBox(width: 12),
+      Expanded(child: Text(title)),
+      Text(value, style: const TextStyle(fontWeight: FontWeight.w700)),
+    ],
+  );
 }
 
 class ChallengePage extends StatefulWidget {
@@ -760,17 +901,19 @@ class ChallengePage extends StatefulWidget {
     super.key,
     required this.profile,
     this.materialTitle = 'Biner',
+    this.durationMinutes = 10,
   });
 
   final UserProfile profile;
   final String materialTitle;
+  final int durationMinutes;
 
   @override
   State<ChallengePage> createState() => _ChallengePageState();
 }
 
 class _ChallengePageState extends State<ChallengePage> {
-  int seconds = 10 * 60;
+  late int seconds;
   int currentQuestion = 0;
   int selected = -1;
   int countdown = 3;
@@ -790,6 +933,7 @@ class _ChallengePageState extends State<ChallengePage> {
   @override
   void initState() {
     super.initState();
+    seconds = widget.durationMinutes * 60;
     _sessionQuestions = selectQuestionsForSession(
       bank: challengeQuestionBank,
       materialTitle: widget.materialTitle,
@@ -908,7 +1052,7 @@ class _ChallengePageState extends State<ChallengePage> {
     final totalQuestions = challengeQuestions.length;
     final duration = Duration(
       seconds: timeExpired
-          ? 10 * 60
+          ? widget.durationMinutes * 60
           : DateTime.now().difference(startedAt ?? DateTime.now()).inSeconds,
     );
 
@@ -1254,8 +1398,9 @@ class ChallengeResultPage extends StatelessWidget {
 
     return Scaffold(
       appBar: const PageTitle(title: 'Hasil Challenge'),
-      body: SafeArea(
-        child: SingleChildScrollView(
+      body: _PlayChallengeCompleteSound(
+        child: SafeArea(
+          child: SingleChildScrollView(
           padding: const EdgeInsets.fromLTRB(20, 10, 20, 20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -1411,8 +1556,35 @@ class ChallengeResultPage extends StatelessWidget {
           ),
         ),
       ),
+      ),
     );
   }
+}
+
+class _PlayChallengeCompleteSound extends StatefulWidget {
+  const _PlayChallengeCompleteSound({required this.child});
+
+  final Widget child;
+
+  @override
+  State<_PlayChallengeCompleteSound> createState() =>
+      _PlayChallengeCompleteSoundState();
+}
+
+class _PlayChallengeCompleteSoundState
+    extends State<_PlayChallengeCompleteSound> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        unawaited(SoundManager.instance.playQuizComplete());
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) => widget.child;
 }
 
 class _ChallengeResultStat extends StatelessWidget {

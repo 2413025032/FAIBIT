@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+enum AppThemeMode { light, dark, pink }
+
 enum ReadingSize {
   small('Kecil', 0.88),
   normal('Normal', 1.0),
@@ -20,24 +22,27 @@ class AppSettingsController extends ChangeNotifier {
   static const _readingSizeKey = 'reading_size';
 
   final SharedPreferences preferences;
-  ThemeMode _themeMode = ThemeMode.light;
+  AppThemeMode _appThemeMode = AppThemeMode.light;
   ReadingSize _readingSize = ReadingSize.normal;
 
-  ThemeMode get themeMode => _themeMode;
+  AppThemeMode get appThemeMode => _appThemeMode;
+  ThemeMode get themeMode =>
+      _appThemeMode == AppThemeMode.dark ? ThemeMode.dark : ThemeMode.light;
   ReadingSize get readingSize => _readingSize;
   double get textScale => _readingSize.scale;
 
-  void setThemeMode(ThemeMode mode) {
-    final selectedMode = mode == ThemeMode.dark
-        ? ThemeMode.dark
-        : ThemeMode.light;
-    if (_themeMode == selectedMode) return;
-    _themeMode = selectedMode;
-    preferences.setString(
-      _themeKey,
-      selectedMode == ThemeMode.dark ? 'dark' : 'light',
-    );
+  void setAppThemeMode(AppThemeMode mode) {
+    if (_appThemeMode == mode) return;
+    _appThemeMode = mode;
+    preferences.setString(_themeKey, mode.name);
     notifyListeners();
+  }
+
+  /// Backwards-compatible method for any older screen still using ThemeMode.
+  void setThemeMode(ThemeMode mode) {
+    setAppThemeMode(
+      mode == ThemeMode.dark ? AppThemeMode.dark : AppThemeMode.light,
+    );
   }
 
   void setReadingSize(ReadingSize size) {
@@ -56,15 +61,19 @@ class AppSettingsController extends ChangeNotifier {
         }
       }
     }
-    _themeMode = ThemeMode.light;
+    _appThemeMode = AppThemeMode.light;
     _readingSize = ReadingSize.normal;
     notifyListeners();
   }
 
   void load() {
-    _themeMode = preferences.getString(_themeKey) == 'dark'
-        ? ThemeMode.dark
-        : ThemeMode.light;
+    final savedTheme = preferences.getString(_themeKey);
+    _appThemeMode = AppThemeMode.values.firstWhere(
+      (mode) => mode.name == savedTheme,
+      orElse: () => savedTheme == 'dark'
+          ? AppThemeMode.dark
+          : AppThemeMode.light,
+    );
     final savedSize = preferences.getString(_readingSizeKey);
     _readingSize = ReadingSize.values.firstWhere(
       (size) => size.name == savedSize,
@@ -81,8 +90,8 @@ class AppSettingsScope extends InheritedNotifier<AppSettingsController> {
   }) : super(notifier: controller);
 
   static AppSettingsController of(BuildContext context) {
-    final scope = context
-        .dependOnInheritedWidgetOfExactType<AppSettingsScope>();
+    final scope =
+        context.dependOnInheritedWidgetOfExactType<AppSettingsScope>();
     assert(scope != null, 'AppSettingsScope is missing above this context.');
     return scope!.notifier!;
   }

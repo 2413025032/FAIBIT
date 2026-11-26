@@ -451,23 +451,29 @@ class SettingsPage extends StatelessWidget {
           const Text('Tampilan', style: TextStyle(fontWeight: FontWeight.w700)),
           const SizedBox(height: 10),
           OutlineCard(
-            child: RadioGroup<ThemeMode>(
-              groupValue: settings.themeMode,
+            child: RadioGroup<AppThemeMode>(
+              groupValue: settings.appThemeMode,
               onChanged: (value) {
-                if (value != null) settings.setThemeMode(value);
+                if (value != null) settings.setAppThemeMode(value);
               },
               child: const Column(
                 children: [
-                  RadioListTile<ThemeMode>(
-                    value: ThemeMode.light,
+                  RadioListTile<AppThemeMode>(
+                    value: AppThemeMode.light,
                     title: Text('Light Mode'),
-                    subtitle: Text('Gunakan tampilan terang'),
+                    subtitle: Text('Tampilan terang yang bersih'),
                     contentPadding: EdgeInsets.zero,
                   ),
-                  RadioListTile<ThemeMode>(
-                    value: ThemeMode.dark,
+                  RadioListTile<AppThemeMode>(
+                    value: AppThemeMode.dark,
                     title: Text('Dark Mode'),
-                    subtitle: Text('Gunakan tampilan gelap'),
+                    subtitle: Text('Tampilan gelap yang nyaman'),
+                    contentPadding: EdgeInsets.zero,
+                  ),
+                  RadioListTile<AppThemeMode>(
+                    value: AppThemeMode.pink,
+                    title: Text('Pink Mode'),
+                    subtitle: Text('Dusty rose lembut dengan permukaan netral'),
                     contentPadding: EdgeInsets.zero,
                   ),
                 ],
@@ -873,8 +879,62 @@ class _MaterialReferenceCard extends StatelessWidget {
 }
 
 
-class AboutPage extends StatelessWidget {
+class AboutPage extends StatefulWidget {
   const AboutPage({super.key});
+
+  @override
+  State<AboutPage> createState() => _AboutPageState();
+}
+
+class _AboutPageState extends State<AboutPage> {
+  late Future<UserProfile?> _developerProfileFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _developerProfileFuture = UserProfileRepository.instance.load();
+  }
+
+  Widget _buildDeveloperPortrait(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    return FutureBuilder<UserProfile?>(
+      future: _developerProfileFuture,
+      builder: (context, snapshot) {
+        final photoPath = snapshot.data?.photoPath;
+        final hasPhoto = photoPath != null &&
+            photoPath.isNotEmpty &&
+            File(photoPath).existsSync();
+        return Container(
+          width: 92,
+          height: 92,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: colors.secondaryContainer,
+            border: Border.all(
+            color: colors.primary.withValues(alpha: 0.35),
+            width: 2,
+          ),
+          ),
+          clipBehavior: Clip.antiAlias,
+          child: hasPhoto
+              ? Image.file(
+                  File(photoPath),
+                  fit: BoxFit.cover,
+                  errorBuilder: (_, _, _) => Icon(
+                    Icons.person_rounded,
+                    size: 42,
+                    color: colors.onSecondaryContainer,
+                  ),
+                )
+              : Icon(
+                  Icons.person_rounded,
+                  size: 42,
+                  color: colors.onSecondaryContainer,
+                ),
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -1069,6 +1129,13 @@ class AboutPage extends StatelessWidget {
                 'menonaktifkan bit dan melihat hasil desimalnya.',
           ),
           const _AboutFeatureTile(
+            icon: Icons.table_chart_rounded,
+            title: 'Tabel Referensi Bilangan',
+            description:
+                'Lihat perbandingan bilangan desimal, biner, oktal, dan '
+                'heksadesimal dari angka 0 sampai 50 sebagai referensi cepat.',
+          ),
+          const _AboutFeatureTile(
             icon: Icons.history_rounded,
             title: 'Riwayat Belajar',
             description:
@@ -1107,24 +1174,19 @@ class AboutPage extends StatelessWidget {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  CircleAvatar(
-                    radius: 27,
-                    backgroundColor: colors.secondaryContainer,
-                    child: Icon(
-                      Icons.person_rounded,
-                      size: 30,
-                      color: colors.onSecondaryContainer,
-                    ),
-                  ),
+                  _buildDeveloperPortrait(context),
                   const SizedBox(width: 14),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          'Mutiara Salsabilla',
-                          style: theme.textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
+                        FutureBuilder<UserProfile?>(
+                          future: _developerProfileFuture,
+                          builder: (context, snapshot) => Text(
+                            snapshot.data?.name ?? 'Mutiara Salsabilla',
+                            style: theme.textTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
                         const SizedBox(height: 5),

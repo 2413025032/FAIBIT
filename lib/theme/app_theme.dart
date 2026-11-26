@@ -51,6 +51,29 @@ class AppTheme {
     outline: Color(0xFF536761),
   );
 
+
+  // A muted blush palette: pink accents, warm neutral surfaces and charcoal text.
+  static const pinkPrimary = Color(0xFFB77491);
+  static const pinkPrimaryDark = Color(0xFF87536A);
+  static const pinkBackground = Color(0xFFFFF9FB);
+  static const pinkSurface = Color(0xFFFFFEFF);
+  static const pinkContainer = Color(0xFFF5E6EC);
+  static const pinkLine = Color(0xFFE9DCE2);
+
+  static const ColorScheme pinkScheme = ColorScheme.light(
+    primary: pinkPrimary,
+    onPrimary: Colors.white,
+    primaryContainer: pinkContainer,
+    onPrimaryContainer: Color(0xFF553746),
+    secondary: Color(0xFF806774),
+    onSecondary: Colors.white,
+    tertiary: Color(0xFFB58B70),
+    onTertiary: Colors.white,
+    surface: pinkSurface,
+    onSurface: darkGray,
+    outline: pinkLine,
+  );
+
   /// Tokens reserved for the Challenge visual mode in a later phase.
   static const ChallengeColors challenge = ChallengeColors(
     primary: challengeOrange,
@@ -199,6 +222,94 @@ class AppTheme {
       selectedColor: tealSurface,
       secondarySelectedColor: tealSurface,
       side: const BorderSide(color: line),
+      labelStyle: const TextStyle(fontFamily: bodyFont, color: darkGray),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+    ),
+  );
+
+  static ThemeData get pink => light.copyWith(
+    colorScheme: pinkScheme,
+    scaffoldBackgroundColor: pinkBackground,
+    appBarTheme: const AppBarTheme(
+      backgroundColor: pinkBackground,
+      foregroundColor: darkGray,
+      surfaceTintColor: Colors.transparent,
+      elevation: 0,
+      centerTitle: true,
+      titleTextStyle: TextStyle(
+        fontFamily: headingFont,
+        color: darkGray,
+        fontSize: 20,
+        fontWeight: FontWeight.w700,
+      ),
+    ),
+    iconTheme: const IconThemeData(color: pinkPrimaryDark),
+    filledButtonTheme: FilledButtonThemeData(
+      style: FilledButton.styleFrom(
+        backgroundColor: pinkPrimary,
+        foregroundColor: Colors.white,
+        minimumSize: const Size.fromHeight(52),
+        textStyle: const TextStyle(
+          fontFamily: headingFont,
+          fontSize: 18,
+          fontWeight: FontWeight.w700,
+        ),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(radius),
+        ),
+      ),
+    ),
+    outlinedButtonTheme: OutlinedButtonThemeData(
+      style: OutlinedButton.styleFrom(
+        foregroundColor: pinkPrimaryDark,
+        minimumSize: const Size.fromHeight(48),
+        side: const BorderSide(color: pinkLine),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(radius),
+        ),
+      ),
+    ),
+    inputDecorationTheme: InputDecorationTheme(
+      filled: true,
+      fillColor: pinkSurface,
+      hintStyle: const TextStyle(fontFamily: bodyFont, color: muted),
+      labelStyle: const TextStyle(fontFamily: bodyFont, color: darkGray),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(radius),
+        borderSide: const BorderSide(color: pinkLine),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(radius),
+        borderSide: const BorderSide(color: pinkLine),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(radius),
+        borderSide: const BorderSide(color: pinkPrimary, width: 2),
+      ),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 15),
+    ),
+    navigationBarTheme: NavigationBarThemeData(
+      backgroundColor: pinkSurface,
+      indicatorColor: pinkContainer,
+      height: 72,
+      labelTextStyle: const WidgetStatePropertyAll(
+        TextStyle(
+          fontFamily: headingFont,
+          fontSize: 12,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+      iconTheme: WidgetStateProperty.resolveWith(
+        (states) => IconThemeData(
+          color: states.contains(WidgetState.selected) ? pinkPrimary : muted,
+        ),
+      ),
+    ),
+    chipTheme: ChipThemeData(
+      backgroundColor: pinkSurface,
+      selectedColor: pinkContainer,
+      secondarySelectedColor: pinkContainer,
+      side: const BorderSide(color: pinkLine),
       labelStyle: const TextStyle(fontFamily: bodyFont, color: darkGray),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
     ),

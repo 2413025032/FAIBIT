@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'screens/identity_splash.dart';
@@ -50,7 +49,9 @@ class FaibitApp extends StatelessWidget {
       routes: {
         '/identity': (_) => const IdentityPage(),
       },
-      theme: AppTheme.light,
+      theme: settings.appThemeMode == AppThemeMode.pink
+          ? AppTheme.pink
+          : AppTheme.light,
       darkTheme: AppTheme.dark,
       themeMode: settings.themeMode,
       builder: (context, child) => MediaQuery(

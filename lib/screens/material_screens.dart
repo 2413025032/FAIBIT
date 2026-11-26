@@ -304,7 +304,13 @@ class _MaterialReaderPageState extends State<MaterialReaderPage> {
                         return PageFlipWidget(
                           controller: pageController,
                           itemCount: sectionCount,
-                          isDoubleSpread: false,
+                          spreadMode: PageFlipSpreadMode.single,
+                          config: const PageFlipConfig(
+                            cutoffForward: 0.4,
+                            cutoffPrevious: 0.4,
+                            sensitivity: 0.55,
+                            enableSound: false,
+                          ),
                           onPageChanged: (page) {
                             if (page != currentPage) {
                               unawaited(SoundManager.instance.playPageTurn());

@@ -293,7 +293,7 @@ class _HomeProfilePhoto extends StatelessWidget {
       child: ClipOval(
         child: hasPhoto
             ? Image.file(
-                File(path!),
+                File(path),
                 width: 42,
                 height: 42,
                 fit: BoxFit.cover,
