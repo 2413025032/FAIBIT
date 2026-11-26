@@ -16,6 +16,38 @@ import '../settings/app_settings.dart';
 import '../theme/app_theme.dart';
 import '../widgets/ui.dart';
 
+const String _pendingProfilePhotoKey = 'faibit_pending_profile_photo_path_v1';
+
+
+TextInputFormatter _singleWordNicknameFormatter() {
+  return TextInputFormatter.withFunction((oldValue, newValue) {
+    final cleaned = newValue.text.trimLeft();
+    final firstWord = cleaned.split(RegExp(r'\s+')).first;
+    final cursor = newValue.selection.extentOffset < 0
+        ? firstWord.length
+        : newValue.selection.extentOffset.clamp(0, firstWord.length).toInt();
+    return TextEditingValue(
+      text: firstWord,
+      selection: TextSelection.collapsed(offset: cursor),
+      composing: TextRange.empty,
+    );
+  });
+}
+
+TextInputFormatter _uppercaseFieldFormatter() {
+  return TextInputFormatter.withFunction((oldValue, newValue) {
+    final upper = newValue.text.toUpperCase();
+    final cursor = newValue.selection.extentOffset < 0
+        ? upper.length
+        : newValue.selection.extentOffset.clamp(0, upper.length).toInt();
+    return TextEditingValue(
+      text: upper,
+      selection: TextSelection.collapsed(offset: cursor),
+      composing: TextRange.empty,
+    );
+  });
+}
+
 class EditProfilePage extends StatefulWidget {
   const EditProfilePage({
     super.key,
@@ -37,27 +69,65 @@ class _EditProfilePageState extends State<EditProfilePage> {
   late final TextEditingController _schoolController;
 
   File? _profileImage;
+  bool _isPickingImage = false;
 
   Future<void> _pickProfileImage() async {
-    final picker = ImagePicker();
-    final pickedFile = await picker.pickImage(
-      source: ImageSource.gallery,
-      imageQuality: 100,
-    );
+    if (_isPickingImage || !mounted) return;
+    setState(() => _isPickingImage = true);
+    try {
+      // Batasi dimensi sejak awal agar pemrosesan foto tidak membebani RAM.
+      final pickedFile = await ImagePicker().pickImage(
+        source: ImageSource.gallery,
+        maxWidth: 1600,
+        maxHeight: 1600,
+        imageQuality: 85,
+        requestFullMetadata: false,
+      );
+      if (pickedFile == null || !mounted) return;
+      await _cropAndSaveProfilePhoto(pickedFile.path);
+    } on PlatformException catch (error) {
+      debugPrint('FAIBIT image picker platform error: $error');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Galeri tidak dapat dibuka. Coba lagi.')),
+        );
+      }
+    } catch (error, stackTrace) {
+      debugPrint('FAIBIT image picker error: $error\n$stackTrace');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Foto belum dapat diproses. Coba foto lain.')),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isPickingImage = false);
+    }
+  }
 
-    if (pickedFile == null || !mounted) return;
+  Future<void> _cropAndSaveProfilePhoto(String sourcePath) async {
+    // Ambil warna tema sebelum operasi async agar BuildContext tidak dipakai
+    // setelah await dan tidak memunculkan lint use_build_context_synchronously.
+    if (!mounted) return;
+    final colors = Theme.of(context).colorScheme;
 
+    final sourceFile = File(sourcePath);
+    if (!await sourceFile.exists()) {
+      throw FileSystemException('File foto tidak ditemukan.', sourcePath);
+    }
+    if (!mounted) return;
     final croppedFile = await ImageCropper().cropImage(
-      sourcePath: pickedFile.path,
+      sourcePath: sourcePath,
+      maxWidth: 900,
+      maxHeight: 900,
       aspectRatio: const CropAspectRatio(ratioX: 1, ratioY: 1),
       compressFormat: ImageCompressFormat.jpg,
-      compressQuality: 92,
+      compressQuality: 88,
       uiSettings: [
         AndroidUiSettings(
           toolbarTitle: 'Atur Foto Profil',
-          toolbarColor: AppTheme.greenTeal,
+          toolbarColor: colors.primary,
           toolbarWidgetColor: Colors.white,
-          activeControlsWidgetColor: AppTheme.greenTeal,
+          activeControlsWidgetColor: colors.primary,
           initAspectRatio: CropAspectRatioPreset.square,
           lockAspectRatio: true,
           cropStyle: CropStyle.circle,
@@ -74,7 +144,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
     if (croppedFile == null || !mounted) return;
 
-    // Simpan hasil crop di folder permanen aplikasi, bukan cache sementara.
     final appDirectory = await getApplicationDocumentsDirectory();
     final profileDirectory = Directory(
       path.join(appDirectory.path, 'profile_photos'),
@@ -88,9 +157,32 @@ class _EditProfilePageState extends State<EditProfilePage> {
     );
 
     if (!mounted) return;
-    setState(() {
-      _profileImage = savedImage;
-    });
+    setState(() => _profileImage = savedImage);
+  }
+
+  Future<void> _resumeRecoveredProfilePhoto() async {
+    final preferences = UserProfileRepository.instance.preferences;
+    final recoveredPath = preferences.getString(_pendingProfilePhotoKey);
+    if (recoveredPath == null || recoveredPath.isEmpty || !mounted) return;
+
+    await preferences.remove(_pendingProfilePhotoKey);
+    if (!mounted) return;
+
+    setState(() => _isPickingImage = true);
+    try {
+      await _cropAndSaveProfilePhoto(recoveredPath);
+    } catch (error, stackTrace) {
+      debugPrint('FAIBIT recovered photo crop error: $error\n$stackTrace');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Foto sebelumnya tidak dapat diproses. Silakan pilih ulang.'),
+          ),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isPickingImage = false);
+    }
   }
 
   @override
@@ -106,6 +198,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
     if (widget.profile.photoPath != null) {
       _profileImage = File(widget.profile.photoPath!);
     }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _resumeRecoveredProfilePhoto();
+    });
   }
 
   @override
@@ -129,8 +224,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
   Future<void> _save() async {
     final name = normalizeFullName(_nameController.text);
     final nickname = normalizeNickname(_nicknameController.text);
-    final schoolClass = _classController.text.trim();
-    final school = _schoolController.text.trim();
+    final schoolClass = normalizeUppercaseField(_classController.text);
+    final school = normalizeUppercaseField(_schoolController.text);
 
     if (name.isEmpty ||
         nickname.isEmpty ||
@@ -288,13 +383,22 @@ class _EditProfilePageState extends State<EditProfilePage> {
                       child: InkWell(
                         onTap: _pickProfileImage,
                         customBorder: const CircleBorder(),
-                        child: const Padding(
-                          padding: EdgeInsets.all(7),
-                          child: Icon(
-                            Icons.edit_outlined,
-                            color: Colors.white,
-                            size: 18,
-                          ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(7),
+                          child: _isPickingImage
+                              ? const SizedBox(
+                                  width: 18,
+                                  height: 18,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    color: Colors.white,
+                                  ),
+                                )
+                              : const Icon(
+                                  Icons.edit_outlined,
+                                  color: Colors.white,
+                                  size: 18,
+                                ),
                         ),
                       ),
                     ),
@@ -325,6 +429,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
               TextField(
                 controller: _nicknameController,
                 onChanged: (_) => setState(() {}),
+                inputFormatters: [_singleWordNicknameFormatter()],
                 textCapitalization: TextCapitalization.words,
                 textInputAction: TextInputAction.next,
                 decoration: const InputDecoration(
@@ -338,6 +443,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
               TextField(
                 controller: _classController,
                 onChanged: (_) => setState(() {}),
+                inputFormatters: [_uppercaseFieldFormatter()],
+                textCapitalization: TextCapitalization.characters,
                 textInputAction: TextInputAction.next,
                 decoration: const InputDecoration(
                   hintText: 'Masukkan kelas',
@@ -350,6 +457,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
               TextField(
                 controller: _schoolController,
                 onChanged: (_) => setState(() {}),
+                inputFormatters: [_uppercaseFieldFormatter()],
+                textCapitalization: TextCapitalization.characters,
                 textInputAction: TextInputAction.done,
                 decoration: const InputDecoration(
                   hintText: 'Masukkan sekolah',
@@ -376,29 +485,34 @@ class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
 
   Future<void> _showDeleteConfirmation(BuildContext context) async {
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (dialogContext) => AlertDialog(
-        title: const Text('Hapus Data'),
-        content: const Text(
-          'Semua riwayat kuis, profil pengguna, dan pengaturan lokal '
-          'akan dihapus. Setelah itu, kamu perlu mengisi identitas kembali. '
-          'Tindakan ini tidak dapat dibatalkan.',
+    final destructiveColor = Theme.of(context).colorScheme.error;
+    final profile = await UserProfileRepository.instance.load();
+    if (!context.mounted) return;
+
+    if (profile == null || profile.name.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Profil tidak ditemukan. Penghapusan dibatalkan.'),
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(dialogContext, false),
-            child: const Text('Batal'),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.pop(dialogContext, true),
-            child: const Text('Hapus Data'),
-          ),
-        ],
+      );
+      return;
+    }
+
+    // Satu route dialog dengan tiga tahap menghindari penumpukan/transisi
+    // beberapa showDialog berturut-turut. Controller dimiliki oleh State dialog
+    // dan baru di-dispose ketika route dialog benar-benar dilepas.
+    final result = await showDialog<_DeleteVerificationResult>(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => _DeleteDataVerificationDialog(
+        fullName: profile.name,
+        destructiveColor: destructiveColor,
       ),
     );
 
-    if (confirmed != true || !context.mounted) return;
+    if (!context.mounted) return;
+    if (result != _DeleteVerificationResult.confirmed) return;
+
     await _deleteAllLocalData(context);
   }
 
@@ -568,22 +682,190 @@ class SettingsPage extends StatelessWidget {
           const SizedBox(height: 10),
           OutlineCard(
             onTap: () => _showDeleteConfirmation(context),
-            child: const Row(
+            child: Row(
               children: [
-                Icon(Icons.delete_outline),
-                SizedBox(width: 14),
+                Icon(Icons.delete_outline, color: Theme.of(context).colorScheme.error),
+                const SizedBox(width: 14),
                 Expanded(
                   child: Text(
                     'Hapus Data',
-                    style: TextStyle(fontWeight: FontWeight.w600),
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      color: Theme.of(context).colorScheme.error,
+                    ),
                   ),
                 ),
-                Icon(Icons.chevron_right),
+                Icon(Icons.chevron_right, color: Theme.of(context).colorScheme.error),
               ],
             ),
           ),
         ],
       ),
+    );
+  }
+}
+
+
+// Bandingkan urutan huruf tanpa membedakan huruf besar/kecil.
+// Spasi, tanda baca, dan karakter kontrol/tak terlihat diabaikan.
+// Isi huruf tetap harus sama dan urutannya tidak boleh berubah.
+String _normalizeDeleteVerificationName(String value) {
+  final withoutInvisibleCharacters = value.replaceAll(
+    RegExp(r'[\u200B-\u200F\u202A-\u202E\u2060\uFEFF\u00AD]'),
+    '',
+  );
+  return withoutInvisibleCharacters
+      .toUpperCase()
+      .replaceAll(RegExp(r'[^A-Z]'), '');
+}
+
+enum _DeleteVerificationResult { confirmed }
+
+class _DeleteDataVerificationDialog extends StatefulWidget {
+  const _DeleteDataVerificationDialog({
+    required this.fullName,
+    required this.destructiveColor,
+  });
+
+  final String fullName;
+  final Color destructiveColor;
+
+  @override
+  State<_DeleteDataVerificationDialog> createState() =>
+      _DeleteDataVerificationDialogState();
+}
+
+class _DeleteDataVerificationDialogState
+    extends State<_DeleteDataVerificationDialog> {
+  late final TextEditingController _verificationController;
+  String? _verificationError;
+  int _step = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _verificationController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    _verificationController.dispose();
+    super.dispose();
+  }
+
+  void _cancel() => Navigator.of(context).pop();
+
+  void _continue() {
+    if (_step < 2) {
+      setState(() => _step++);
+      return;
+    }
+
+    // Baca langsung dari controller agar nilai yang dibandingkan selalu
+    // merupakan teks terbaru dari TextField, termasuk input dari keyboard IME.
+    final enteredName = _normalizeDeleteVerificationName(
+      _verificationController.value.text,
+    );
+    final expectedName = _normalizeDeleteVerificationName(widget.fullName);
+    final matches = enteredName.isNotEmpty && enteredName == expectedName;
+
+    // Diagnostik aman: tidak mencatat nama pribadi, hanya panjang dan hasil.
+    debugPrint(
+      'FAIBIT_DELETE_VERIFY '
+      'enteredLength=${enteredName.length} '
+      'expectedLength=${expectedName.length} '
+      'matches=$matches',
+    );
+
+    if (!matches) {
+      setState(() {
+        _verificationError = 'Nama belum cocok. Periksa kembali ejaan nama lengkap.';
+      });
+      return;
+    }
+
+    FocusManager.instance.primaryFocus?.unfocus();
+    Navigator.of(context).pop(_DeleteVerificationResult.confirmed);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final titles = [
+      'Hapus Data',
+      'Yakin ingin menghapus semuanya?',
+      'Verifikasi Nama Lengkap',
+    ];
+
+    final contents = <Widget>[
+      const Text(
+        'Semua riwayat kuis, profil pengguna, dan pengaturan lokal akan '
+        'dihapus. Tindakan ini tidak dapat dibatalkan.',
+      ),
+      const Text(
+        'Data akan dihapus permanen dan tidak dapat dipulihkan. '
+        'Lanjutkan hanya jika kamu benar-benar yakin.',
+      ),
+      Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Ketik nama lengkap yang terdaftar pada profil FAIBIT. '
+            'Satu huruf yang berbeda akan membatalkan penghapusan.',
+          ),
+          const SizedBox(height: 12),
+          Text(
+            widget.fullName,
+            style: const TextStyle(fontWeight: FontWeight.w800),
+          ),
+          const SizedBox(height: 12),
+          TextField(
+            controller: _verificationController,
+            autofocus: true,
+            autocorrect: false,
+            enableSuggestions: false,
+            textCapitalization: TextCapitalization.none,
+            onChanged: (_) {
+              if (_verificationError != null) {
+                setState(() => _verificationError = null);
+              }
+            },
+            decoration: InputDecoration(
+              hintText: 'Ketik nama lengkap',
+              prefixIcon: const Icon(Icons.person_outline),
+              errorText: _verificationError,
+            ),
+            textInputAction: TextInputAction.done,
+            onSubmitted: (_) => _continue(),
+          ),
+        ],
+      ),
+    ];
+
+    final labels = ['Lanjutkan', 'Ya, saya yakin', 'Hapus Permanen'];
+
+    return AlertDialog(
+      scrollable: true,
+      title: Text(titles[_step]),
+      content: AnimatedSize(
+        duration: const Duration(milliseconds: 160),
+        curve: Curves.easeOut,
+        child: contents[_step],
+      ),
+      actions: [
+        TextButton(
+          onPressed: _cancel,
+          child: Text(_step == 0 ? 'Batal' : 'Tidak, batal'),
+        ),
+        FilledButton(
+          style: FilledButton.styleFrom(
+            backgroundColor: widget.destructiveColor,
+            foregroundColor: Colors.white,
+          ),
+          onPressed: _continue,
+          child: Text(labels[_step]),
+        ),
+      ],
     );
   }
 }
@@ -909,7 +1191,7 @@ class _AboutPageState extends State<AboutPage> {
         fit: BoxFit.cover,
         errorBuilder: (_, _, _) => Icon(
           Icons.person_rounded,
-          size: 48,
+          size: 24,
           color: colors.onSecondaryContainer,
         ),
       ),

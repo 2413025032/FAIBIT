@@ -532,7 +532,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           label: const Text('Edit Profil'),
                           style: FilledButton.styleFrom(
                             backgroundColor: Colors.white,
-                            foregroundColor: const Color(0xFF08765D),
+                            foregroundColor: colors.primary,
                             padding: const EdgeInsets.symmetric(vertical: 12),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(14),

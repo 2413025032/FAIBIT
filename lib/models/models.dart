@@ -1,14 +1,16 @@
 String normalizeFullName(String value) =>
     value.trim().replaceAll(RegExp(r'\s+'), ' ').toUpperCase();
 
-String normalizeNickname(String value) => value
-    .trim()
-    .replaceAll(RegExp(r'\s+'), ' ')
-    .split(' ')
-    .where((word) => word.isNotEmpty)
-    .map((word) =>
-        '${word.substring(0, 1).toUpperCase()}${word.substring(1).toLowerCase()}')
-    .join(' ');
+String normalizeUppercaseField(String value) =>
+    value.trim().replaceAll(RegExp(r'\s+'), ' ').toUpperCase();
+
+/// Nama panggilan dibatasi satu kata dan ditulis dengan huruf awal kapital.
+String normalizeNickname(String value) {
+  final cleaned = value.trim().replaceAll(RegExp(r'\s+'), ' ');
+  if (cleaned.isEmpty) return '';
+  final firstWord = cleaned.split(' ').first;
+  return '${firstWord.substring(0, 1).toUpperCase()}${firstWord.substring(1).toLowerCase()}';
+}
 
 class UserProfile {
   const UserProfile({

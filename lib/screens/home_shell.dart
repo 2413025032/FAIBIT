@@ -117,7 +117,13 @@ class HomePage extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) => Padding(
+  Widget build(BuildContext context) {
+    // Keep the home cards readable when the device font size is enlarged.
+    final textScale = (MediaQuery.textScalerOf(context).scale(16) / 16)
+        .clamp(1.0, 2.0)
+        .toDouble();
+
+    return Padding(
     padding: const EdgeInsets.fromLTRB(20, 12, 20, 8),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -179,7 +185,9 @@ class HomePage extends StatelessWidget {
                   crossAxisCount: 2,
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
-                  childAspectRatio: 1.35,
+                  // Taller tiles make room for two-line labels at large fonts.
+                  // At the default font scale this remains the original 1.35 ratio.
+                  childAspectRatio: 1.35 / textScale,
                   crossAxisSpacing: 10,
                   mainAxisSpacing: 10,
                   children: [
@@ -243,7 +251,8 @@ class HomePage extends StatelessWidget {
         ),
       ],
     ),
-  );
+    );
+  }
 
   Widget _menu(
     BuildContext context,
@@ -252,7 +261,12 @@ class HomePage extends StatelessWidget {
     VoidCallback tap,
   ) => OutlineCard(
     onTap: tap,
-    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 14),
+    padding: EdgeInsets.symmetric(
+      horizontal: 10,
+      vertical: MediaQuery.textScalerOf(context).scale(16) / 16 > 1.35
+          ? 10
+          : 14,
+    ),
     child: Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -326,9 +340,12 @@ class _FaiWelcomeCard extends StatelessWidget {
     final colors = Theme.of(context).colorScheme;
     final primary = colors.primary;
     final deepPrimary = Color.lerp(primary, Colors.black, 0.22)!;
+    // Do not assign a fixed height here. System text scaling can enlarge the
+    // copy beyond a height calculated from one nominal font size. Let the card
+    // grow to fit the taller of the text column and Fai mascot instead.
     return Container(
-    height: 190,
-    padding: const EdgeInsets.fromLTRB(18, 16, 8, 12),
+    constraints: const BoxConstraints(minHeight: 190),
+    padding: const EdgeInsets.fromLTRB(18, 16, 8, 16),
     decoration: BoxDecoration(
       gradient: LinearGradient(
         begin: Alignment.topLeft,

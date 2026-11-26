@@ -964,7 +964,8 @@ class _ChallengePageState extends State<ChallengePage> {
     timer = Timer.periodic(const Duration(seconds: 1), (t) {
       if (seconds <= 1) {
         t.cancel();
-        finish(timeExpired: true);
+        if (mounted) setState(() => seconds = 0);
+        unawaited(finish(timeExpired: true));
       } else if (mounted) {
         setState(() => seconds--);
       }
@@ -989,13 +990,33 @@ class _ChallengePageState extends State<ChallengePage> {
           'Sesi challenge akan dibatalkan dan progres sesi ini tidak disimpan.',
         ),
         actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(dialogContext, false),
-            child: const Text('Lanjut'),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.pop(dialogContext, true),
-            child: const Text('Keluar'),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+            child: Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton(
+                    style: OutlinedButton.styleFrom(
+                      minimumSize: const Size.fromHeight(48),
+                    ),
+                    onPressed: () => Navigator.pop(dialogContext, false),
+                    child: const Text('Lanjut'),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: FilledButton(
+                    style: FilledButton.styleFrom(
+                      backgroundColor: const Color(0xFFC62828),
+                      foregroundColor: Colors.white,
+                      minimumSize: const Size.fromHeight(48),
+                    ),
+                    onPressed: () => Navigator.pop(dialogContext, true),
+                    child: const Text('Keluar'),
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
       ),
@@ -1029,12 +1050,27 @@ class _ChallengePageState extends State<ChallengePage> {
     }
   }
 
-  void finish({bool timeExpired = false}) async {
+  Future<void> _showTimeExpiredNotice() async {
+    if (!mounted) return;
+    unawaited(SoundManager.instance.playWrongAnswer());
+    await showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => const _ChallengeTimeExpiredDialog(),
+    );
+  }
+
+  Future<void> finish({bool timeExpired = false}) async {
     if (completionStarted) return;
     completionStarted = true;
     timer?.cancel();
 
     if (!mounted) return;
+
+    if (timeExpired) {
+      await _showTimeExpiredNotice();
+      if (!mounted) return;
+    }
 
     if (answers.length == currentQuestion) {
       answers.add(selected);
@@ -1192,6 +1228,46 @@ class _ChallengePageState extends State<ChallengePage> {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class _ChallengeTimeExpiredDialog extends StatefulWidget {
+  const _ChallengeTimeExpiredDialog();
+
+  @override
+  State<_ChallengeTimeExpiredDialog> createState() =>
+      _ChallengeTimeExpiredDialogState();
+}
+
+class _ChallengeTimeExpiredDialogState
+    extends State<_ChallengeTimeExpiredDialog> {
+  Timer? _closeTimer;
+
+  @override
+  void initState() {
+    super.initState();
+    _closeTimer = Timer(const Duration(milliseconds: 1600), () {
+      if (mounted) Navigator.of(context).pop();
+    });
+  }
+
+  @override
+  void dispose() {
+    _closeTimer?.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final errorColor = Theme.of(context).colorScheme.error;
+    return AlertDialog(
+      icon: Icon(Icons.timer_off_rounded, color: errorColor, size: 42),
+      title: const Text('Waktu Habis!'),
+      content: const Text(
+        'Waktu Challenge kamu sudah selesai. Sebentar lagi hasilnya ditampilkan.',
+        textAlign: TextAlign.center,
       ),
     );
   }

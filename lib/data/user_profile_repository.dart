@@ -48,8 +48,8 @@ class UserProfileRepository {
       return UserProfile(
         name: normalizedName,
         nickname: normalizeNickname(nicknameSource),
-        schoolClass: schoolClass.trim(),
-        school: school.trim(),
+        schoolClass: normalizeUppercaseField(schoolClass),
+        school: normalizeUppercaseField(school),
         photoPath: photoPath is String ? photoPath : null,
       );
     } on FormatException {
@@ -75,8 +75,8 @@ class UserProfileRepository {
               ? normalizeFullName(profile.name).split(' ').first
               : profile.nickname,
         ),
-        'schoolClass': profile.schoolClass.trim(),
-        'school': profile.school.trim(),
+        'schoolClass': normalizeUppercaseField(profile.schoolClass),
+        'school': normalizeUppercaseField(profile.school),
         'photoPath': profile.photoPath,
       }),
     );

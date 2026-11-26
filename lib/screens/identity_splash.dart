@@ -1,12 +1,43 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../theme/app_theme.dart';
 import '../models/models.dart';
 import '../data/user_profile_repository.dart';
 import '../widgets/ui.dart';
 import 'home_shell.dart';
+
+
+TextInputFormatter _singleWordNicknameFormatter() {
+  return TextInputFormatter.withFunction((oldValue, newValue) {
+    final cleaned = newValue.text.trimLeft();
+    final firstWord = cleaned.split(RegExp(r'\s+')).first;
+    final cursor = newValue.selection.extentOffset < 0
+        ? firstWord.length
+        : newValue.selection.extentOffset.clamp(0, firstWord.length).toInt();
+    return TextEditingValue(
+      text: firstWord,
+      selection: TextSelection.collapsed(offset: cursor),
+      composing: TextRange.empty,
+    );
+  });
+}
+
+TextInputFormatter _uppercaseFieldFormatter() {
+  return TextInputFormatter.withFunction((oldValue, newValue) {
+    final upper = newValue.text.toUpperCase();
+    final cursor = newValue.selection.extentOffset < 0
+        ? upper.length
+        : newValue.selection.extentOffset.clamp(0, upper.length).toInt();
+    return TextEditingValue(
+      text: upper,
+      selection: TextSelection.collapsed(offset: cursor),
+      composing: TextRange.empty,
+    );
+  });
+}
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key, this.initialProfile});
@@ -82,6 +113,17 @@ class _SplashScreenState extends State<SplashScreen>
                   style: Theme.of(context).textTheme.displaySmall
                       ?.copyWith(letterSpacing: 3, fontWeight: FontWeight.w800),
                 ),
+                const SizedBox(height: 5),
+                Text(
+                  'Fast Arithmatic Bit Interface',
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    fontStyle: FontStyle.italic,
+                    fontWeight: FontWeight.w500,
+                    letterSpacing: 0.25,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
+                ),
                 const SizedBox(height: 8),
                 Text(
                   'Belajar Sistem Bilangan Jadi Lebih Seru!',
@@ -135,8 +177,8 @@ class _IdentityPageState extends State<IdentityPage> {
       final profile = UserProfile(
         name: normalizeFullName(name.text),
         nickname: normalizeNickname(nickname.text),
-        schoolClass: schoolClass.text.trim(),
-        school: school.text.trim(),
+        schoolClass: normalizeUppercaseField(schoolClass.text),
+        school: normalizeUppercaseField(school.text),
       );
       await UserProfileRepository.instance.save(profile);
 
@@ -238,6 +280,7 @@ class _IdentityPageState extends State<IdentityPage> {
                     const SizedBox(height: 14),
                     TextFormField(
                       controller: nickname,
+                      inputFormatters: [_singleWordNicknameFormatter()],
                       textCapitalization: TextCapitalization.words,
                       textInputAction: TextInputAction.next,
                       decoration: const InputDecoration(
@@ -251,6 +294,8 @@ class _IdentityPageState extends State<IdentityPage> {
                     const SizedBox(height: 14),
                     TextFormField(
                       controller: schoolClass,
+                      inputFormatters: [_uppercaseFieldFormatter()],
+                      textCapitalization: TextCapitalization.characters,
                       onFieldSubmitted: (_) => submit(),
                       decoration: const InputDecoration(
                         prefixIcon: Icon(Icons.school_outlined),
@@ -263,6 +308,8 @@ class _IdentityPageState extends State<IdentityPage> {
                     const SizedBox(height: 14),
                     TextFormField(
                       controller: school,
+                      inputFormatters: [_uppercaseFieldFormatter()],
+                      textCapitalization: TextCapitalization.characters,
                       textInputAction: TextInputAction.done,
                       onFieldSubmitted: (_) => submit(),
                       decoration: const InputDecoration(

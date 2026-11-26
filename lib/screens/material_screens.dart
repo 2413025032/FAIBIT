@@ -310,6 +310,9 @@ class _MaterialReaderPageState extends State<MaterialReaderPage> {
                             cutoffPrevious: 0.4,
                             sensitivity: 0.55,
                             enableSound: false,
+                            singlePageBackContentOpacity: 0.0,
+                            enableSinglePageSettleReveal: false,
+                            snapshotRefreshPolicy: PageFlipSnapshotRefreshPolicy.whenDirty,
                           ),
                           onPageChanged: (page) {
                             if (page != currentPage) {

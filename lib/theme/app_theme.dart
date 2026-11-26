@@ -55,10 +55,10 @@ class AppTheme {
   // A muted blush palette: pink accents, warm neutral surfaces and charcoal text.
   static const pinkPrimary = Color(0xFFB77491);
   static const pinkPrimaryDark = Color(0xFF87536A);
-  static const pinkBackground = Color(0xFFFFF9FB);
-  static const pinkSurface = Color(0xFFFFFEFF);
-  static const pinkContainer = Color(0xFFF5E6EC);
-  static const pinkLine = Color(0xFFE9DCE2);
+  static const pinkBackground = Color(0xFFFFF1F5);
+  static const pinkSurface = Color(0xFFFFF7F9);
+  static const pinkContainer = Color(0xFFF3DDE6);
+  static const pinkLine = Color(0xFFE8CFD9);
 
   static const ColorScheme pinkScheme = ColorScheme.light(
     primary: pinkPrimary,
@@ -72,6 +72,11 @@ class AppTheme {
     surface: pinkSurface,
     onSurface: darkGray,
     outline: pinkLine,
+    surfaceContainerLowest: Color(0xFFFFFAFC),
+    surfaceContainerLow: Color(0xFFFFF5F8),
+    surfaceContainer: Color(0xFFFFF0F4),
+    surfaceContainerHigh: Color(0xFFFCEAF0),
+    surfaceContainerHighest: Color(0xFFF8E3EB),
   );
 
   /// Tokens reserved for the Challenge visual mode in a later phase.
