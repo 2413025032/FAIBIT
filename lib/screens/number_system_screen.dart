@@ -21,6 +21,7 @@ class _InteractiveNumberSystemPageState
   final TextEditingController _numberController = TextEditingController();
 
   int _selectedRadix = 10;
+  int _visualizationRadix = 2;
 
   String get _radixLabel => switch (_selectedRadix) {
     2 => 'Biner',
@@ -192,7 +193,7 @@ class _InteractiveNumberSystemPageState
               else ...[
                 _conversionResults(context, value),
                 const SizedBox(height: 18),
-                _binaryVisualization(context, value),
+                _radixVisualization(context, value),
                 const SizedBox(height: 14),
                 _placeValueExplanation(context, value),
               ],
@@ -344,8 +345,9 @@ class _InteractiveNumberSystemPageState
       mainAxisSpacing: 9,
       childAspectRatio: 1.45,
       children: results.map((item) {
-        final isBinary = item.base == 2;
+        final isSelected = item.base == _visualizationRadix;
         return OutlineCard(
+          onTap: () => setState(() => _visualizationRadix = item.base),
           padding: const EdgeInsets.fromLTRB(11, 10, 7, 8),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -388,7 +390,7 @@ class _InteractiveNumberSystemPageState
                   item.result,
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.w800,
-                        color: isBinary
+                        color: isSelected
                             ? Theme.of(context).colorScheme.primary
                             : Theme.of(context).colorScheme.onSurface,
                       ),
@@ -405,21 +407,46 @@ class _InteractiveNumberSystemPageState
     );
   }
 
-  Widget _binaryVisualization(BuildContext context, BigInt value) {
-    final binary = value.toRadixString(2);
-    final bits = binary.split('');
+  String _radixName(int radix) => switch (radix) {
+    2 => 'biner',
+    8 => 'oktal',
+    10 => 'desimal',
+    16 => 'heksadesimal',
+    _ => 'bilangan',
+  };
+
+  String _radixSubscript(int radix) => switch (radix) {
+    2 => '₂',
+    8 => '₈',
+    10 => '₁₀',
+    16 => '₁₆',
+    _ => '',
+  };
+
+  int _digitValue(String digit) {
+    final code = digit.toUpperCase().codeUnitAt(0);
+    if (code >= 48 && code <= 57) return code - 48;
+    if (code >= 65 && code <= 70) return code - 55;
+    return 0;
+  }
+
+  Widget _radixVisualization(BuildContext context, BigInt value) {
+    final radix = _visualizationRadix;
+    final number = value.toRadixString(radix).toUpperCase();
+    final digits = number.split('');
+    final colorScheme = Theme.of(context).colorScheme;
 
     return OutlineCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Visualisasi biner',
+            'Visualisasi ${_radixName(radix)}',
             style: Theme.of(context).textTheme.titleMedium,
           ),
           const SizedBox(height: 4),
           Text(
-            'Setiap kotak menunjukkan satu digit biner.',
+            'Setiap kotak menunjukkan satu digit dan nilai posisinya.',
             style: Theme.of(context).textTheme.bodySmall,
           ),
           const SizedBox(height: 13),
@@ -427,47 +454,48 @@ class _InteractiveNumberSystemPageState
             scrollDirection: Axis.horizontal,
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: List.generate(bits.length, (index) {
-                final bit = bits[index];
-                final power = bits.length - index - 1;
-                final isOne = bit == '1';
-                final activeColor = Theme.of(context).colorScheme.primary;
-                final inactiveColor = Theme.of(context)
-                    .colorScheme
-                    .surfaceContainerHighest;
+              children: List.generate(digits.length, (index) {
+                final digit = digits[index];
+                final digitValue = _digitValue(digit);
+                final power = digits.length - index - 1;
+                final isNonZero = digitValue != 0;
+                final activeColor = colorScheme.primary;
+                final inactiveColor = colorScheme.surfaceContainerHighest;
 
-                return Container(
-                  width: 39,
-                  margin: const EdgeInsets.only(right: 5),
-                  child: Column(
-                    children: [
-                      Container(
-                        height: 43,
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          color: isOne ? activeColor : inactiveColor,
-                          borderRadius: BorderRadius.circular(9),
-                        ),
-                        child: Text(
-                          bit,
-                          style: TextStyle(
-                            color: isOne
-                                ? Theme.of(context).colorScheme.onPrimary
-                                : Theme.of(context).colorScheme.onSurface,
-                            fontSize: 19,
-                            fontWeight: FontWeight.w800,
+                return SizedBox(
+                  width: 43,
+                  child: Padding(
+                    padding: const EdgeInsets.only(right: 4),
+                    child: Column(
+                      children: [
+                        Container(
+                          height: 43,
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            color: isNonZero ? activeColor : inactiveColor,
+                            borderRadius: BorderRadius.circular(9),
+                          ),
+                          child: Text(
+                            digit,
+                            style: TextStyle(
+                              color: isNonZero
+                                  ? colorScheme.onPrimary
+                                  : colorScheme.onSurface,
+                              fontSize: 19,
+                              fontWeight: FontWeight.w800,
+                            ),
                           ),
                         ),
-                      ),
-                      const SizedBox(height: 5),
-                      Text(
-                        '2^$power',
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              fontSize: 10,
-                              fontWeight: FontWeight.w600,
-                            ),
-                      ),
-                    ],
+                        const SizedBox(height: 5),
+                        Text(
+                          '$radix^$power',
+                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                fontSize: 10,
+                                fontWeight: FontWeight.w600,
+                              ),
+                        ),
+                      ],
+                    ),
                   ),
                 );
               }),
@@ -478,11 +506,11 @@ class _InteractiveNumberSystemPageState
             spacing: 13,
             runSpacing: 7,
             children: [
-              _legend(context, Theme.of(context).colorScheme.primary, 'Bit 1'),
+              _legend(context, colorScheme.primary, 'Digit bukan 0'),
               _legend(
                 context,
-                Theme.of(context).colorScheme.surfaceContainerHighest,
-                'Bit 0',
+                colorScheme.surfaceContainerHighest,
+                'Digit 0',
                 border: true,
               ),
             ],
@@ -519,21 +547,27 @@ class _InteractiveNumberSystemPageState
   }
 
   Widget _placeValueExplanation(BuildContext context, BigInt value) {
-    final binary = value.toRadixString(2);
-    final selectedPowers = <int>[];
+    final radix = _visualizationRadix;
+    final number = value.toRadixString(radix).toUpperCase();
+    final digits = number.split('');
+    final terms = <String>[];
+    final contributions = <String>[];
 
-    for (var index = 0; index < binary.length; index++) {
-      if (binary[index] == '1') {
-        selectedPowers.add(binary.length - index - 1);
-      }
+    for (var index = 0; index < digits.length; index++) {
+      final digit = digits[index];
+      final digitValue = _digitValue(digit);
+      final power = digits.length - index - 1;
+      if (digitValue == 0) continue;
+
+      final contribution = BigInt.from(digitValue) * BigInt.from(radix).pow(power);
+      terms.add('$digit × $radix^$power');
+      contributions.add(contribution.toString());
     }
 
-    final expandedValues = selectedPowers
-        .map((power) => BigInt.one << power)
-        .toList();
-    final expression = expandedValues.isEmpty
+    final expression = terms.isEmpty ? '0' : terms.join(' + ');
+    final expandedValues = contributions.isEmpty
         ? '0'
-        : expandedValues.join(' + ');
+        : contributions.join(' + ');
 
     return OutlineCard(
       child: Column(
@@ -545,8 +579,8 @@ class _InteractiveNumberSystemPageState
           ),
           const SizedBox(height: 7),
           Text(
-            'Pada sistem biner, setiap posisi memiliki nilai pangkat 2. '
-            'Digit 1 berarti nilai posisi tersebut dijumlahkan, sedangkan digit 0 tidak dijumlahkan.',
+            'Pada sistem ${_radixName(radix)}, setiap posisi memiliki nilai pangkat $radix. '
+            'Nilai setiap digit dikalikan dengan bobot posisinya, kemudian seluruh hasilnya dijumlahkan.',
             style: Theme.of(context).textTheme.bodyMedium,
           ),
           const SizedBox(height: 12),
@@ -561,14 +595,14 @@ class _InteractiveNumberSystemPageState
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '${binary}₂ = $expression',
+                  '${number}${_radixSubscript(radix)} = $expression',
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.w800,
                       ),
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  '= ${value.toString()}₁₀',
+                  '= $expandedValues = ${value.toString()}₁₀',
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
                         color: Theme.of(context).colorScheme.primary,
                         fontWeight: FontWeight.w800,
