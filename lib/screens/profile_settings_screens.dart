@@ -887,52 +887,32 @@ class AboutPage extends StatefulWidget {
 }
 
 class _AboutPageState extends State<AboutPage> {
-  late Future<UserProfile?> _developerProfileFuture;
-
-  @override
-  void initState() {
-    super.initState();
-    _developerProfileFuture = UserProfileRepository.instance.load();
-  }
+  static const String _developerPhotoAsset =
+      'assets/images/developer/mutiara_salsabilla.png';
 
   Widget _buildDeveloperPortrait(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
-    return FutureBuilder<UserProfile?>(
-      future: _developerProfileFuture,
-      builder: (context, snapshot) {
-        final photoPath = snapshot.data?.photoPath;
-        final hasPhoto = photoPath != null &&
-            photoPath.isNotEmpty &&
-            File(photoPath).existsSync();
-        return Container(
-          width: 92,
-          height: 92,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: colors.secondaryContainer,
-            border: Border.all(
-            color: colors.primary.withValues(alpha: 0.35),
-            width: 2,
-          ),
-          ),
-          clipBehavior: Clip.antiAlias,
-          child: hasPhoto
-              ? Image.file(
-                  File(photoPath),
-                  fit: BoxFit.cover,
-                  errorBuilder: (_, _, _) => Icon(
-                    Icons.person_rounded,
-                    size: 42,
-                    color: colors.onSecondaryContainer,
-                  ),
-                )
-              : Icon(
-                  Icons.person_rounded,
-                  size: 42,
-                  color: colors.onSecondaryContainer,
-                ),
-        );
-      },
+    return Container(
+      width: 50,
+      height: 50,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: colors.secondaryContainer,
+        border: Border.all(
+          color: colors.primary.withValues(alpha: 0.4),
+          width: 2.5,
+        ),
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: Image.asset(
+        _developerPhotoAsset,
+        fit: BoxFit.cover,
+        errorBuilder: (_, _, _) => Icon(
+          Icons.person_rounded,
+          size: 48,
+          color: colors.onSecondaryContainer,
+        ),
+      ),
     );
   }
 
@@ -1180,13 +1160,10 @@ class _AboutPageState extends State<AboutPage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        FutureBuilder<UserProfile?>(
-                          future: _developerProfileFuture,
-                          builder: (context, snapshot) => Text(
-                            snapshot.data?.name ?? 'Mutiara Salsabilla',
-                            style: theme.textTheme.titleMedium?.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
+                        Text(
+                          'Mutiara Salsabilla',
+                          style: theme.textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
                         const SizedBox(height: 5),

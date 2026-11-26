@@ -440,6 +440,9 @@ class _ProfilePageState extends State<ProfilePage> {
             }).length;
             final recent = attempts.take(3).toList();
 
+            final profilePrimary = Theme.of(context).colorScheme.primary;
+            final profileDeep = Color.lerp(profilePrimary, Colors.black, 0.22)!;
+
             return ListView(
               padding: const EdgeInsets.fromLTRB(18, 8, 18, 28),
               children: [
@@ -447,15 +450,15 @@ class _ProfilePageState extends State<ProfilePage> {
                   width: double.infinity,
                   padding: const EdgeInsets.fromLTRB(20, 22, 20, 18),
                   decoration: BoxDecoration(
-                    gradient: const LinearGradient(
+                    gradient: LinearGradient(
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
-                      colors: [Color(0xFF13A982), Color(0xFF08765D)],
+                      colors: [profilePrimary, profileDeep],
                     ),
                     borderRadius: BorderRadius.circular(24),
                     boxShadow: [
                       BoxShadow(
-                        color: AppTheme.greenTeal.withValues(alpha: 0.22),
+                        color: profilePrimary.withValues(alpha: 0.22),
                         blurRadius: 18,
                         offset: const Offset(0, 8),
                       ),

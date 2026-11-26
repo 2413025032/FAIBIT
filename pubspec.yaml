@@ -69,6 +69,7 @@ flutter:
   assets:
     - assets/images/fai/
     - assets/images/branding/
+    - assets/images/developer/mutiara_salsabilla.png
     - assets/audio/buttons/
     - assets/audio/quiz/
     - assets/audio/fai/

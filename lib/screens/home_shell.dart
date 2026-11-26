@@ -322,21 +322,25 @@ class _FaiWelcomeCard extends StatelessWidget {
   const _FaiWelcomeCard();
 
   @override
-  Widget build(BuildContext context) => Container(
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    final primary = colors.primary;
+    final deepPrimary = Color.lerp(primary, Colors.black, 0.22)!;
+    return Container(
     height: 190,
     padding: const EdgeInsets.fromLTRB(18, 16, 8, 12),
     decoration: BoxDecoration(
-      gradient: const LinearGradient(
+      gradient: LinearGradient(
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
-        colors: [Color(0xFF159B79), Color(0xFF0B6557)],
+        colors: [primary, deepPrimary],
       ),
       borderRadius: BorderRadius.circular(20),
-      boxShadow: const [
+      boxShadow: [
         BoxShadow(
-          color: Color(0x24107A62),
+          color: primary.withValues(alpha: 0.22),
           blurRadius: 16,
-          offset: Offset(0, 7),
+          offset: const Offset(0, 7),
         ),
       ],
     ),
@@ -346,11 +350,11 @@ class _FaiWelcomeCard extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: const [
+            children: [
               Text(
                 'TEMAN BELAJARMU',
                 style: TextStyle(
-                  color: Color(0xFFD5F2E9),
+                  color: colors.onPrimary.withValues(alpha: 0.82),
                   fontSize: 10,
                   fontWeight: FontWeight.w800,
                   letterSpacing: 1.1,
@@ -369,7 +373,7 @@ class _FaiWelcomeCard extends StatelessWidget {
               Text(
                 'Yuk, belajar sistem bilangan bersamaku!',
                 style: TextStyle(
-                  color: Color(0xFFF0FFFA),
+                  color: colors.onPrimary.withValues(alpha: 0.94),
                   fontSize: 12,
                   height: 1.4,
                 ),
@@ -388,6 +392,7 @@ class _FaiWelcomeCard extends StatelessWidget {
       ],
     ),
   );
+  }
 }
 
 
