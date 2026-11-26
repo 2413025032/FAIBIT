@@ -8,6 +8,7 @@ import 'history_profile.dart';
 import 'material_screens.dart';
 import 'quiz_screens.dart';
 import 'number_system_screen.dart';
+import 'bit_playground_screen.dart';
 
 enum RootDestination { home, materials, history, profile }
 
@@ -272,6 +273,15 @@ class HomePage extends StatelessWidget {
                       () => _openChildPage(
                         context,
                         const InteractiveNumberSystemPage(),
+                      ),
+                    ),
+                    _menu(
+                      context,
+                      'Bit Playground',
+                      Icons.memory_rounded,
+                      () => _openChildPage(
+                        context,
+                        const BitPlaygroundPage(),
                       ),
                     ),
                   ],
